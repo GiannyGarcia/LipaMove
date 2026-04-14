@@ -1,0 +1,44 @@
+LipaMove — MySQL Workbench + Node API integration
+==================================================
+
+Why a server?
+-------------
+Browsers cannot connect to MySQL directly. The Node app (server/index.js) uses the mysql2 driver to talk to MySQL and exposes JSON APIs under /api/*. The same server also serves index.xhtml, data.xml, and assets so fetch("data.xml") and fetch("/api/...") share one origin (no CORS issues).
+
+Steps (Windows)
+---------------
+
+1) MySQL Server running (local or remote). In MySQL Workbench:
+   - Create a connection to localhost (or your host).
+   - Run the SQL in server/schema_auth.sql (creates tables users, otp_codes, sessions).
+   - Optional: run lipamove_schema.sql for fleet demo tables if you extend the API later.
+
+2) Configure environment:
+   - Copy server/.env.example to server/.env
+   - Set MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE=lipamove (or your DB name).
+   - DEV_RETURN_OTP=true shows the OTP in API responses for class demos only. Turn off in production.
+
+3) Install and start the API:
+   cd server
+   npm install
+   npm start
+
+4) Open the app in the browser (same host/port as the API):
+   http://127.0.0.1:3000/index.xhtml
+
+   Do not open index.xhtml as file:// — fetch("data.xml") and /api/* will fail.
+
+5) Test DB connection:
+   http://127.0.0.1:3000/api/health
+
+Auth flow (prototype)
+-----------------------
+- Sign up: POST /api/auth/register → OTP row in otp_codes; dev build may return devOtp in JSON.
+- Verify signup: POST /api/auth/verify-signup with phone + 6-digit code → session token.
+- Log in: POST /api/auth/login → second-factor OTP in otp_codes; verify with POST /api/auth/verify-login-otp.
+- Profile: GET /api/me with header Authorization: Bearer <token>.
+
+Production notes
+----------------
+- Replace DEV OTP display with SMS (Twilio, etc.) and remove devOtp from responses.
+- Use HTTPS, strong secrets, rate-limit /api/auth/*, and hash or encrypt OTP storage as required by your policy.

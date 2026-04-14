@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="commuter-ui.xsl"?>
+<lipamove_command_center>
+    <fleet_management>
+        <unit id="LM-BTR-01" vehicle_type="batrasco" speed_kph="27">
+            <operator>BATRASCO</operator>
+            <route_assignment>Ayala Hwy - SM Lipa Loop</route_assignment>
+            <location lat="13.94169" lng="121.16332">SM Lipa Terminal</location>
+            <last_updated>2026-04-14T08:42:00+08:00</last_updated>
+            <route_path>
+                <point lat="13.93982" lng="121.15880">Ayala Highway</point>
+                <point lat="13.94112" lng="121.16051">Big Ben Complex</point>
+                <point lat="13.94220" lng="121.16214">SM Lipa North</point>
+                <point lat="13.94169" lng="121.16332">SM Lipa Terminal</point>
+            </route_path>
+            <current_occupancy value="22">High Density</current_occupancy>
+            <efficiency_score>94%</efficiency_score>
+            <fuel_savings_daily>12.5L</fuel_savings_daily>
+        </unit>
+        <unit id="LM-BTR-02" vehicle_type="batrasco" speed_kph="26">
+            <operator>BATRASCO</operator>
+            <route_assignment>Tambo Exit - Lipa Poblacion</route_assignment>
+            <location lat="13.93921" lng="121.14955">Tambo Exit</location>
+            <last_updated>2026-04-14T08:42:10+08:00</last_updated>
+            <route_path>
+                <point lat="13.93921" lng="121.14955">Tambo Exit</point>
+                <point lat="13.93959" lng="121.15227">Marawoy Junction</point>
+                <point lat="13.94018" lng="121.15520">Poblacion Core</point>
+                <point lat="13.94072" lng="121.15740">CM Recto Avenue</point>
+            </route_path>
+            <current_occupancy value="8">Low Density</current_occupancy>
+            <efficiency_score>88%</efficiency_score>
+            <fuel_savings_daily>8.2L</fuel_savings_daily>
+        </unit>
+        <unit id="LM-BTR-03" vehicle_type="batrasco" speed_kph="27">
+            <operator>BATRASCO</operator>
+            <route_assignment>Ayala Hwy - UB Lipa</route_assignment>
+            <location lat="13.94452" lng="121.16781">University of Batangas Lipa</location>
+            <last_updated>2026-04-14T08:41:54+08:00</last_updated>
+            <route_path>
+                <point lat="13.94051" lng="121.16092">Ayala Highway</point>
+                <point lat="13.94243" lng="121.16391">SM Lipa Access</point>
+                <point lat="13.94346" lng="121.16596">P. Torres Street</point>
+                <point lat="13.94452" lng="121.16781">University of Batangas Lipa</point>
+            </route_path>
+            <current_occupancy value="25">High Density</current_occupancy>
+            <efficiency_score>85%</efficiency_score>
+            <fuel_savings_daily>8.5L</fuel_savings_daily>
+        </unit>
+        <unit id="LM-BTR-04" vehicle_type="batrasco" speed_kph="25">
+            <operator>BATRASCO</operator>
+            <route_assignment>Tambo Exit - Outlets Lipa</route_assignment>
+            <location lat="13.93688" lng="121.15702">Lipa Outlets</location>
+            <last_updated>2026-04-14T08:42:04+08:00</last_updated>
+            <route_path>
+                <point lat="13.93917" lng="121.15031">Tambo Exit</point>
+                <point lat="13.93833" lng="121.15288">Lipa-Malvar Road</point>
+                <point lat="13.93741" lng="121.15515">Outlets Access Road</point>
+                <point lat="13.93688" lng="121.15702">Lipa Outlets</point>
+            </route_path>
+            <current_occupancy value="10">Low Density</current_occupancy>
+            <efficiency_score>80%</efficiency_score>
+            <fuel_savings_daily>7.0L</fuel_savings_daily>
+        </unit>
+        <unit id="LM-JP-01" vehicle_type="jeepney" speed_kph="22">
+            <operator>Traditional PUJ</operator>
+            <route_assignment>Public Market - SM Lipa (Jeepney)</route_assignment>
+            <location lat="13.94105" lng="121.15780">Public Market area</location>
+            <last_updated>2026-04-14T08:41:20+08:00</last_updated>
+            <route_path>
+                <point lat="13.94105" lng="121.15780">Public Market area</point>
+                <point lat="13.94055" lng="121.15940">Rizal Street</point>
+                <point lat="13.94090" lng="121.16120">Ayala junction</point>
+                <point lat="13.94169" lng="121.16332">SM Lipa Terminal</point>
+            </route_path>
+            <current_occupancy value="16">High Density</current_occupancy>
+            <efficiency_score>78%</efficiency_score>
+            <fuel_savings_daily>0L</fuel_savings_daily>
+        </unit>
+        <unit id="LM-JP-02" vehicle_type="jeepney" speed_kph="23">
+            <operator>Traditional PUJ</operator>
+            <route_assignment>Plaza M. Luna - Ayala Highway (Jeepney)</route_assignment>
+            <location lat="13.94020" lng="121.15410">Plaza M. Luna</location>
+            <last_updated>2026-04-14T08:41:45+08:00</last_updated>
+            <route_path>
+                <point lat="13.94020" lng="121.15410">Plaza M. Luna</point>
+                <point lat="13.94045" lng="121.15620">Gomez Street</point>
+                <point lat="13.94080" lng="121.15860">Ayala approach</point>
+                <point lat="13.93982" lng="121.15880">Ayala Highway</point>
+            </route_path>
+            <current_occupancy value="9">Low Density</current_occupancy>
+            <efficiency_score>82%</efficiency_score>
+            <fuel_savings_daily>0L</fuel_savings_daily>
+        </unit>
+    </fleet_management>
+
+    <terminal_analytics>
+        <node id="NODE-01">
+            <name>SM Lipa Terminal (Northbound)</name>
+            <commuter_count>142</commuter_count>
+            <avg_wait_time>14 mins</avg_wait_time>
+            <surge_prediction_status>CRITICAL (17:00 - 19:00)</surge_prediction_status>
+            <recommended_dispatch_interval>3 mins</recommended_dispatch_interval>
+        </node>
+        <node id="NODE-02">
+            <name>Robinson's Lipa / Morada Ave</name>
+            <commuter_count>56</commuter_count>
+            <avg_wait_time>6 mins</avg_wait_time>
+            <surge_prediction_status>STABLE</surge_prediction_status>
+            <recommended_dispatch_interval>10 mins</recommended_dispatch_interval>
+        </node>
+    </terminal_analytics>
+
+    <economic_metrics>
+        <total_daily_savings_php>45,800.00</total_daily_savings_php>
+        <dead_mileage_eliminated_km>340.5</dead_mileage_eliminated_km>
+        <system_uptime>99.98%</system_uptime>
+        <lstm_prediction_accuracy>96.4%</lstm_prediction_accuracy>
+    </economic_metrics>
+</lipamove_command_center>

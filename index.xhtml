@@ -1,0 +1,1557 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>LipaMove | Live Commute</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="lipamove-api-base" content="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style type="text/css">
+    html, body { margin: 0; padding: 0; background: #020617; font-family: "Segoe UI", Arial, sans-serif; color: #e2e8f0; }
+    body { background: radial-gradient(circle at 20% 15%, rgba(14,165,233,.2), transparent 35%), radial-gradient(circle at 85% 92%, rgba(45,212,191,.15), transparent 35%), #020617; }
+    .app { max-width: 460px; margin: 0 auto; min-height: 100vh; border-left: 1px solid rgba(255,255,255,.06); border-right: 1px solid rgba(255,255,255,.06); box-shadow: 0 0 24px rgba(14,165,233,.10); position: relative; }
+    .map-wrap { position: relative; z-index: 1; height: 58vh; min-height: 420px; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,.07); isolation: isolate; }
+    #map { position: absolute; inset: 0; z-index: 0; }
+    .map-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 400;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(2,6,23,.18) 0%, rgba(2,6,23,.32) 45%, rgba(2,6,23,.50) 100%);
+    }
+    .overlay { position: relative; z-index: 500; padding: 12px; pointer-events: none; }
+    .glass { pointer-events: auto; border-radius: 24px; border: 1px solid rgba(255,255,255,.12); background: rgba(15,23,42,.68); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+    .top { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; }
+    .brand { color: #0ea5e9; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+    .headline { margin-top: 4px; font-size: 30px; font-weight: 700; letter-spacing: -.3px; }
+    .sub { margin-top: 3px; color: #cbd5e1; font-size: 12px; }
+    .pill { border-radius: 999px; border: 1px solid rgba(45,212,191,.40); color: #5eead4; background: rgba(45,212,191,.10); padding: 6px 10px; font-size: 12px; }
+    .alert { margin-top: 10px; padding: 10px 12px; border-radius: 14px; border: 1px solid rgba(251,113,133,.40); color: #fda4af; background: rgba(251,113,133,.10); font-size: 13px; animation: pulse 2.6s infinite; }
+    .chips { margin-top: 8px; display: flex; gap: 7px; flex-wrap: wrap; opacity: .9; }
+    .chip { border-radius: 999px; border: 1px solid rgba(148,163,184,.35); background: rgba(15,23,42,.70); color: #cbd5e1; padding: 5px 9px; font-size: 11px; }
+    .chip.button { cursor: pointer; pointer-events: auto; touch-action: manipulation; -webkit-tap-highlight-color: rgba(14,165,233,.2); }
+    .chip.button:hover { border-color: rgba(45,212,191,.4); color: #e2e8f0; }
+    .chip.warn { border-color: rgba(245,158,11,.5); color: #fcd34d; }
+    .cards { margin-top: -14px; border-radius: 28px 28px 0 0; border-top: 1px solid rgba(255,255,255,.07); background: rgba(15,23,42,.70); padding: 14px; position: relative; z-index: 600; }
+    .label { color: #94a3b8; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; }
+    .tagline { color: #cbd5e1; font-size: 12px; margin-top: 4px; margin-bottom: 12px; }
+    .card { border-radius: 22px; border: 1px solid rgba(255,255,255,.10); background: rgba(2,6,23,.72); padding: 14px; margin-bottom: 10px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .card.active { border-color: rgba(14,165,233,.45); box-shadow: 0 0 0 1px rgba(14,165,233,.2); }
+    .row { display: flex; justify-content: space-between; gap: 10px; }
+    .unit { color: #94a3b8; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+    .route { margin-top: 3px; font-size: 14px; font-weight: 600; line-height: 1.35; }
+    .eta { border-radius: 999px; border: 1px solid rgba(14,165,233,.35); color: #7dd3fc; background: rgba(14,165,233,.10); padding: 6px 9px; font-size: 12px; white-space: nowrap; }
+    .crowd { margin-top: 9px; font-size: 12px; color: #94a3b8; display: flex; justify-content: space-between; }
+    .barwrap { margin-top: 7px; height: 10px; border-radius: 999px; overflow: hidden; background: rgba(71,85,105,.6); }
+    .bar { height: 100%; border-radius: 999px; }
+    .bar.high { background: #f59e0b; }
+    .bar.low { background: #2dd4bf; }
+    #eta-list { display: flex; flex-direction: column; gap: 10px; }
+    .nearest-summary { margin-bottom: 12px; padding: 12px 14px; font-size: 13px; line-height: 1.45; color: #e2e8f0; }
+    .nearest-summary .ns-title { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px; }
+    .nearest-summary .km { color: #7dd3fc; }
+    .card.nearest { border-color: rgba(14,165,233,.55); box-shadow: 0 0 0 1px rgba(14,165,233,.22), 0 0 20px rgba(14,165,233,.12); }
+    .vtype { margin-top: 6px; }
+    .vtag { display: inline-block; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; border-radius: 999px; padding: 3px 8px; font-weight: 600; }
+    .vtag.jeepney { border: 1px solid rgba(251,146,60,.5); color: #fdba74; background: rgba(251,146,60,.12); }
+    .vtag.batrasco { border: 1px solid rgba(56,189,248,.5); color: #7dd3fc; background: rgba(56,189,248,.12); }
+    .vehicle-pin { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; transform-origin: center center; transition: transform 0.35s ease; }
+    .vehicle-pin .vehicle-body { width: 20px; height: 9px; border-radius: 3px; position: relative; }
+    .vehicle-pin.jeepney .vehicle-body { background: linear-gradient(180deg, #fb923c, #ea580c); box-shadow: 0 0 0 1px rgba(254,215,170,.35), 0 0 12px rgba(251,146,60,.45); }
+    .vehicle-pin.batrasco .vehicle-body { width: 22px; height: 10px; background: linear-gradient(180deg, #38bdf8, #0284c7); box-shadow: 0 0 0 1px rgba(125,211,252,.4), 0 0 12px rgba(14,165,233,.4); }
+    .vehicle-pin.high .vehicle-body::after { content: ""; position: absolute; inset: -3px; border-radius: 4px; border: 1px solid rgba(245,158,11,.65); }
+    .vehicle-pin.low .vehicle-body::after { content: ""; position: absolute; inset: -3px; border-radius: 4px; border: 1px solid rgba(45,212,191,.45); }
+    .vehicle-marker-wrap { background: transparent !important; border: none !important; }
+    @keyframes puvPulse {
+      0%, 100% { filter: drop-shadow(0 0 6px rgba(14,165,233,.45)); }
+      50% { filter: drop-shadow(0 0 14px rgba(45,212,191,.55)); }
+    }
+    .vehicle-pin.live-sim { animation: puvPulse 2.4s ease-in-out infinite; }
+    .leaflet-tooltip.live-puv-tip {
+      background: rgba(15,23,42,.92) !important;
+      border: 1px solid rgba(56,189,248,.4) !important;
+      color: #e2e8f0 !important;
+      border-radius: 10px !important;
+      padding: 6px 10px !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,.35) !important;
+    }
+    .leaflet-tooltip.live-puv-tip.jeepney-tip { border-color: rgba(251,146,60,.5) !important; }
+    .actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+    .action-btn { border-radius: 14px; border: 1px solid rgba(148,163,184,.35); background: rgba(15,23,42,.75); color: #e2e8f0; font-size: 12px; padding: 10px 8px; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: rgba(14,165,233,.2); }
+    .action-btn:hover { border-color: rgba(14,165,233,.45); }
+    .action-btn.primary { background: rgba(14,165,233,.22); border-color: rgba(14,165,233,.55); color: #e0f2fe; }
+    .action-btn.block { width: 100%; display: block; box-sizing: border-box; }
+    .app-panel { display: flex; flex-direction: column; min-height: 0; position: relative; z-index: 5; background: rgba(15,23,42,.99); pointer-events: auto; }
+    .panel-nav { display: none; gap: 6px; flex-wrap: wrap; padding: 0 14px 10px; border-bottom: 1px solid rgba(255,255,255,.06); }
+    .panel-nav a, .panel-nav button.panel-tab {
+      font: inherit; font-size: 12px; color: #94a3b8; text-decoration: none;
+      border: 1px solid rgba(148,163,184,.25); background: rgba(15,23,42,.5); border-radius: 999px; padding: 6px 12px; cursor: pointer;
+    }
+    .panel-nav a:hover, .panel-nav button.panel-tab:hover { color: #e2e8f0; border-color: rgba(14,165,233,.4); }
+    .panel-nav a.active, .panel-nav button.panel-tab.active { color: #7dd3fc; border-color: rgba(14,165,233,.5); background: rgba(14,165,233,.12); }
+    .screen { display: none; flex: 1; flex-direction: column; min-height: 0; padding: 14px; overflow-y: auto; }
+    .screen.active { display: flex; }
+    .screen-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .screen-head h2 { margin: 0; font-size: 18px; font-weight: 700; flex: 1; }
+    .back-mob { display: none; border-radius: 999px; border: 1px solid rgba(148,163,184,.35); background: rgba(15,23,42,.8); color: #e2e8f0; padding: 6px 12px; font-size: 12px; cursor: pointer; }
+    .screen-intro { color: #94a3b8; font-size: 13px; margin: -6px 0 14px; line-height: 1.45; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; }
+    .preview-box { border-radius: 14px; border: 1px solid rgba(148,163,184,.25); background: rgba(2,6,23,.65); padding: 12px; font-size: 13px; line-height: 1.5; color: #cbd5e1; margin: 10px 0; white-space: pre-wrap; word-break: break-word; }
+    .dispatch-card { border-radius: 16px; border: 1px solid rgba(255,255,255,.08); background: rgba(2,6,23,.55); padding: 14px; margin-bottom: 10px; }
+    .dispatch-card h3 { margin: 0 0 6px; font-size: 15px; color: #e2e8f0; }
+    .dispatch-card p { margin: 0; font-size: 13px; color: #94a3b8; line-height: 1.45; }
+    .dispatch-card a { color: #7dd3fc; }
+    .bottom-nav {
+      display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 900;
+      background: rgba(15,23,42,.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255,255,255,.1); padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+      justify-content: space-around; align-items: stretch;
+    }
+    .bottom-nav button {
+      flex: 1; border: none; background: transparent; color: #94a3b8; font-size: 10px; padding: 6px 2px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0;
+      touch-action: manipulation; -webkit-tap-highlight-color: rgba(14,165,233,.2); position: relative; z-index: 2;
+    }
+    .bottom-nav button .ico { font-size: 18px; line-height: 1; }
+    .bottom-nav button.active { color: #7dd3fc; }
+    .bottom-nav button[data-goto="auth"] { flex: 0 0 auto; min-width: 52px; }
+    .auth-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+    .auth-tabs button { flex: 1; border-radius: 12px; border: 1px solid rgba(148,163,184,.35); background: rgba(15,23,42,.75); color: #94a3b8; padding: 10px; font-size: 13px; cursor: pointer; }
+    .auth-tabs button.active { border-color: rgba(14,165,233,.5); color: #e0f2fe; background: rgba(14,165,233,.15); }
+    .auth-step { display: none; }
+    .auth-step.visible { display: block; }
+    .otp-dev-hint { font-size: 12px; color: #fcd34d; margin-top: 8px; }
+    .muted { color: #94a3b8; font-size: 12px; }
+    .status-ok { color: #5eead4; font-size: 13px; margin-top: 8px; }
+    .input, .select, textarea.area {
+      width: 100%; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(148,163,184,.35);
+      background: rgba(2,6,23,.9); color: #e2e8f0; padding: 10px; font-size: 13px; font-family: inherit;
+    }
+    textarea.area { min-height: 72px; resize: vertical; }
+    .sheet-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    @keyframes pulse { 0% { opacity: .85; } 50% { opacity: 1; } 100% { opacity: .85; } }
+    .leaflet-control-attribution { background: rgba(2,6,23,.75) !important; color: #94a3b8 !important; font-size: 10px; }
+    .leaflet-popup-content { margin: 10px 12px; color: #e2e8f0; }
+    @media (min-width: 900px) {
+      .app { max-width: none; display: grid; grid-template-columns: minmax(0, 1fr) min(420px, 38vw); align-items: stretch; min-height: 100vh; }
+      .map-wrap { height: 100vh; min-height: 0; border-bottom: none; border-right: 1px solid rgba(255,255,255,.07); display: block !important; }
+      .app-panel { height: 100vh; max-height: 100vh; overflow: hidden; }
+      .panel-nav { display: flex; padding-top: 10px; flex-shrink: 0; }
+      .screen { flex: 1; min-height: 0; overflow-y: auto; }
+      .cards { margin-top: 0; border-radius: 0; }
+      .back-mob { display: none !important; }
+      .headline { font-size: 26px; }
+    }
+    @media (max-width: 899px) {
+      body:not([data-screen="home"]) .map-wrap { display: none !important; }
+      body:not([data-screen="home"]) .app { min-height: 100vh; }
+      body:not([data-screen="home"]) .app-panel { min-height: 100vh; }
+      .app-panel { padding-bottom: 64px; }
+      .back-mob { display: inline-block; }
+      .panel-nav { display: none; }
+      .bottom-nav { display: flex; }
+      .cards { margin-top: 0; border-radius: 24px 24px 0 0; }
+    }
+    @media (max-width: 420px) {
+      .headline { font-size: 24px; }
+      .map-wrap { min-height: 340px; height: 52vh; }
+    }
+  </style>
+</head>
+<body data-screen="home">
+  <div class="app">
+    <section class="map-wrap">
+      <div id="map"></div>
+      <div class="overlay">
+        <div class="top glass">
+          <div>
+            <div class="brand">LipaMove</div>
+            <div class="headline">Saan na ang sakay?</div>
+            <div class="sub">Live jeepney at Batra units sa mapa — pinaka-malapit at ETA, tulad ng commuter view.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <div class="pill" id="live-sim-pill">Live PUV simulation</div>
+            <button type="button" id="auth-entry-btn" class="chip button">Account</button>
+          </div>
+        </div>
+        <div id="surge-alert" class="alert glass" style="display:none;"></div>
+        <div class="chips">
+          <span class="chip">Jeepney + Batra</span><span class="chip">SM Lipa</span><span class="chip">Simulated GPS</span>
+          <span id="locate-me" class="chip button">Locate me</span>
+          <span id="fit-rides" class="chip button">Fit all rides</span>
+          <span id="gps-toggle" class="chip button" title="PUVs follow route paths; on-map speed is scaled up so motion is easy to see.">Movement sim: On</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="app-panel">
+      <nav class="panel-nav" aria-label="Screens">
+        <button type="button" class="panel-tab active" data-goto="home">Map</button>
+        <button type="button" class="panel-tab" data-goto="plan">Plan</button>
+        <button type="button" class="panel-tab" data-goto="share">Share</button>
+        <button type="button" class="panel-tab" data-goto="dispatch">Dispatch</button>
+        <button type="button" class="panel-tab" data-goto="request">Request</button>
+        <button type="button" class="panel-tab" data-goto="auth">Account</button>
+        <button type="button" class="panel-tab" data-goto="profile" id="panel-tab-profile" style="display:none;">Profile</button>
+      </nav>
+
+      <section id="screen-home" class="screen active" aria-label="Live feed">
+        <div class="cards" style="margin-top:0;border-radius:0;background:transparent;padding:0;">
+          <div class="label">Nearest rides &amp; ETA</div>
+          <div class="tagline">List sorted by distance from your spot (GPS o map center). ETA factors traffic pattern at occupancy.</div>
+          <div id="nearest-summary" class="nearest-summary glass" style="display:none;">
+            <div class="ns-title">Pinaka-malapit</div>
+            <div id="nearest-body" class="ns-body">—</div>
+          </div>
+          <div class="actions">
+            <button id="plan-trip" type="button" class="action-btn">Plan Trip</button>
+            <button id="share-eta" type="button" class="action-btn">Share ETA</button>
+            <button id="call-dispatch" type="button" class="action-btn">Call Dispatch</button>
+            <button id="request-ride" type="button" class="action-btn">Request Ride</button>
+          </div>
+          <div id="eta-list"></div>
+        </div>
+      </section>
+
+      <section id="screen-plan" class="screen" aria-label="Plan trip">
+        <div class="screen-head">
+          <button type="button" class="back-mob" data-goto="home">Back</button>
+          <h2>Plan Trip</h2>
+        </div>
+        <p class="screen-intro">Set origin and destination, pick a unit or nearest ride, then open turn-by-turn directions.</p>
+        <div class="form-group">
+          <label for="plan-origin-preset">Origin</label>
+          <select id="plan-origin-preset" class="select">
+            <option value="current">My location (or map center)</option>
+            <option value="13.94169,121.16332">SM Lipa Terminal</option>
+            <option value="13.94452,121.16781">UB Lipa</option>
+            <option value="13.93688,121.15702">Lipa Outlets</option>
+            <option value="13.94020,121.15410">Plaza M. Luna</option>
+            <option value="13.94105,121.15780">Public Market area</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="plan-dest-preset">Destination</label>
+          <select id="plan-dest-preset" class="select">
+            <option value="ride">Selected / tracked vehicle position</option>
+            <option value="13.94169,121.16332">SM Lipa Terminal</option>
+            <option value="13.94452,121.16781">UB Lipa</option>
+            <option value="13.93688,121.15702">Lipa Outlets</option>
+            <option value="13.93921,121.14955">Tambo Exit</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="plan-ride-select">Track unit (for destination)</label>
+          <select id="plan-ride-select" class="select"><option value="">Loading…</option></select>
+        </div>
+        <p class="muted" id="plan-summary">Select a ride on the map feed or choose a fixed stop above.</p>
+        <div class="sheet-row">
+          <button id="plan-open-maps" type="button" class="action-btn primary block">Open in Google Maps</button>
+        </div>
+      </section>
+
+      <section id="screen-share" class="screen" aria-label="Share ETA">
+        <div class="screen-head">
+          <button type="button" class="back-mob" data-goto="home">Back</button>
+          <h2>Share ETA</h2>
+        </div>
+        <p class="screen-intro">Choose a unit, then copy or share your live ETA message.</p>
+        <div class="form-group">
+          <label for="share-ride-select">Unit</label>
+          <select id="share-ride-select" class="select"><option value="">Loading…</option></select>
+        </div>
+        <div class="preview-box" id="share-preview">—</div>
+        <div class="sheet-row">
+          <button id="share-copy-btn" type="button" class="action-btn">Copy message</button>
+          <button id="share-native-btn" type="button" class="action-btn primary">Share…</button>
+        </div>
+        <p class="muted" id="share-status"></p>
+      </section>
+
+      <section id="screen-dispatch" class="screen" aria-label="Dispatch">
+        <div class="screen-head">
+          <button type="button" class="back-mob" data-goto="home">Back</button>
+          <h2>Dispatch &amp; help</h2>
+        </div>
+        <p class="screen-intro">Contact LipaMove operations or terminal support. All links work on mobile (tel / SMS).</p>
+        <div class="dispatch-card">
+          <h3>Central dispatch</h3>
+          <p>Hotline: <a href="tel:+639171234567">+63 917 123 4567</a></p>
+          <p style="margin-top:8px;"><a href="sms:+639171234567?body=LipaMove%20commuter%20inquiry">Send SMS</a></p>
+        </div>
+        <div class="dispatch-card">
+          <h3>Terminal advisories</h3>
+          <div id="dispatch-terminals"><p class="muted">Loading…</p></div>
+        </div>
+        <div class="dispatch-card">
+          <h3>Emergency</h3>
+          <p>For emergencies call <a href="tel:911">911</a> or local PNP / BFP as appropriate.</p>
+        </div>
+      </section>
+
+      <section id="screen-request" class="screen" aria-label="Request ride">
+        <div class="screen-head">
+          <button type="button" class="back-mob" data-goto="home">Back</button>
+          <h2>Request ride</h2>
+        </div>
+        <p class="screen-intro">Send a pickup request to dispatch (saved on this device for your reference).</p>
+        <div class="form-group">
+          <label for="req-ride-select">Preferred unit / route</label>
+          <select id="req-ride-select" class="select"><option value="">Loading…</option></select>
+        </div>
+        <div class="form-group">
+          <label for="pickup-input">Pickup point</label>
+          <input id="pickup-input" class="input" type="text" placeholder="e.g. SM Lipa North entrance" />
+        </div>
+        <div class="form-group">
+          <label for="dropoff-select">Drop-off</label>
+          <select id="dropoff-select" class="select">
+            <option value="SM Lipa Terminal">SM Lipa Terminal</option>
+            <option value="Robinsons Lipa">Robinsons Lipa</option>
+            <option value="UB Lipa">UB Lipa</option>
+            <option value="Lipa Outlets">Lipa Outlets</option>
+            <option value="Tambo Exit">Tambo Exit</option>
+            <option value="Lipa Poblacion">Lipa Poblacion</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="req-notes">Notes (optional)</label>
+          <textarea id="req-notes" class="area" placeholder="Passengers, landmark, special needs…"></textarea>
+        </div>
+        <div class="sheet-row">
+          <button id="confirm-request" type="button" class="action-btn primary">Submit request</button>
+        </div>
+        <div class="muted" id="request-status"></div>
+        <div class="muted" id="request-last" style="margin-top:12px;"></div>
+      </section>
+
+      <section id="screen-auth" class="screen" aria-label="Account">
+        <div class="screen-head">
+          <button type="button" class="back-mob" data-goto="home">Back</button>
+          <h2>Account</h2>
+        </div>
+        <p class="screen-intro">Sign up or log in. OTP is verified against the MySQL-backed API when the server is running.</p>
+        <div class="auth-tabs" role="tablist">
+          <button type="button" id="auth-tab-login" class="active" data-auth-tab="login">Log in</button>
+          <button type="button" id="auth-tab-signup" data-auth-tab="signup">Sign up</button>
+        </div>
+        <div id="auth-step-login" class="auth-step visible">
+          <div class="form-group">
+            <label for="login-username">Username</label>
+            <input id="login-username" class="input" type="text" autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input id="login-password" class="input" type="password" autocomplete="current-password" />
+          </div>
+          <button type="button" id="login-submit" class="action-btn primary block">Continue (send OTP)</button>
+        </div>
+        <div id="auth-step-signup" class="auth-step">
+          <div class="form-group">
+            <label for="signup-username">Username</label>
+            <input id="signup-username" class="input" type="text" autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label for="signup-email">Email</label>
+            <input id="signup-email" class="input" type="email" autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="signup-phone">Mobile (for OTP)</label>
+            <input id="signup-phone" class="input" type="tel" placeholder="+63912..." autocomplete="tel" />
+          </div>
+          <div class="form-group">
+            <label for="signup-password">Password</label>
+            <input id="signup-password" class="input" type="password" autocomplete="new-password" />
+          </div>
+          <button type="button" id="signup-submit" class="action-btn primary block">Create account (send OTP)</button>
+        </div>
+        <div id="auth-step-otp" class="auth-step">
+          <p class="muted" id="otp-context"></p>
+          <div class="form-group">
+            <label for="otp-code">6-digit OTP</label>
+            <input id="otp-code" class="input" type="text" inputmode="numeric" maxlength="6" placeholder="000000" />
+          </div>
+          <button type="button" id="otp-verify" class="action-btn primary block">Verify OTP</button>
+          <p class="otp-dev-hint" id="otp-dev-hint" style="display:none;"></p>
+        </div>
+        <p class="muted" id="auth-status"></p>
+      </section>
+
+      <section id="screen-profile" class="screen" aria-label="Profile">
+        <div class="screen-head">
+          <button type="button" class="back-mob" data-goto="home">Back</button>
+          <h2>Your profile</h2>
+        </div>
+        <div class="dispatch-card" id="profile-card">
+          <p class="muted">Not signed in. Open Account to log in.</p>
+        </div>
+        <button type="button" id="logout-btn" class="action-btn" style="display:none;">Log out</button>
+      </section>
+    </div>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Main navigation">
+    <button type="button" data-goto="home" class="active"><span class="ico" aria-hidden="true">◎</span>Map</button>
+    <button type="button" data-goto="plan"><span class="ico" aria-hidden="true">⎘</span>Plan</button>
+    <button type="button" data-goto="share"><span class="ico" aria-hidden="true">↗</span>Share</button>
+    <button type="button" data-goto="dispatch"><span class="ico" aria-hidden="true">☎</span>Call</button>
+    <button type="button" data-goto="request"><span class="ico" aria-hidden="true">✎</span>Ride</button>
+    <button type="button" id="bottom-nav-auth"><span class="ico" aria-hidden="true">👤</span>Account</button>
+  </nav>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="text/javascript">
+    //<![CDATA[
+    (function () {
+      var map = null;
+      var markers = {};
+      var markerGroup = null;
+      var routeGroup = null;
+      var userMarker = null;
+      var userCircle = null;
+      var userLocation = null;
+      var rides = [];
+      var etaByRide = {};
+      var defaultFallback = [[13.9416,121.1623],[13.9394,121.1498],[13.9449,121.1669],[13.9368,121.1571]];
+      var lipaBounds = null;
+      var simEnabled = true;
+      var simRafId = null;
+      var simLastFrameTime = 0;
+      var liveTrailGroup = null;
+      /** Real physics would move ~7 m/s at 25 km/h — too slow to see at map zoom; scale up path progress only. */
+      var SIM_MOVEMENT_SCALE = 48;
+      var gpsPollTimer = null;
+      var userWatchId = null;
+      var selectedRideId = null;
+
+      function navigateTo(name) {
+        document.body.setAttribute("data-screen", name);
+        document.querySelectorAll(".screen").forEach(function (s) {
+          s.classList.toggle("active", s.id === "screen-" + name);
+        });
+        document.querySelectorAll(".panel-nav .panel-tab").forEach(function (t) {
+          var g = t.getAttribute("data-goto");
+          if (g === "profile") { return; }
+          t.classList.toggle("active", g === name);
+        });
+        document.querySelectorAll(".bottom-nav button").forEach(function (b) {
+          var g = b.getAttribute("data-goto");
+          if (!g) { return; }
+          b.classList.toggle("active", g === name);
+        });
+        var bAuth = document.getElementById("bottom-nav-auth");
+        if (bAuth) {
+          bAuth.classList.toggle("active", name === "auth" || name === "profile");
+        }
+        var pTab = document.getElementById("panel-tab-profile");
+        if (pTab) {
+          pTab.style.display = localStorage.getItem("lipamove_token") ? "inline-block" : "none";
+          pTab.classList.toggle("active", name === "profile");
+        }
+        if (name === "home") {
+          setTimeout(function () { map.invalidateSize(); }, 150);
+        }
+        if (name === "profile") {
+          try {
+            refreshAuthUi();
+          } catch (err) { console.error(err); }
+        }
+      }
+
+      function apiUrl(subpath) {
+        var meta = document.querySelector("meta[name=\"lipamove-api-base\"]");
+        var base = meta ? (meta.getAttribute("content") || "").replace(/\/$/, "") : "";
+        return base + subpath;
+      }
+
+      function authFetch(path, options) {
+        options = options || {};
+        var headers = options.headers || {};
+        var t = localStorage.getItem("lipamove_token");
+        if (t) { headers["Authorization"] = "Bearer " + t; }
+        options.headers = headers;
+        return fetch(apiUrl(path), options);
+      }
+
+      document.addEventListener("click", function (e) {
+        var el = e.target;
+        if (el.nodeType === 3) {
+          el = el.parentElement;
+        }
+        if (!el || !el.closest) { return; }
+        var t = el.closest("[data-goto]");
+        if (!t) { return; }
+        var g = t.getAttribute("data-goto");
+        if (g) {
+          navigateTo(g);
+        }
+      });
+
+      function distanceKm(a, b) {
+        var R = 6371;
+        var dLat = (b[0] - a[0]) * Math.PI / 180;
+        var dLng = (b[1] - a[1]) * Math.PI / 180;
+        var lat1 = a[0] * Math.PI / 180;
+        var lat2 = b[0] * Math.PI / 180;
+        var x = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLng / 2) * Math.sin(dLng / 2) * Math.cos(lat1) * Math.cos(lat2);
+        return 2 * R * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+      }
+
+      function getTrafficMultiplier() {
+        var hour = new Date().getHours();
+        if (hour >= 6 && hour < 9) { return 1.35; }
+        if (hour >= 17 && hour < 20) { return 1.45; }
+        if (hour >= 11 && hour < 14) { return 1.15; }
+        return 1;
+      }
+
+      function interpolate(a, b, t) {
+        return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+      }
+
+      function bearingDeg(a, b) {
+        var toRad = Math.PI / 180;
+        var lat1 = a[0] * toRad;
+        var lat2 = b[0] * toRad;
+        var dLng = (b[1] - a[1]) * toRad;
+        var y = Math.sin(dLng) * Math.cos(lat2);
+        var x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+        return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+      }
+
+      function segmentLengthKmForRide(ride) {
+        var path = ride.path;
+        if (!path || path.length < 2) { return 0.00001; }
+        return Math.max(0.00001, distanceKm(path[ride.pathIndex], path[(ride.pathIndex + 1) % path.length]));
+      }
+
+      function advanceRideAlongPath(ride, distKm) {
+        var path = ride.path;
+        if (!path || path.length < 2) { return; }
+        var remaining = distKm;
+        var guard = 0;
+        while (remaining > 0.0000001 && guard < path.length * 6) {
+          guard++;
+          var segLen = segmentLengthKmForRide(ride);
+          var segRemain = segLen * (1 - ride.segmentT);
+          if (remaining >= segRemain) {
+            remaining -= segRemain;
+            ride.segmentT = 0;
+            ride.pathIndex = (ride.pathIndex + 1) % path.length;
+          } else {
+            ride.segmentT += remaining / segLen;
+            remaining = 0;
+          }
+        }
+        var from = path[ride.pathIndex];
+        var to = path[(ride.pathIndex + 1) % path.length];
+        var pos = interpolate(from, to, ride.segmentT);
+        ride.lat = pos[0];
+        ride.lng = pos[1];
+        ride.bearing = bearingDeg(from, to) || 0;
+      }
+
+      function updateMarkerRotation(ride) {
+        var iconEl = ride.marker.getElement && ride.marker.getElement();
+        if (!iconEl) { return; }
+        var pin = iconEl.querySelector(".vehicle-pin");
+        if (pin) {
+          pin.style.transform = "rotate(" + (ride.bearing || 0) + "deg)";
+        }
+      }
+
+      function arePointsNear(a, b) {
+        return distanceKm(a, b) < 0.03;
+      }
+
+      function computeEta(ride) {
+        var basis = userLocation || (map ? [map.getCenter().lat, map.getCenter().lng] : [13.9411, 121.1600]);
+        var km = distanceKm(basis, [ride.lat, ride.lng]);
+        var demandWeight = ride.occVal * 0.08;
+        var rushWeight = getTrafficMultiplier();
+        var eta = (2.8 + (km * 3.2) + demandWeight) * rushWeight;
+        if (ride.high) { eta += 0.8; }
+        if (ride.vtype === "jeepney") { eta += 0.35; }
+        return Math.max(2, Math.round(eta));
+      }
+
+      function updateNearestAndOrder() {
+        var basis = userLocation || (map ? [map.getCenter().lat, map.getCenter().lng] : [13.9411, 121.1600]);
+        var panel = document.getElementById("nearest-summary");
+        var body = document.getElementById("nearest-body");
+        if (!rides.length || !panel || !body) { return; }
+        var nearest = null;
+        rides.forEach(function (r) {
+          var km = distanceKm(basis, [r.lat, r.lng]);
+          if (!nearest || km < nearest.km) {
+            nearest = { ride: r, km: km };
+          }
+        });
+        panel.style.display = "block";
+        if (nearest) {
+          var eta = computeEta(nearest.ride);
+          var typeLabel = nearest.ride.vtype === "jeepney" ? "Jeepney" : "Batra jeepney";
+          body.innerHTML = "<strong>" + nearest.ride.id + "</strong> · " + typeLabel + " · ~<strong>" + eta + "</strong> min · <span class=\"km\">" + nearest.km.toFixed(2) + " km</span>";
+        }
+        rides.forEach(function (r) {
+          var card = document.querySelector(".card[data-ride-id=\"" + r.id + "\"]");
+          if (card) {
+            card.classList.toggle("nearest", nearest && r.id === nearest.ride.id);
+            card.style.order = String(Math.round(distanceKm(basis, [r.lat, r.lng]) * 10000));
+          }
+        });
+      }
+
+      function refreshEtas() {
+        rides.forEach(function (ride) {
+          if (etaByRide[ride.id]) {
+            etaByRide[ride.id].textContent = computeEta(ride) + " min ETA";
+          }
+        });
+        updateNearestAndOrder();
+        if (document.body.getAttribute("data-screen") === "share" && typeof window._lipamoveUpdateSharePreview === "function") {
+          window._lipamoveUpdateSharePreview();
+        }
+      }
+
+      function updateGpsFreshness() {
+        var gpsChip = document.getElementById("gps-toggle");
+        if (!gpsChip) { return; }
+        gpsChip.classList.toggle("warn", !simEnabled);
+        if (!rides.length) {
+          gpsChip.textContent = "Movement sim: No units loaded";
+          gpsChip.classList.add("warn");
+        } else {
+          gpsChip.textContent = simEnabled ? "Movement sim: On" : "Movement sim: Paused (XML)";
+        }
+        var pill = document.getElementById("live-sim-pill");
+        if (pill) {
+          if (!rides.length) {
+            pill.textContent = "Waiting for data.xml over HTTP";
+          } else {
+            pill.textContent = simEnabled ? "Live PUV simulation" : "XML snapshot (paused)";
+          }
+        }
+        rides.forEach(function (r) {
+          var el = r.marker.getElement && r.marker.getElement();
+          if (el) {
+            var pin = el.querySelector(".vehicle-pin");
+            if (pin) { pin.classList.toggle("live-sim", simEnabled); }
+          }
+          var tip = r.marker.getTooltip && r.marker.getTooltip();
+          if (tip) {
+            tip.setContent(
+              simEnabled
+                ? r.id + " · " + Math.round(r.effectiveSpeedKmh != null ? r.effectiveSpeedKmh : r.speedKmh) + " km/h (sim)"
+                : r.id + " · XML snapshot"
+            );
+          }
+          if (r.trailLine && r.trailLine.setStyle) {
+            r.trailLine.setStyle({ opacity: simEnabled ? 0.4 : 0.12 });
+          }
+        });
+      }
+
+      function startUserWatch() {
+        if (!navigator.geolocation || userWatchId !== null) { return; }
+        userWatchId = navigator.geolocation.watchPosition(function (pos) {
+          var user = [pos.coords.latitude, pos.coords.longitude];
+          userLocation = user;
+          if (userMarker) {
+            userMarker.setLatLng(user);
+            userCircle.setLatLng(user);
+          } else {
+            userMarker = L.circleMarker(user, { radius: 7, color: "#0ea5e9", weight: 2, fillColor: "#7dd3fc", fillOpacity: 0.95 }).addTo(map);
+            userCircle = L.circle(user, { radius: Math.max(60, pos.coords.accuracy), color: "#0ea5e9", fillColor: "#0ea5e9", fillOpacity: 0.08, weight: 1 }).addTo(map);
+          }
+          refreshEtas();
+        }, function () {}, { enableHighAccuracy: true, maximumAge: 3000, timeout: 12000 });
+      }
+
+      function stopUserWatch() {
+        if (userWatchId !== null && navigator.geolocation) {
+          navigator.geolocation.clearWatch(userWatchId);
+          userWatchId = null;
+        }
+      }
+
+      function applyLiveGpsSnapshot(xmlDoc) {
+        if (simEnabled) { return; }
+        var unitNodes = Array.prototype.slice.call(xmlDoc.querySelectorAll("fleet_management unit"));
+        unitNodes.forEach(function (u) {
+          var id = u.getAttribute("id");
+          var ride = rides.find(function (r) { return r.id === id; });
+          if (!ride) { return; }
+          var locEl = u.querySelector("location");
+          if (!locEl) { return; }
+          var lat = Number(locEl.getAttribute("lat"));
+          var lng = Number(locEl.getAttribute("lng"));
+          if (!isFinite(lat) || !isFinite(lng)) { return; }
+          ride.lat = lat;
+          ride.lng = lng;
+          ride.pathIndex = 0;
+          ride.segmentT = 0;
+            var lu = (u.querySelector("last_updated") || {}).textContent || "";
+            var parsed = Date.parse(lu);
+            ride.lastUpdatedMs = isNaN(parsed) ? null : parsed;
+          ride.marker.setLatLng([lat, lng]);
+          updateMarkerRotation(ride);
+        });
+        refreshEtas();
+        updateGpsFreshness();
+      }
+
+      function startLiveGpsPolling() {
+        if (gpsPollTimer) { return; }
+        var tick = function () {
+          fetch("data.xml")
+            .then(function (r) { return r.text(); })
+            .then(function (xmlText) {
+              var xml = new DOMParser().parseFromString(xmlText, "application/xml");
+              applyLiveGpsSnapshot(xml);
+            })
+            .catch(function () {});
+        };
+        tick();
+        gpsPollTimer = setInterval(tick, 7000);
+      }
+
+      function stopLiveGpsPolling() {
+        if (gpsPollTimer) {
+          clearInterval(gpsPollTimer);
+          gpsPollTimer = null;
+        }
+      }
+
+      function syncRideSelects(rid) {
+        if (!rid) { return; }
+        ["plan-ride-select", "share-ride-select", "req-ride-select"].forEach(function (selId) {
+          var el = document.getElementById(selId);
+          if (el && el.querySelector("option[value=\"" + rid + "\"]")) {
+            el.value = rid;
+          }
+        });
+      }
+
+      function buildShareMessage(ride) {
+        if (!ride) { return ""; }
+        var basis = userLocation || (map ? [map.getCenter().lat, map.getCenter().lng] : [13.9411, 121.1600]);
+        var km = distanceKm(basis, [ride.lat, ride.lng]);
+        var typeLabel = ride.vtype === "jeepney" ? "Jeepney" : "Batra jeepney";
+        return "LipaMove: " + ride.id + " (" + typeLabel + ") — " + ride.route + ". ~" + computeEta(ride) + " min ETA, " + km.toFixed(2) + " km from my spot.";
+      }
+
+      function updateSharePreview() {
+        var sel = document.getElementById("share-ride-select");
+        var rid = (sel && sel.value) ? sel.value : selectedRideId;
+        var ride = rides.find(function (r) { return r.id === rid; });
+        if (!ride && rides.length) { ride = rides[0]; }
+        var box = document.getElementById("share-preview");
+        if (box) {
+          box.textContent = ride ? buildShareMessage(ride) : "Walang ride data.";
+        }
+      }
+      window._lipamoveUpdateSharePreview = updateSharePreview;
+
+      function updatePlanSummary() {
+        var el = document.getElementById("plan-summary");
+        if (!el) { return; }
+        var sel = document.getElementById("plan-ride-select");
+        var rid = (sel && sel.value) ? sel.value : selectedRideId;
+        var r = rides.find(function (x) { return x.id === rid; });
+        if (r) {
+          el.textContent = "Tracking " + r.id + " — ETA ~" + computeEta(r) + " min (from your spot).";
+        } else {
+          el.textContent = "Pumili ng unit sa listahan o sa map.";
+        }
+      }
+
+      function escHtml(s) {
+        return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      function updateLiveSimVisuals(ride) {
+        if (!ride.trailLine || !liveTrailGroup) { return; }
+        ride.trailHistory = ride.trailHistory || [];
+        ride.trailHistory.push([ride.lat, ride.lng]);
+        if (ride.trailHistory.length > 20) { ride.trailHistory.shift(); }
+        if (ride.trailHistory.length > 1) {
+          ride.trailLine.setLatLngs(ride.trailHistory);
+        }
+        var tip = ride.marker.getTooltip && ride.marker.getTooltip();
+        if (tip && simEnabled) {
+          tip.setContent(ride.id + " · " + Math.round(ride.effectiveSpeedKmh != null ? ride.effectiveSpeedKmh : ride.speedKmh) + " km/h (sim)");
+        }
+      }
+
+      function stopSimulation() {
+        if (simRafId) {
+          cancelAnimationFrame(simRafId);
+          simRafId = null;
+        }
+        simLastFrameTime = 0;
+      }
+
+      function startSimulation() {
+        if (simRafId) { return; }
+        if (!map) { return; }
+        if (!rides.length) {
+          updateGpsFreshness();
+          return;
+        }
+        simLastFrameTime = performance.now();
+        function step(now) {
+          if (!simEnabled) {
+            simRafId = null;
+            return;
+          }
+          var rawDt = (now - simLastFrameTime) / 1000;
+          simLastFrameTime = now;
+          var dt = Math.min(Math.max(rawDt, 1 / 120), 0.28);
+          if (dt > 0) {
+            rides.forEach(function (ride) {
+              if (!ride.path || ride.path.length < 2) { return; }
+              if (ride.simPhase == null) { ride.simPhase = Math.random() * Math.PI * 2; }
+              var ph = ride.simPhase;
+              var wobble = Math.sin(now / 4200 + ph) * 0.085 + Math.sin(now / 9100 + ph * 2) * 0.055;
+              ride.effectiveSpeedKmh = Math.max(6, ride.speedKmh * (1 + wobble));
+              var distStep = (ride.effectiveSpeedKmh / 3600) * dt * SIM_MOVEMENT_SCALE;
+              advanceRideAlongPath(ride, distStep);
+              ride.marker.setLatLng([ride.lat, ride.lng]);
+              updateMarkerRotation(ride);
+              updateLiveSimVisuals(ride);
+            });
+            refreshEtas();
+          }
+          if (simEnabled) {
+            simRafId = requestAnimationFrame(step);
+          } else {
+            simRafId = null;
+          }
+        }
+        simRafId = requestAnimationFrame(step);
+      }
+
+      var authMode = "login";
+      var pendingOtpPhone = "";
+      var pendingOtpUsername = "";
+
+      function showAuthStep(step) {
+        var loginEl = document.getElementById("auth-step-login");
+        var signupEl = document.getElementById("auth-step-signup");
+        var otpEl = document.getElementById("auth-step-otp");
+        if (loginEl) { loginEl.classList.toggle("visible", step === "login"); }
+        if (signupEl) { signupEl.classList.toggle("visible", step === "signup"); }
+        if (otpEl) { otpEl.classList.toggle("visible", step === "otp"); }
+      }
+
+      function refreshAuthUi() {
+        var tok = localStorage.getItem("lipamove_token");
+        var btn = document.getElementById("auth-entry-btn");
+        if (btn) { btn.textContent = tok ? "Profile" : "Account"; }
+        var pTab = document.getElementById("panel-tab-profile");
+        if (pTab) { pTab.style.display = tok ? "inline-block" : "none"; }
+        if (tok) {
+          authFetch("/api/me", { method: "GET" })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              var card = document.getElementById("profile-card");
+              var lo = document.getElementById("logout-btn");
+              if (data.user && card) {
+                card.innerHTML = "<h3>" + escHtml(data.user.username) + "</h3><p>Email: " + escHtml(data.user.email) + "</p><p>Phone: " + escHtml(data.user.phone || "—") + "</p><p class=\"muted\">User ID: " + data.user.id + "</p>";
+              }
+              if (lo) { lo.style.display = "block"; }
+            })
+            .catch(function () {
+              var card = document.getElementById("profile-card");
+              if (card) { card.innerHTML = "<p class=\"muted\">Could not load profile. Is the API running?</p>"; }
+            });
+        } else {
+          var card = document.getElementById("profile-card");
+          var lo = document.getElementById("logout-btn");
+          if (card) { card.innerHTML = "<p class=\"muted\">Not signed in.</p>"; }
+          if (lo) { lo.style.display = "none"; }
+        }
+      }
+
+      function initLeafletMap() {
+        if (typeof L === "undefined") {
+          console.warn("LipaMove: Leaflet not loaded (check network / CDN).");
+          return false;
+        }
+        try {
+          lipaBounds = L.latLngBounds(
+            [13.9180, 121.1300], // southwest of Lipa coverage
+            [13.9665, 121.1880]  // northeast of Lipa coverage
+          );
+          map = L.map("map", {
+            zoomControl: true,
+            minZoom: 13,
+            maxZoom: 18,
+            maxBounds: lipaBounds,
+            maxBoundsViscosity: 1.0
+          }).setView([13.9411, 121.1600], 14);
+          L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+            subdomains: "abcd", maxZoom: 19, opacity: 0.8, attribution: "&copy; OpenStreetMap &copy; CARTO"
+          }).addTo(map);
+          markerGroup = L.featureGroup().addTo(map);
+          routeGroup = L.featureGroup().addTo(map);
+          liveTrailGroup = L.featureGroup().addTo(map);
+          return true;
+        } catch (err) {
+          console.error("LipaMove: map init failed", err);
+          return false;
+        }
+      }
+
+      function initWireNavigationOnly() {
+        var planTrip = document.getElementById("plan-trip");
+        if (planTrip) {
+          planTrip.addEventListener("click", function () {
+            navigateTo("plan");
+            updatePlanSummary();
+          });
+        }
+        var shareEta = document.getElementById("share-eta");
+        if (shareEta) {
+          shareEta.addEventListener("click", function () {
+            navigateTo("share");
+            updateSharePreview();
+          });
+        }
+        var callD = document.getElementById("call-dispatch");
+        if (callD) {
+          callD.addEventListener("click", function () { navigateTo("dispatch"); });
+        }
+        var reqR = document.getElementById("request-ride");
+        if (reqR) {
+          reqR.addEventListener("click", function () { navigateTo("request"); });
+        }
+        var authEntry = document.getElementById("auth-entry-btn");
+        if (authEntry) {
+          authEntry.addEventListener("click", function () {
+            if (localStorage.getItem("lipamove_token")) {
+              navigateTo("profile");
+              refreshAuthUi();
+            } else {
+              navigateTo("auth");
+            }
+          });
+        }
+        var bNavAuth = document.getElementById("bottom-nav-auth");
+        if (bNavAuth) {
+          bNavAuth.addEventListener("click", function (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            if (localStorage.getItem("lipamove_token")) {
+              navigateTo("profile");
+              refreshAuthUi();
+            } else {
+              navigateTo("auth");
+            }
+          });
+        }
+        var tabLogin = document.getElementById("auth-tab-login");
+        var tabSignup = document.getElementById("auth-tab-signup");
+        if (tabLogin && tabSignup) {
+          tabLogin.addEventListener("click", function () {
+            authMode = "login";
+            tabLogin.classList.add("active");
+            tabSignup.classList.remove("active");
+            showAuthStep("login");
+          });
+          tabSignup.addEventListener("click", function () {
+            authMode = "signup";
+            tabSignup.classList.add("active");
+            tabLogin.classList.remove("active");
+            showAuthStep("signup");
+          });
+        }
+        var signupSubmit = document.getElementById("signup-submit");
+        if (signupSubmit) {
+          signupSubmit.addEventListener("click", function () {
+            var u = document.getElementById("signup-username").value.trim();
+            var em = document.getElementById("signup-email").value.trim();
+            var ph = document.getElementById("signup-phone").value.trim();
+            var pw = document.getElementById("signup-password").value;
+            var st = document.getElementById("auth-status");
+            if (!u || !em || !ph || !pw) {
+              if (st) { st.textContent = "Fill in all fields."; }
+              return;
+            }
+            fetch(apiUrl("/api/auth/register"), {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username: u, email: em, phone: ph, password: pw })
+            })
+              .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+              .then(function (x) {
+                if (!x.ok) {
+                  if (st) { st.textContent = x.j.error || "Register failed"; }
+                  return;
+                }
+                pendingOtpPhone = ph;
+                pendingOtpUsername = u;
+                authMode = "signup";
+                showAuthStep("otp");
+                if (st) { st.textContent = "Enter the OTP sent to your phone."; }
+                var hint = document.getElementById("otp-dev-hint");
+                if (hint && x.j.devOtp) {
+                  hint.style.display = "block";
+                  hint.textContent = "Dev OTP: " + x.j.devOtp;
+                }
+                document.getElementById("otp-context").textContent = "Sign up: " + ph;
+              })
+              .catch(function () {
+                if (st) { st.textContent = "API unreachable. Run: cd server && npm install && npm start"; }
+              });
+          });
+        }
+        var loginSubmit = document.getElementById("login-submit");
+        if (loginSubmit) {
+          loginSubmit.addEventListener("click", function () {
+            var u = document.getElementById("login-username").value.trim();
+            var pw = document.getElementById("login-password").value;
+            var st = document.getElementById("auth-status");
+            if (!u || !pw) {
+              if (st) { st.textContent = "Enter username and password."; }
+              return;
+            }
+            fetch(apiUrl("/api/auth/login"), {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username: u, password: pw })
+            })
+              .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+              .then(function (x) {
+                if (!x.ok) {
+                  if (st) { st.textContent = x.j.error || "Login failed"; }
+                  return;
+                }
+                pendingOtpUsername = u;
+                pendingOtpPhone = x.j.phoneHint || "";
+                authMode = "login";
+                showAuthStep("otp");
+                if (st) { st.textContent = "Enter the OTP for login."; }
+                var hint = document.getElementById("otp-dev-hint");
+                if (hint && x.j.devOtp) {
+                  hint.style.display = "block";
+                  hint.textContent = "Dev OTP: " + x.j.devOtp;
+                }
+                document.getElementById("otp-context").textContent = "Login: " + u;
+              })
+              .catch(function () {
+                if (st) { st.textContent = "API unreachable. Start the Node server from the server folder."; }
+              });
+          });
+        }
+        var otpVerify = document.getElementById("otp-verify");
+        if (otpVerify) {
+          otpVerify.addEventListener("click", function () {
+            var code = (document.getElementById("otp-code") || {}).value.trim();
+            var st = document.getElementById("auth-status");
+            if (!code || code.length !== 6) {
+              if (st) { st.textContent = "Enter 6-digit OTP."; }
+              return;
+            }
+            if (authMode === "signup") {
+              fetch(apiUrl("/api/auth/verify-signup"), {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ phone: pendingOtpPhone, code: code })
+              })
+                .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+                .then(function (x) {
+                  if (!x.ok) {
+                    if (st) { st.textContent = x.j.error || "Invalid OTP"; }
+                    return;
+                  }
+                  localStorage.setItem("lipamove_token", x.j.token);
+                  if (st) { st.textContent = "Signed up successfully."; }
+                  refreshAuthUi();
+                  navigateTo("profile");
+                })
+                .catch(function () { if (st) { st.textContent = "Verify failed."; } });
+            } else {
+              fetch(apiUrl("/api/auth/verify-login-otp"), {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username: pendingOtpUsername, code: code })
+              })
+                .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+                .then(function (x) {
+                  if (!x.ok) {
+                    if (st) { st.textContent = x.j.error || "Invalid OTP"; }
+                    return;
+                  }
+                  localStorage.setItem("lipamove_token", x.j.token);
+                  if (st) { st.textContent = "Logged in."; }
+                  refreshAuthUi();
+                  navigateTo("profile");
+                })
+                .catch(function () { if (st) { st.textContent = "Verify failed."; } });
+            }
+          });
+        }
+        var logoutBtn = document.getElementById("logout-btn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", function () {
+            authFetch("/api/auth/logout", { method: "POST" })
+              .catch(function () {})
+              .finally(function () {
+                localStorage.removeItem("lipamove_token");
+                refreshAuthUi();
+                navigateTo("auth");
+                showAuthStep("login");
+                var tl = document.getElementById("auth-tab-login");
+                var ts = document.getElementById("auth-tab-signup");
+                if (tl) { tl.classList.add("active"); }
+                if (ts) { ts.classList.remove("active"); }
+              });
+          });
+        }
+      }
+
+      function initUiWiring() {
+        var fitBtn = document.getElementById("fit-rides");
+        if (fitBtn) {
+          fitBtn.addEventListener("click", function () {
+            if (!map || !routeGroup || !markerGroup) { return; }
+            if (!routeGroup.getLayers().length && !markerGroup.getLayers().length) { return; }
+            var b = routeGroup.getBounds().isValid() ? routeGroup.getBounds().pad(0.2) : markerGroup.getBounds().pad(0.25);
+            map.fitBounds(b);
+          });
+        }
+
+        var locateBtn = document.getElementById("locate-me");
+        if (locateBtn) {
+          locateBtn.addEventListener("click", function () {
+            if (!navigator.geolocation) {
+              locateBtn.textContent = "No GPS support";
+              return;
+            }
+            locateBtn.textContent = "Locating...";
+            navigator.geolocation.getCurrentPosition(function (pos) {
+              if (!map) {
+                locateBtn.textContent = "No map";
+                return;
+              }
+              var user = [pos.coords.latitude, pos.coords.longitude];
+              userLocation = user;
+              if (userMarker) {
+                userMarker.setLatLng(user);
+                userCircle.setLatLng(user);
+              } else {
+                userMarker = L.circleMarker(user, { radius: 7, color: "#0ea5e9", weight: 2, fillColor: "#7dd3fc", fillOpacity: 0.95 }).addTo(map);
+                userCircle = L.circle(user, { radius: Math.max(60, pos.coords.accuracy), color: "#0ea5e9", fillColor: "#0ea5e9", fillOpacity: 0.08, weight: 1 }).addTo(map);
+              }
+              map.flyTo(user, 15, { duration: 0.8 });
+              var nearest = null;
+              rides.forEach(function (r) {
+                var km = distanceKm(user, [r.lat, r.lng]);
+                if (!nearest || km < nearest.km) {
+                  nearest = { ride: r, km: km };
+                }
+              });
+              if (nearest && markers[nearest.ride.id]) {
+                selectedRideId = nearest.ride.id;
+                syncRideSelects(nearest.ride.id);
+                markers[nearest.ride.id].openPopup();
+                var focused = document.querySelector(".card[data-ride-id=\"" + nearest.ride.id + "\"]");
+                if (focused) {
+                  Array.prototype.forEach.call(document.querySelectorAll(".card[data-ride-id]"), function (el) { el.classList.remove("active"); });
+                  focused.classList.add("active");
+                  focused.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                }
+                if (typeof window._lipamoveUpdateSharePreview === "function") {
+                  window._lipamoveUpdateSharePreview();
+                }
+                updatePlanSummary();
+              }
+              refreshEtas();
+              locateBtn.textContent = "Nearest ride found";
+              setTimeout(function () { locateBtn.textContent = "Locate me"; }, 2500);
+            }, function () {
+              locateBtn.textContent = "Location blocked";
+              setTimeout(function () { locateBtn.textContent = "Locate me"; }, 2500);
+            }, { enableHighAccuracy: true, timeout: 12000 });
+          });
+        }
+
+        var planOpen = document.getElementById("plan-open-maps");
+        if (planOpen) {
+          planOpen.addEventListener("click", function () {
+            if (!rides.length) {
+              var ps = document.getElementById("plan-summary");
+              if (ps) { ps.textContent = "Naglo-load pa ang fleet o walang data.xml."; }
+              return;
+            }
+            if (!map) {
+              var ps2 = document.getElementById("plan-summary");
+              if (ps2) { ps2.textContent = "Map not ready."; }
+              return;
+            }
+            var originSel = document.getElementById("plan-origin-preset").value;
+            var from;
+            if (originSel === "current") {
+              from = userLocation ? (userLocation[0] + "," + userLocation[1]) : (map.getCenter().lat + "," + map.getCenter().lng);
+            } else {
+              from = originSel;
+            }
+            var destSel = document.getElementById("plan-dest-preset").value;
+            var to;
+            if (destSel === "ride") {
+              var pr = document.getElementById("plan-ride-select").value || selectedRideId;
+              var ride = rides.find(function (r) { return r.id === pr; }) || rides[0];
+              if (!ride) {
+                document.getElementById("plan-summary").textContent = "Walang ride data.";
+                return;
+              }
+              to = ride.lat + "," + ride.lng;
+            } else {
+              to = destSel;
+            }
+            window.open("https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(from) + "&destination=" + encodeURIComponent(to) + "&travelmode=driving", "_blank");
+          });
+        }
+
+        var pop = document.getElementById("plan-origin-preset");
+        var pdp = document.getElementById("plan-dest-preset");
+        var prs = document.getElementById("plan-ride-select");
+        if (pop) { pop.addEventListener("change", updatePlanSummary); }
+        if (pdp) { pdp.addEventListener("change", updatePlanSummary); }
+        if (prs) { prs.addEventListener("change", updatePlanSummary); }
+
+        var srs = document.getElementById("share-ride-select");
+        if (srs) {
+          srs.addEventListener("change", function () { updateSharePreview(); });
+        }
+        var scb = document.getElementById("share-copy-btn");
+        if (scb) {
+          scb.addEventListener("click", function () {
+            if (!rides.length) { return; }
+            var sel = document.getElementById("share-ride-select");
+            var rid = (sel && sel.value) ? sel.value : selectedRideId;
+            var ride = rides.find(function (r) { return r.id === rid; }) || rides[0];
+            if (!ride) {
+              document.getElementById("share-status").textContent = "Walang napiling unit.";
+              return;
+            }
+            var msg = buildShareMessage(ride);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(msg).then(function () {
+                document.getElementById("share-status").textContent = "Nakopya na ang mensahe.";
+                setTimeout(function () { document.getElementById("share-status").textContent = ""; }, 2200);
+              });
+            } else {
+              document.getElementById("share-status").textContent = msg;
+            }
+          });
+        }
+        var snb = document.getElementById("share-native-btn");
+        if (snb) {
+          snb.addEventListener("click", function () {
+            if (!rides.length) { return; }
+            var sel = document.getElementById("share-ride-select");
+            var rid = (sel && sel.value) ? sel.value : selectedRideId;
+            var ride = rides.find(function (r) { return r.id === rid; }) || rides[0];
+            if (!ride) { return; }
+            var msg = buildShareMessage(ride);
+            if (navigator.share) {
+              navigator.share({ title: "LipaMove ETA", text: msg }).catch(function () {});
+            } else if (navigator.clipboard) {
+              navigator.clipboard.writeText(msg);
+              document.getElementById("share-status").textContent = "Walang native share — nakopya sa clipboard.";
+            }
+          });
+        }
+
+        var cr = document.getElementById("confirm-request");
+        if (cr) {
+          cr.addEventListener("click", function () {
+            var reqSel = document.getElementById("req-ride-select");
+            var rid = (reqSel && reqSel.value) ? reqSel.value : selectedRideId;
+            if (!rid) {
+              document.getElementById("request-status").textContent = "Pumili ng unit o pumili muna sa Map feed.";
+              return;
+            }
+            var pickup = document.getElementById("pickup-input").value.trim();
+            var drop = document.getElementById("dropoff-select").value;
+            var notesEl = document.getElementById("req-notes");
+            var notes = notesEl ? notesEl.value.trim() : "";
+            if (!pickup) {
+              document.getElementById("request-status").textContent = "Ilagay ang pickup point.";
+              return;
+            }
+            var payload = {
+              rideId: rid,
+              pickup: pickup,
+              dropoff: drop,
+              notes: notes,
+              requestedAt: new Date().toISOString()
+            };
+            localStorage.setItem("lipamove_last_request", JSON.stringify(payload));
+            document.getElementById("request-status").textContent = "Na-save ang request sa device mo. Hintayin ang tawag o SMS mula dispatch.";
+            var lastEl = document.getElementById("request-last");
+            if (lastEl) {
+              lastEl.textContent = "Huling request: " + rid + " · " + pickup + " → " + drop;
+            }
+          });
+        }
+
+        var gpsBtn = document.getElementById("gps-toggle");
+        if (gpsBtn) {
+          gpsBtn.addEventListener("click", function () {
+            simEnabled = !simEnabled;
+            if (!simEnabled) {
+              stopSimulation();
+              startLiveGpsPolling();
+            } else {
+              stopLiveGpsPolling();
+              if (!simRafId) {
+                startSimulation();
+              }
+            }
+            updateGpsFreshness();
+          });
+        }
+      }
+
+      initWireNavigationOnly();
+      initLeafletMap();
+      initUiWiring();
+      refreshAuthUi();
+
+      fetch("data.xml")
+        .then(function (r) { return r.text(); })
+        .then(function (xmlText) {
+          var xml = new DOMParser().parseFromString(xmlText, "application/xml");
+          var units = Array.prototype.slice.call(xml.querySelectorAll("fleet_management unit"));
+          var nodes = Array.prototype.slice.call(xml.querySelectorAll("terminal_analytics node"));
+          var etaList = document.getElementById("eta-list");
+
+          if (!map || !markerGroup) {
+            if (etaList) {
+              etaList.innerHTML = "<div class=\"card\">Map did not start (Leaflet missing or blocked). Serve this app over HTTP (e.g. <code>npm start</code> in the <code>server</code> folder) and allow the CDN. Navigation and Account still work.</div>";
+            }
+            var dtEarly = document.getElementById("dispatch-terminals");
+            if (dtEarly) {
+              dtEarly.innerHTML = nodes.map(function (n) {
+                var name = escHtml((n.querySelector("name") || {}).textContent || "Terminal");
+                var wait = escHtml((n.querySelector("avg_wait_time") || {}).textContent || "—");
+                var surge = escHtml((n.querySelector("surge_prediction_status") || {}).textContent || "");
+                var comm = escHtml((n.querySelector("commuter_count") || {}).textContent || "");
+                return "<div class=\"dispatch-card\" style=\"margin-bottom:8px\"><h3>" + name + "</h3><p>Avg wait: " + wait + (comm ? " · Commuters: ~" + comm : "") + "</p><p>" + surge + "</p></div>";
+              }).join("") || "<p class=\"muted\">Walang terminal data.</p>";
+            }
+            return;
+          }
+
+          units.forEach(function (u, i) {
+            var id = u.getAttribute("id") || ("LM-" + (i + 1));
+            var rawType = ((u.getAttribute("vehicle_type") || "batrasco") + "").toLowerCase();
+            var vtype = rawType === "jeepney" ? "jeepney" : "batrasco";
+            var speedKmh = Number(u.getAttribute("speed_kph") || (vtype === "jeepney" ? 22 : 26));
+            if (!isFinite(speedKmh) || speedKmh < 8) { speedKmh = vtype === "jeepney" ? 22 : 26; }
+            var route = (u.querySelector("route_assignment") || {}).textContent || "Route unavailable";
+            var occEl = u.querySelector("current_occupancy");
+            var occTxt = occEl ? occEl.textContent : "Low Density";
+            var occVal = occEl ? Number(occEl.getAttribute("value") || 0) : 0;
+            var high = (occTxt || "").toLowerCase().indexOf("high") >= 0;
+            var pct = Math.max(8, Math.min(100, Math.round((occVal / 30) * 100)));
+            var locEl = u.querySelector("location");
+            var lat = locEl ? Number(locEl.getAttribute("lat")) : NaN;
+            var lng = locEl ? Number(locEl.getAttribute("lng")) : NaN;
+            if (!isFinite(lat) || !isFinite(lng)) {
+              var fallback = defaultFallback[i % defaultFallback.length];
+              lat = fallback[0];
+              lng = fallback[1];
+            }
+
+            var routePoints = Array.prototype.slice.call(u.querySelectorAll("route_path point")).map(function (pt) {
+              return [Number(pt.getAttribute("lat")), Number(pt.getAttribute("lng"))];
+            }).filter(function (pt) { return isFinite(pt[0]) && isFinite(pt[1]); });
+            if (!routePoints.length) {
+              routePoints = [[lat, lng]];
+            } else if (!arePointsNear(routePoints[0], [lat, lng])) {
+              routePoints.unshift([lat, lng]);
+            }
+
+            var brStart = routePoints.length >= 2 ? bearingDeg(routePoints[0], routePoints[1]) : 0;
+            var vtagLabel = vtype === "jeepney" ? "Jeepney" : "Batra jeepney";
+            var icon = L.divIcon({
+              className: "vehicle-marker-wrap",
+              html: '<div class="vehicle-pin ' + vtype + " " + (high ? "high" : "low") + ' live-sim" style="transform:rotate(' + brStart + 'deg)"><div class="vehicle-body"></div></div>',
+              iconSize: [26, 26],
+              iconAnchor: [13, 13]
+            });
+            var marker = L.marker([lat, lng], { icon: icon }).addTo(markerGroup).bindPopup(
+              "<strong>" + id + "</strong><br/>" + vtagLabel + "<br/>" + route + "<br/>Crowd: " + occTxt + "<br/><span style=\"opacity:.85;font-size:11px\">Movement is simulated along route paths.</span>"
+            );
+            marker.bindTooltip(id + " · " + Math.round(speedKmh) + " km/h (sim)", {
+              permanent: true,
+              direction: "top",
+              offset: [0, -16],
+              className: "live-puv-tip " + (vtype === "jeepney" ? "jeepney-tip" : "")
+            });
+            markers[id] = marker;
+            var lineColor = vtype === "jeepney" ? "#fb923c" : "#38bdf8";
+            L.polyline(routePoints, {
+              color: lineColor,
+              weight: 3,
+              opacity: 0.5,
+              dashArray: vtype === "jeepney" ? "4 10" : "6 8"
+            }).addTo(routeGroup);
+
+            var trailLine = null;
+            if (liveTrailGroup) {
+              trailLine = L.polyline([[lat, lng]], {
+                color: lineColor,
+                weight: 2,
+                opacity: 0.4,
+                dashArray: "2 8"
+              }).addTo(liveTrailGroup);
+            }
+
+            var rideRef = {
+              id: id,
+              route: route,
+              density: occTxt,
+              occVal: occVal,
+              high: high,
+              vtype: vtype,
+              speedKmh: speedKmh,
+              effectiveSpeedKmh: speedKmh,
+              simPhase: Math.random() * Math.PI * 2,
+              lat: lat,
+              lng: lng,
+              bearing: brStart,
+              marker: marker,
+              path: routePoints,
+              pathIndex: 0,
+              segmentT: 0,
+              trailHistory: [[lat, lng]],
+              trailLine: trailLine,
+              lastUpdatedMs: (function () {
+                var lu = (u.querySelector("last_updated") || {}).textContent || "";
+                var parsed = Date.parse(lu);
+                return isNaN(parsed) ? null : parsed;
+              })()
+            };
+            rides.push(rideRef);
+
+            var card = document.createElement("article");
+            card.className = "card";
+            card.setAttribute("data-ride-id", id);
+            card.innerHTML =
+              '<div class="row"><div><div class="unit">' + id + '</div><div class="vtype"><span class="vtag ' + vtype + '">' + vtagLabel + "</span></div><div class=\"route\">" + route + '</div></div><div class="eta">-- min ETA</div></div>' +
+              '<div class="crowd"><span>Crowd Level</span><span style="color:' + (high ? "#f59e0b" : "#5eead4") + ';">' + (high ? "High Density" : "Low Density") + '</span></div>' +
+              '<div class="barwrap"><div class="bar ' + (high ? "high" : "low") + '" style="width:' + pct + '%;"></div></div>';
+            etaList.appendChild(card);
+            etaByRide[id] = card.querySelector(".eta");
+
+            card.addEventListener("click", function () {
+              Array.prototype.forEach.call(document.querySelectorAll(".card[data-ride-id]"), function (el) { el.classList.remove("active"); });
+              card.classList.add("active");
+              selectedRideId = id;
+              syncRideSelects(id);
+              if (typeof window._lipamoveUpdateSharePreview === "function") {
+                window._lipamoveUpdateSharePreview();
+              }
+              updatePlanSummary();
+              if (map) {
+                map.flyTo([rideRef.lat, rideRef.lng], 16, { duration: 0.8 });
+              }
+              marker.openPopup();
+            });
+          });
+
+          if (!rides.length && etaList) {
+            etaList.innerHTML = "<div class=\"card\">No units found in <code>data.xml</code>. Add <code>fleet_management &gt; unit</code> entries with route points.</div>";
+          }
+
+          function fillRideSelects() {
+            var opts = rides.map(function (r) {
+              var safe = (r.route + "").replace(/</g, "").replace(/"/g, "'");
+              return "<option value=\"" + r.id + "\">" + r.id + " — " + safe.substring(0, 48) + (safe.length > 48 ? "…" : "") + "</option>";
+            }).join("");
+            ["plan-ride-select", "share-ride-select", "req-ride-select"].forEach(function (selId) {
+              var el = document.getElementById(selId);
+              if (el) {
+                el.innerHTML = "<option value=\"\">Any unit / choose on map</option>" + opts;
+              }
+            });
+          }
+
+          fillRideSelects();
+          if (selectedRideId) { syncRideSelects(selectedRideId); }
+          updateSharePreview();
+          updatePlanSummary();
+
+          var dt = document.getElementById("dispatch-terminals");
+          if (dt) {
+            dt.innerHTML = nodes.map(function (n) {
+              var name = escHtml((n.querySelector("name") || {}).textContent || "Terminal");
+              var wait = escHtml((n.querySelector("avg_wait_time") || {}).textContent || "—");
+              var surge = escHtml((n.querySelector("surge_prediction_status") || {}).textContent || "");
+              var comm = escHtml((n.querySelector("commuter_count") || {}).textContent || "");
+              return "<div class=\"dispatch-card\" style=\"margin-bottom:8px\"><h3>" + name + "</h3><p>Avg wait: " + wait + (comm ? " · Commuters: ~" + comm : "") + "</p><p>" + surge + "</p></div>";
+            }).join("") || "<p class=\"muted\">Walang terminal data.</p>";
+          }
+
+          var lastReq = localStorage.getItem("lipamove_last_request");
+          var lastEl = document.getElementById("request-last");
+          if (lastEl && lastReq) {
+            try {
+              var p = JSON.parse(lastReq);
+              lastEl.textContent = "Huling request: " + (p.rideId || "—") + " · " + (p.pickup || "") + " → " + (p.dropoff || "") + " · " + (p.requestedAt || "").slice(0, 16);
+            } catch (e) {
+              lastEl.textContent = "";
+            }
+          }
+
+          if (markerGroup.getLayers().length || routeGroup.getLayers().length) {
+            map.fitBounds(routeGroup.getBounds().isValid() ? routeGroup.getBounds().pad(0.2) : markerGroup.getBounds().pad(0.25));
+            if (lipaBounds) { map.setMaxBounds(lipaBounds); }
+          }
+          refreshEtas();
+
+          map.on("moveend", function () {
+            refreshEtas();
+          });
+
+          var critical = nodes.find(function (n) {
+            var s = (n.querySelector("surge_prediction_status") || {}).textContent || "";
+            return s.toUpperCase().indexOf("CRITICAL") >= 0;
+          });
+          if (critical) {
+            var nm = (critical.querySelector("name") || {}).textContent || "SM Lipa";
+            var box = document.getElementById("surge-alert");
+            box.style.display = "block";
+            box.textContent = "Uy, mataas ang demand sa " + nm + ". 3 units dispatched na.";
+          }
+
+          startSimulation();
+          updateGpsFreshness();
+        })
+        .catch(function () {
+          simEnabled = false;
+          var etaList = document.getElementById("eta-list");
+          if (etaList) {
+            etaList.innerHTML = "<div class=\"card\">Hindi ma-load ang live feed. I-serve ang project sa HTTP at tingnan ang <code>data.xml</code>.</div>";
+          }
+          var dt = document.getElementById("dispatch-terminals");
+          if (dt) {
+            dt.innerHTML = "<p class=\"muted\">Hindi ma-load ang terminal data.</p>";
+          }
+          updateGpsFreshness();
+        });
+    })();
+    //]]>
+  </script>
+</body>
+</html>
