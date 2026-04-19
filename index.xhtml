@@ -5,11 +5,11 @@
   <title>LipaMove | Live Commute</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="lipamove-api-base" content="" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
   <style type="text/css">
-    html, body { margin: 0; padding: 0; background: #020617; font-family: "Segoe UI", Arial, sans-serif; color: #e2e8f0; }
-    body { background: radial-gradient(circle at 20% 15%, rgba(14,165,233,.2), transparent 35%), radial-gradient(circle at 85% 92%, rgba(45,212,191,.15), transparent 35%), #020617; }
-    .app { max-width: 460px; margin: 0 auto; min-height: 100vh; border-left: 1px solid rgba(255,255,255,.06); border-right: 1px solid rgba(255,255,255,.06); box-shadow: 0 0 24px rgba(14,165,233,.10); position: relative; }
+    html, body { margin: 0; padding: 0; background: #f4f7fb; font-family: "Segoe UI", Arial, sans-serif; color: #0f172a; }
+    body { background: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%); }
+    .app { max-width: 460px; margin: 0 auto; min-height: 100vh; border-left: 1px solid rgba(15,23,42,.08); border-right: 1px solid rgba(15,23,42,.08); box-shadow: 0 10px 28px rgba(15,23,42,.08); position: relative; }
     .map-wrap { position: relative; z-index: 1; height: 58vh; min-height: 420px; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,.07); isolation: isolate; }
     #map { position: absolute; inset: 0; z-index: 0; }
     .map-wrap::after {
@@ -18,39 +18,39 @@
       inset: 0;
       z-index: 400;
       pointer-events: none;
-      background: linear-gradient(180deg, rgba(2,6,23,.18) 0%, rgba(2,6,23,.32) 45%, rgba(2,6,23,.50) 100%);
+      background: linear-gradient(180deg, rgba(15,23,42,.06) 0%, rgba(15,23,42,.16) 45%, rgba(15,23,42,.28) 100%);
     }
     .overlay { position: relative; z-index: 500; padding: 12px; pointer-events: none; }
-    .glass { pointer-events: auto; border-radius: 24px; border: 1px solid rgba(255,255,255,.12); background: rgba(15,23,42,.68); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+    .glass { pointer-events: auto; border-radius: 20px; border: 1px solid rgba(148,163,184,.25); background: rgba(255,255,255,.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
     .top { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; }
-    .brand { color: #0ea5e9; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+    .brand { color: #0284c7; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; }
     .headline { margin-top: 4px; font-size: 30px; font-weight: 700; letter-spacing: -.3px; }
-    .sub { margin-top: 3px; color: #cbd5e1; font-size: 12px; }
-    .pill { border-radius: 999px; border: 1px solid rgba(45,212,191,.40); color: #5eead4; background: rgba(45,212,191,.10); padding: 6px 10px; font-size: 12px; }
+    .sub { margin-top: 3px; color: #334155; font-size: 12px; }
+    .pill { border-radius: 999px; border: 1px solid rgba(14,165,233,.35); color: #0369a1; background: rgba(14,165,233,.10); padding: 6px 10px; font-size: 12px; }
     .alert { margin-top: 10px; padding: 10px 12px; border-radius: 14px; border: 1px solid rgba(251,113,133,.40); color: #fda4af; background: rgba(251,113,133,.10); font-size: 13px; animation: pulse 2.6s infinite; }
-    .chips { margin-top: 8px; display: flex; gap: 7px; flex-wrap: wrap; opacity: .9; }
-    .chip { border-radius: 999px; border: 1px solid rgba(148,163,184,.35); background: rgba(15,23,42,.70); color: #cbd5e1; padding: 5px 9px; font-size: 11px; }
+    .chips { margin-top: 8px; display: flex; gap: 7px; flex-wrap: wrap; opacity: 1; }
+    .chip { border-radius: 999px; border: 1px solid rgba(148,163,184,.35); background: rgba(255,255,255,.96); color: #334155; padding: 6px 10px; font-size: 11px; }
     .chip.button { cursor: pointer; pointer-events: auto; touch-action: manipulation; -webkit-tap-highlight-color: rgba(14,165,233,.2); }
-    .chip.button:hover { border-color: rgba(45,212,191,.4); color: #e2e8f0; }
-    .chip.warn { border-color: rgba(245,158,11,.5); color: #fcd34d; }
-    .cards { margin-top: -14px; border-radius: 28px 28px 0 0; border-top: 1px solid rgba(255,255,255,.07); background: rgba(15,23,42,.70); padding: 14px; position: relative; z-index: 600; }
-    .label { color: #94a3b8; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; }
-    .tagline { color: #cbd5e1; font-size: 12px; margin-top: 4px; margin-bottom: 12px; }
-    .card { border-radius: 22px; border: 1px solid rgba(255,255,255,.10); background: rgba(2,6,23,.72); padding: 14px; margin-bottom: 10px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .chip.button:hover { border-color: rgba(14,165,233,.45); color: #0f172a; }
+    .chip.warn { border-color: rgba(217,119,6,.55); color: #92400e; background: rgba(251,191,36,.12); }
+    .cards { margin-top: -14px; border-radius: 24px 24px 0 0; border-top: 1px solid rgba(148,163,184,.25); background: rgba(255,255,255,.94); padding: 14px; position: relative; z-index: 600; }
+    .label { color: #475569; font-size: 12px; letter-spacing: .06em; text-transform: none; font-weight: 700; }
+    .tagline { color: #475569; font-size: 13px; margin-top: 4px; margin-bottom: 12px; }
+    .card { border-radius: 16px; border: 1px solid rgba(148,163,184,.28); background: #ffffff; padding: 14px; margin-bottom: 10px; box-shadow: 0 4px 16px rgba(15,23,42,.06); }
     .card.active { border-color: rgba(14,165,233,.45); box-shadow: 0 0 0 1px rgba(14,165,233,.2); }
     .row { display: flex; justify-content: space-between; gap: 10px; }
     .unit { color: #94a3b8; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
-    .route { margin-top: 3px; font-size: 14px; font-weight: 600; line-height: 1.35; }
-    .eta { border-radius: 999px; border: 1px solid rgba(14,165,233,.35); color: #7dd3fc; background: rgba(14,165,233,.10); padding: 6px 9px; font-size: 12px; white-space: nowrap; }
-    .crowd { margin-top: 9px; font-size: 12px; color: #94a3b8; display: flex; justify-content: space-between; }
+    .route { margin-top: 3px; font-size: 14px; font-weight: 600; line-height: 1.35; color: #0f172a; }
+    .eta { border-radius: 999px; border: 1px solid rgba(2,132,199,.35); color: #075985; background: rgba(14,165,233,.12); padding: 6px 9px; font-size: 12px; white-space: nowrap; font-weight: 700; }
+    .crowd { margin-top: 9px; font-size: 12px; color: #475569; display: flex; justify-content: space-between; }
     .barwrap { margin-top: 7px; height: 10px; border-radius: 999px; overflow: hidden; background: rgba(71,85,105,.6); }
     .bar { height: 100%; border-radius: 999px; }
     .bar.high { background: #f59e0b; }
     .bar.low { background: #2dd4bf; }
     #eta-list { display: flex; flex-direction: column; gap: 10px; }
-    .nearest-summary { margin-bottom: 12px; padding: 12px 14px; font-size: 13px; line-height: 1.45; color: #e2e8f0; }
-    .nearest-summary .ns-title { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px; }
-    .nearest-summary .km { color: #7dd3fc; }
+    .nearest-summary { margin-bottom: 12px; padding: 12px 14px; font-size: 13px; line-height: 1.45; color: #1e293b; }
+    .nearest-summary .ns-title { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #475569; margin-bottom: 4px; }
+    .nearest-summary .km { color: #0369a1; }
     .card.nearest { border-color: rgba(14,165,233,.55); box-shadow: 0 0 0 1px rgba(14,165,233,.22), 0 0 20px rgba(14,165,233,.12); }
     .vtype { margin-top: 6px; }
     .vtag { display: inline-block; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; border-radius: 999px; padding: 3px 8px; font-weight: 600; }
@@ -80,62 +80,62 @@
     }
     .leaflet-tooltip.live-puv-tip.jeepney-tip { border-color: rgba(251,146,60,.5) !important; }
     .actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
-    .action-btn { border-radius: 14px; border: 1px solid rgba(148,163,184,.35); background: rgba(15,23,42,.75); color: #e2e8f0; font-size: 12px; padding: 10px 8px; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: rgba(14,165,233,.2); }
-    .action-btn:hover { border-color: rgba(14,165,233,.45); }
-    .action-btn.primary { background: rgba(14,165,233,.22); border-color: rgba(14,165,233,.55); color: #e0f2fe; }
+    .action-btn { border-radius: 12px; border: 1px solid rgba(148,163,184,.35); background: #ffffff; color: #0f172a; font-size: 12px; padding: 10px 8px; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: rgba(14,165,233,.2); }
+    .action-btn:hover { border-color: rgba(14,165,233,.45); background: #f8fafc; }
+    .action-btn.primary { background: #0284c7; border-color: #0284c7; color: #ffffff; }
     .action-btn.block { width: 100%; display: block; box-sizing: border-box; }
-    .app-panel { display: flex; flex-direction: column; min-height: 0; position: relative; z-index: 5; background: rgba(15,23,42,.99); pointer-events: auto; }
+    .app-panel { display: flex; flex-direction: column; min-height: 0; position: relative; z-index: 5; background: rgba(248,250,252,.98); pointer-events: auto; }
     .panel-nav { display: none; gap: 6px; flex-wrap: wrap; padding: 0 14px 10px; border-bottom: 1px solid rgba(255,255,255,.06); }
     .panel-nav a, .panel-nav button.panel-tab {
-      font: inherit; font-size: 12px; color: #94a3b8; text-decoration: none;
-      border: 1px solid rgba(148,163,184,.25); background: rgba(15,23,42,.5); border-radius: 999px; padding: 6px 12px; cursor: pointer;
+      font: inherit; font-size: 12px; color: #475569; text-decoration: none;
+      border: 1px solid rgba(148,163,184,.32); background: #ffffff; border-radius: 999px; padding: 6px 12px; cursor: pointer;
     }
-    .panel-nav a:hover, .panel-nav button.panel-tab:hover { color: #e2e8f0; border-color: rgba(14,165,233,.4); }
-    .panel-nav a.active, .panel-nav button.panel-tab.active { color: #7dd3fc; border-color: rgba(14,165,233,.5); background: rgba(14,165,233,.12); }
+    .panel-nav a:hover, .panel-nav button.panel-tab:hover { color: #0f172a; border-color: rgba(14,165,233,.4); }
+    .panel-nav a.active, .panel-nav button.panel-tab.active { color: #075985; border-color: rgba(14,165,233,.55); background: rgba(14,165,233,.12); }
     .screen { display: none; flex: 1; flex-direction: column; min-height: 0; padding: 14px; overflow-y: auto; }
     .screen.active { display: flex; }
     .screen-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
     .screen-head h2 { margin: 0; font-size: 18px; font-weight: 700; flex: 1; }
     .back-mob { display: none; border-radius: 999px; border: 1px solid rgba(148,163,184,.35); background: rgba(15,23,42,.8); color: #e2e8f0; padding: 6px 12px; font-size: 12px; cursor: pointer; }
-    .screen-intro { color: #94a3b8; font-size: 13px; margin: -6px 0 14px; line-height: 1.45; }
+    .screen-intro { color: #475569; font-size: 13px; margin: -6px 0 14px; line-height: 1.45; }
     .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; }
-    .preview-box { border-radius: 14px; border: 1px solid rgba(148,163,184,.25); background: rgba(2,6,23,.65); padding: 12px; font-size: 13px; line-height: 1.5; color: #cbd5e1; margin: 10px 0; white-space: pre-wrap; word-break: break-word; }
-    .dispatch-card { border-radius: 16px; border: 1px solid rgba(255,255,255,.08); background: rgba(2,6,23,.55); padding: 14px; margin-bottom: 10px; }
-    .dispatch-card h3 { margin: 0 0 6px; font-size: 15px; color: #e2e8f0; }
-    .dispatch-card p { margin: 0; font-size: 13px; color: #94a3b8; line-height: 1.45; }
-    .dispatch-card a { color: #7dd3fc; }
+    .form-group label { display: block; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: #64748b; margin-bottom: 5px; }
+    .preview-box { border-radius: 12px; border: 1px solid rgba(148,163,184,.32); background: #ffffff; padding: 12px; font-size: 13px; line-height: 1.5; color: #334155; margin: 10px 0; white-space: pre-wrap; word-break: break-word; }
+    .dispatch-card { border-radius: 14px; border: 1px solid rgba(148,163,184,.24); background: #ffffff; padding: 14px; margin-bottom: 10px; box-shadow: 0 3px 12px rgba(15,23,42,.05); }
+    .dispatch-card h3 { margin: 0 0 6px; font-size: 15px; color: #0f172a; }
+    .dispatch-card p { margin: 0; font-size: 13px; color: #475569; line-height: 1.45; }
+    .dispatch-card a { color: #0284c7; }
     .bottom-nav {
       display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 900;
-      background: rgba(15,23,42,.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid rgba(255,255,255,.1); padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,.98); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(148,163,184,.25); padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
       justify-content: space-around; align-items: stretch;
     }
     .bottom-nav button {
-      flex: 1; border: none; background: transparent; color: #94a3b8; font-size: 10px; padding: 6px 2px; cursor: pointer;
+      flex: 1; border: none; background: transparent; color: #64748b; font-size: 10px; padding: 6px 2px; cursor: pointer;
       display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0;
       touch-action: manipulation; -webkit-tap-highlight-color: rgba(14,165,233,.2); position: relative; z-index: 2;
     }
     .bottom-nav button .ico { font-size: 18px; line-height: 1; }
-    .bottom-nav button.active { color: #7dd3fc; }
+    .bottom-nav button.active { color: #0284c7; }
     .bottom-nav button[data-goto="auth"] { flex: 0 0 auto; min-width: 52px; }
     .auth-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
-    .auth-tabs button { flex: 1; border-radius: 12px; border: 1px solid rgba(148,163,184,.35); background: rgba(15,23,42,.75); color: #94a3b8; padding: 10px; font-size: 13px; cursor: pointer; }
-    .auth-tabs button.active { border-color: rgba(14,165,233,.5); color: #e0f2fe; background: rgba(14,165,233,.15); }
+    .auth-tabs button { flex: 1; border-radius: 12px; border: 1px solid rgba(148,163,184,.35); background: #ffffff; color: #64748b; padding: 10px; font-size: 13px; cursor: pointer; }
+    .auth-tabs button.active { border-color: rgba(14,165,233,.5); color: #075985; background: rgba(14,165,233,.14); }
     .auth-step { display: none; }
     .auth-step.visible { display: block; }
     .otp-dev-hint { font-size: 12px; color: #fcd34d; margin-top: 8px; }
-    .muted { color: #94a3b8; font-size: 12px; }
+    .muted { color: #64748b; font-size: 12px; }
     .status-ok { color: #5eead4; font-size: 13px; margin-top: 8px; }
     .input, .select, textarea.area {
-      width: 100%; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(148,163,184,.35);
-      background: rgba(2,6,23,.9); color: #e2e8f0; padding: 10px; font-size: 13px; font-family: inherit;
+      width: 100%; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(148,163,184,.4);
+      background: #ffffff; color: #0f172a; padding: 10px; font-size: 13px; font-family: inherit;
     }
     textarea.area { min-height: 72px; resize: vertical; }
     .sheet-row { display: flex; gap: 8px; flex-wrap: wrap; }
     @keyframes pulse { 0% { opacity: .85; } 50% { opacity: 1; } 100% { opacity: .85; } }
-    .leaflet-control-attribution { background: rgba(2,6,23,.75) !important; color: #94a3b8 !important; font-size: 10px; }
-    .leaflet-popup-content { margin: 10px 12px; color: #e2e8f0; }
+    .leaflet-control-attribution { background: rgba(255,255,255,.88) !important; color: #64748b !important; font-size: 10px; }
+    .leaflet-popup-content { margin: 10px 12px; color: #0f172a; }
     @media (min-width: 900px) {
       .app { max-width: none; display: grid; grid-template-columns: minmax(0, 1fr) min(420px, 38vw); align-items: stretch; min-height: 100vh; }
       .map-wrap { height: 100vh; min-height: 0; border-bottom: none; border-right: 1px solid rgba(255,255,255,.07); display: block !important; }
@@ -171,19 +171,19 @@
           <div>
             <div class="brand">LipaMove</div>
             <div class="headline">Saan na ang sakay?</div>
-            <div class="sub">Live jeepney at Batra units sa mapa — pinaka-malapit at ETA, tulad ng commuter view.</div>
+            <div class="sub">Madaling makita kung saan na ang masasakyan, para mas simple at panatag ang biyahe.</div>
           </div>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-            <div class="pill" id="live-sim-pill">Live PUV simulation</div>
+            <div class="pill" id="live-sim-pill">Live vehicle tracking</div>
             <button type="button" id="auth-entry-btn" class="chip button">Account</button>
           </div>
         </div>
         <div id="surge-alert" class="alert glass" style="display:none;"></div>
         <div class="chips">
-          <span class="chip">Jeepney + Batra</span><span class="chip">SM Lipa</span><span class="chip">Simulated GPS</span>
+          <span class="chip">Live updates</span><span class="chip">Lipa loop route</span>
           <span id="locate-me" class="chip button">Locate me</span>
           <span id="fit-rides" class="chip button">Fit all rides</span>
-          <span id="gps-toggle" class="chip button" title="PUVs follow route paths; on-map speed is scaled up so motion is easy to see.">Movement sim: On</span>
+          <span id="gps-toggle" class="chip button" title="Live tracking of vehicles on the route.">Live tracking: On</span>
         </div>
       </div>
     </section>
@@ -201,8 +201,8 @@
 
       <section id="screen-home" class="screen active" aria-label="Live feed">
         <div class="cards" style="margin-top:0;border-radius:0;background:transparent;padding:0;">
-          <div class="label">Nearest rides &amp; ETA</div>
-          <div class="tagline">List sorted by distance from your spot (GPS o map center). ETA factors traffic pattern at occupancy.</div>
+          <div class="label">Mga pinakamalapit na sakay</div>
+          <div class="tagline">Pinaka-malalapit na sakay mula sa lokasyon mo, may simple ETA para madaling pumili.</div>
           <div id="nearest-summary" class="nearest-summary glass" style="display:none;">
             <div class="ns-title">Pinaka-malapit</div>
             <div id="nearest-body" class="ns-body">—</div>
@@ -222,14 +222,15 @@
           <button type="button" class="back-mob" data-goto="home">Back</button>
           <h2>Plan Trip</h2>
         </div>
-        <p class="screen-intro">Set origin and destination, pick a unit or nearest ride, then open turn-by-turn directions.</p>
+        <p class="screen-intro">Piliin ang simula at pupuntahan para mabilis mong makita ang direksyon.</p>
         <div class="form-group">
           <label for="plan-origin-preset">Origin</label>
           <select id="plan-origin-preset" class="select">
             <option value="current">My location (or map center)</option>
-            <option value="13.94169,121.16332">SM Lipa Terminal</option>
-            <option value="13.94452,121.16781">UB Lipa</option>
-            <option value="13.93688,121.15702">Lipa Outlets</option>
+            <option value="13.9425265,121.1632107">Bayan (T.M. Kalaw Street)</option>
+            <option value="13.9681910,121.1595069">University of Batangas Lipa City</option>
+            <option value="13.9547813,121.1630958">SM Lipa Terminal</option>
+            <option value="14.0095011,121.1697526">The Outlets at Lipa</option>
             <option value="13.94020,121.15410">Plaza M. Luna</option>
             <option value="13.94105,121.15780">Public Market area</option>
           </select>
@@ -238,9 +239,10 @@
           <label for="plan-dest-preset">Destination</label>
           <select id="plan-dest-preset" class="select">
             <option value="ride">Selected / tracked vehicle position</option>
-            <option value="13.94169,121.16332">SM Lipa Terminal</option>
-            <option value="13.94452,121.16781">UB Lipa</option>
-            <option value="13.93688,121.15702">Lipa Outlets</option>
+            <option value="13.9425265,121.1632107">Bayan (T.M. Kalaw Street)</option>
+            <option value="13.9681910,121.1595069">University of Batangas Lipa City</option>
+            <option value="13.9547813,121.1630958">SM Lipa Terminal</option>
+            <option value="14.0095011,121.1697526">The Outlets at Lipa</option>
             <option value="13.93921,121.14955">Tambo Exit</option>
           </select>
         </div>
@@ -259,7 +261,7 @@
           <button type="button" class="back-mob" data-goto="home">Back</button>
           <h2>Share ETA</h2>
         </div>
-        <p class="screen-intro">Choose a unit, then copy or share your live ETA message.</p>
+        <p class="screen-intro">Piliin ang sasakyan at i-share ang estimated dating sa pamilya o kaibigan.</p>
         <div class="form-group">
           <label for="share-ride-select">Unit</label>
           <select id="share-ride-select" class="select"><option value="">Loading…</option></select>
@@ -277,7 +279,7 @@
           <button type="button" class="back-mob" data-goto="home">Back</button>
           <h2>Dispatch &amp; help</h2>
         </div>
-        <p class="screen-intro">Contact LipaMove operations or terminal support. All links work on mobile (tel / SMS).</p>
+        <p class="screen-intro">Mabilisang tulong at hotline para sa biyahe.</p>
         <div class="dispatch-card">
           <h3>Central dispatch</h3>
           <p>Hotline: <a href="tel:+639171234567">+63 917 123 4567</a></p>
@@ -298,7 +300,7 @@
           <button type="button" class="back-mob" data-goto="home">Back</button>
           <h2>Request ride</h2>
         </div>
-        <p class="screen-intro">Send a pickup request to dispatch (saved on this device for your reference).</p>
+        <p class="screen-intro">Mag-request ng sundo gamit ang simpleng form na ito.</p>
         <div class="form-group">
           <label for="req-ride-select">Preferred unit / route</label>
           <select id="req-ride-select" class="select"><option value="">Loading…</option></select>
@@ -334,7 +336,7 @@
           <button type="button" class="back-mob" data-goto="home">Back</button>
           <h2>Account</h2>
         </div>
-        <p class="screen-intro">Sign up or log in. OTP is verified against the MySQL-backed API when the server is running.</p>
+        <p class="screen-intro">Mag-sign up o mag-log in para sa personalized na experience.</p>
         <div class="auth-tabs" role="tablist">
           <button type="button" id="auth-tab-login" class="active" data-auth-tab="login">Log in</button>
           <button type="button" id="auth-tab-signup" data-auth-tab="signup">Sign up</button>
@@ -403,7 +405,7 @@
     <button type="button" id="bottom-nav-auth"><span class="ico" aria-hidden="true">👤</span>Account</button>
   </nav>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="vendor/leaflet/leaflet.js"></script>
   <script type="text/javascript">
     //<![CDATA[
     (function () {
@@ -416,14 +418,21 @@
       var userLocation = null;
       var rides = [];
       var etaByRide = {};
-      var defaultFallback = [[13.9416,121.1623],[13.9394,121.1498],[13.9449,121.1669],[13.9368,121.1571]];
+      var defaultFallback = [[13.9425265,121.1632107],[13.9681910,121.1595069],[13.9547813,121.1630958],[14.0095011,121.1697526]];
       var lipaBounds = null;
       var simEnabled = true;
       var simRafId = null;
       var simLastFrameTime = 0;
       var liveTrailGroup = null;
-      /** Real physics would move ~7 m/s at 25 km/h — too slow to see at map zoom; scale up path progress only. */
-      var SIM_MOVEMENT_SCALE = 48;
+      var coreLoopStops = [
+        { name: "Bayan (T.M. Kalaw Street)", latlng: [13.9425265, 121.1632107] },
+        { name: "University of Batangas Lipa City", latlng: [13.9681910, 121.1595069] },
+        { name: "SM Lipa Terminal", latlng: [13.9547813, 121.1630958] },
+        { name: "The Outlets at Lipa", latlng: [14.0095011, 121.1697526] }
+      ];
+      /** Keep map motion visible but close to realistic pacing. */
+      var SIM_MOVEMENT_SCALE = 7;
+      var STOP_DWELL_MS = 4500;
       var gpsPollTimer = null;
       var userWatchId = null;
       var selectedRideId = null;
@@ -555,6 +564,13 @@
         ride.bearing = bearingDeg(from, to) || 0;
       }
 
+      function isCoreLoopStop(point) {
+        if (!point || point.length < 2) { return false; }
+        return coreLoopStops.some(function (stop) {
+          return distanceKm(point, stop.latlng) < 0.05;
+        });
+      }
+
       function updateMarkerRotation(ride) {
         var iconEl = ride.marker.getElement && ride.marker.getElement();
         if (!iconEl) { return; }
@@ -621,19 +637,19 @@
       function updateGpsFreshness() {
         var gpsChip = document.getElementById("gps-toggle");
         if (!gpsChip) { return; }
-        gpsChip.classList.toggle("warn", !simEnabled);
+          gpsChip.classList.toggle("warn", !simEnabled);
         if (!rides.length) {
-          gpsChip.textContent = "Movement sim: No units loaded";
+            gpsChip.textContent = "Live tracking: No units loaded";
           gpsChip.classList.add("warn");
         } else {
-          gpsChip.textContent = simEnabled ? "Movement sim: On" : "Movement sim: Paused (XML)";
+            gpsChip.textContent = simEnabled ? "Live tracking: On" : "Live tracking: Paused";
         }
         var pill = document.getElementById("live-sim-pill");
         if (pill) {
           if (!rides.length) {
-            pill.textContent = "Waiting for data.xml over HTTP";
+            pill.textContent = "Preparing live route data...";
           } else {
-            pill.textContent = simEnabled ? "Live PUV simulation" : "XML snapshot (paused)";
+            pill.textContent = simEnabled ? "Live vehicle tracking" : "Live tracking paused";
           }
         }
         rides.forEach(function (r) {
@@ -646,8 +662,8 @@
           if (tip) {
             tip.setContent(
               simEnabled
-                ? r.id + " · " + Math.round(r.effectiveSpeedKmh != null ? r.effectiveSpeedKmh : r.speedKmh) + " km/h (sim)"
-                : r.id + " · XML snapshot"
+                ? r.id + " · " + (r.dwellUntilMs && r.dwellUntilMs > performance.now() ? "Boarding stop" : Math.round(r.effectiveSpeedKmh != null ? r.effectiveSpeedKmh : r.speedKmh) + " km/h")
+                : r.id + " · Live feed paused"
             );
           }
           if (r.trailLine && r.trailLine.setStyle) {
@@ -784,7 +800,7 @@
         }
         var tip = ride.marker.getTooltip && ride.marker.getTooltip();
         if (tip && simEnabled) {
-          tip.setContent(ride.id + " · " + Math.round(ride.effectiveSpeedKmh != null ? ride.effectiveSpeedKmh : ride.speedKmh) + " km/h (sim)");
+          tip.setContent(ride.id + " · " + Math.round(ride.effectiveSpeedKmh != null ? ride.effectiveSpeedKmh : ride.speedKmh) + " km/h");
         }
       }
 
@@ -815,12 +831,21 @@
           if (dt > 0) {
             rides.forEach(function (ride) {
               if (!ride.path || ride.path.length < 2) { return; }
+              if (ride.dwellUntilMs && now < ride.dwellUntilMs) {
+                ride.effectiveSpeedKmh = 0;
+                updateLiveSimVisuals(ride);
+                return;
+              }
               if (ride.simPhase == null) { ride.simPhase = Math.random() * Math.PI * 2; }
               var ph = ride.simPhase;
-              var wobble = Math.sin(now / 4200 + ph) * 0.085 + Math.sin(now / 9100 + ph * 2) * 0.055;
-              ride.effectiveSpeedKmh = Math.max(6, ride.speedKmh * (1 + wobble));
+              var wobble = Math.sin(now / 5400 + ph) * 0.06 + Math.sin(now / 11000 + ph * 2) * 0.035;
+              ride.effectiveSpeedKmh = Math.max(10, ride.speedKmh * (1 + wobble));
+              var prevIdx = ride.pathIndex;
               var distStep = (ride.effectiveSpeedKmh / 3600) * dt * SIM_MOVEMENT_SCALE;
               advanceRideAlongPath(ride, distStep);
+              if (prevIdx !== ride.pathIndex && isCoreLoopStop(ride.path[ride.pathIndex])) {
+                ride.dwellUntilMs = now + STOP_DWELL_MS + Math.random() * 1500;
+              }
               ride.marker.setLatLng([ride.lat, ride.lng]);
               updateMarkerRotation(ride);
               updateLiveSimVisuals(ride);
@@ -880,32 +905,47 @@
 
       function initLeafletMap() {
         if (typeof L === "undefined") {
-          console.warn("LipaMove: Leaflet not loaded (check network / CDN).");
+          console.warn("LipaMove: Leaflet not loaded — check that vendor/leaflet/leaflet.js is present and served over HTTP.");
           return false;
         }
         try {
+          if (map && markerGroup && routeGroup) {
+            return true;
+          }
           lipaBounds = L.latLngBounds(
-            [13.9180, 121.1300], // southwest of Lipa coverage
-            [13.9665, 121.1880]  // northeast of Lipa coverage
+            [13.9250, 121.1450], // southwest of expanded corridor
+            [14.0200, 121.1900]  // northeast incl. Outlets and UB area
           );
-          map = L.map("map", {
-            zoomControl: true,
-            minZoom: 13,
-            maxZoom: 18,
-            maxBounds: lipaBounds,
-            maxBoundsViscosity: 1.0
-          }).setView([13.9411, 121.1600], 14);
-          L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-            subdomains: "abcd", maxZoom: 19, opacity: 0.8, attribution: "&copy; OpenStreetMap &copy; CARTO"
-          }).addTo(map);
-          markerGroup = L.featureGroup().addTo(map);
-          routeGroup = L.featureGroup().addTo(map);
-          liveTrailGroup = L.featureGroup().addTo(map);
+          if (!map) {
+            map = L.map("map", {
+              zoomControl: true,
+              minZoom: 13,
+              maxZoom: 18,
+              maxBounds: lipaBounds,
+              maxBoundsViscosity: 1.0
+            }).setView([13.9650, 121.1640], 13);
+            L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+              subdomains: "abcd", maxZoom: 19, opacity: 0.8, attribution: "&copy; OpenStreetMap &copy; CARTO"
+            }).addTo(map);
+          }
+          if (!markerGroup) { markerGroup = L.featureGroup().addTo(map); }
+          if (!routeGroup) { routeGroup = L.featureGroup().addTo(map); }
+          if (!liveTrailGroup) { liveTrailGroup = L.featureGroup().addTo(map); }
           return true;
         } catch (err) {
           console.error("LipaMove: map init failed", err);
           return false;
         }
+      }
+
+      function ensureMapReady(retriesLeft) {
+        if (initLeafletMap()) { return Promise.resolve(true); }
+        if (!retriesLeft) { return Promise.resolve(false); }
+        return new Promise(function (resolve) {
+          setTimeout(function () {
+            ensureMapReady(retriesLeft - 1).then(resolve);
+          }, 250);
+        });
       }
 
       function initWireNavigationOnly() {
@@ -1322,11 +1362,12 @@
       }
 
       initWireNavigationOnly();
-      initLeafletMap();
       initUiWiring();
       refreshAuthUi();
 
-      fetch("data.xml")
+      ensureMapReady(6).then(function () {
+        return fetch("data.xml");
+      })
         .then(function (r) { return r.text(); })
         .then(function (xmlText) {
           var xml = new DOMParser().parseFromString(xmlText, "application/xml");
@@ -1335,8 +1376,11 @@
           var etaList = document.getElementById("eta-list");
 
           if (!map || !markerGroup) {
+            initLeafletMap();
+          }
+          if (!map || !markerGroup) {
             if (etaList) {
-              etaList.innerHTML = "<div class=\"card\">Map did not start (Leaflet missing or blocked). Serve this app over HTTP (e.g. <code>npm start</code> in the <code>server</code> folder) and allow the CDN. Navigation and Account still work.</div>";
+              etaList.innerHTML = "<div class=\"card\">Map did not start (Leaflet failed to load). Serve this app over HTTP (e.g. run <code>start-server.bat</code> or <code>npm start</code> in the <code>server</code> folder) so <code>vendor/leaflet/leaflet.js</code> loads. Navigation and Account still work.</div>";
             }
             var dtEarly = document.getElementById("dispatch-terminals");
             if (dtEarly) {
@@ -1377,11 +1421,20 @@
             }).filter(function (pt) { return isFinite(pt[0]) && isFinite(pt[1]); });
             if (!routePoints.length) {
               routePoints = [[lat, lng]];
-            } else if (!arePointsNear(routePoints[0], [lat, lng])) {
-              routePoints.unshift([lat, lng]);
             }
 
-            var brStart = routePoints.length >= 2 ? bearingDeg(routePoints[0], routePoints[1]) : 0;
+            var startIndex = 0;
+            if (routePoints.length > 1) {
+              var minPointKm = Infinity;
+              routePoints.forEach(function (pt, idx) {
+                var ptKm = distanceKm(pt, [lat, lng]);
+                if (ptKm < minPointKm) {
+                  minPointKm = ptKm;
+                  startIndex = idx;
+                }
+              });
+            }
+            var brStart = routePoints.length >= 2 ? bearingDeg(routePoints[startIndex], routePoints[(startIndex + 1) % routePoints.length]) : 0;
             var vtagLabel = vtype === "jeepney" ? "Jeepney" : "Batra jeepney";
             var icon = L.divIcon({
               className: "vehicle-marker-wrap",
@@ -1390,9 +1443,9 @@
               iconAnchor: [13, 13]
             });
             var marker = L.marker([lat, lng], { icon: icon }).addTo(markerGroup).bindPopup(
-              "<strong>" + id + "</strong><br/>" + vtagLabel + "<br/>" + route + "<br/>Crowd: " + occTxt + "<br/><span style=\"opacity:.85;font-size:11px\">Movement is simulated along route paths.</span>"
+              "<strong>" + id + "</strong><br/>" + vtagLabel + "<br/>" + route + "<br/>Crowd: " + occTxt
             );
-            marker.bindTooltip(id + " · " + Math.round(speedKmh) + " km/h (sim)", {
+            marker.bindTooltip(id + " · " + Math.round(speedKmh) + " km/h", {
               permanent: true,
               direction: "top",
               offset: [0, -16],
@@ -1432,8 +1485,9 @@
               bearing: brStart,
               marker: marker,
               path: routePoints,
-              pathIndex: 0,
+              pathIndex: startIndex,
               segmentT: 0,
+              dwellUntilMs: 0,
               trailHistory: [[lat, lng]],
               trailLine: trailLine,
               lastUpdatedMs: (function () {
@@ -1448,9 +1502,8 @@
             card.className = "card";
             card.setAttribute("data-ride-id", id);
             card.innerHTML =
-              '<div class="row"><div><div class="unit">' + id + '</div><div class="vtype"><span class="vtag ' + vtype + '">' + vtagLabel + "</span></div><div class=\"route\">" + route + '</div></div><div class="eta">-- min ETA</div></div>' +
-              '<div class="crowd"><span>Crowd Level</span><span style="color:' + (high ? "#f59e0b" : "#5eead4") + ';">' + (high ? "High Density" : "Low Density") + '</span></div>' +
-              '<div class="barwrap"><div class="bar ' + (high ? "high" : "low") + '" style="width:' + pct + '%;"></div></div>';
+              '<div class="row"><div><div class="vtype"><span class="vtag ' + vtype + '">' + vtagLabel + "</span></div><div class=\"route\">" + route + '</div></div><div class="eta">-- min ETA</div></div>' +
+              '<div class="crowd"><span>' + id + '</span><span style="color:' + (high ? "#f59e0b" : "#5eead4") + ';">' + (high ? "Mataas ang sakay" : "Magaan ang sakay") + '</span></div>';
             etaList.appendChild(card);
             etaByRide[id] = card.querySelector(".eta");
 
@@ -1472,6 +1525,25 @@
 
           if (!rides.length && etaList) {
             etaList.innerHTML = "<div class=\"card\">No units found in <code>data.xml</code>. Add <code>fleet_management &gt; unit</code> entries with route points.</div>";
+          }
+
+          if (routeGroup && coreLoopStops.length > 1) {
+            L.polyline(coreLoopStops.map(function (s) { return s.latlng; }), {
+              color: "#22d3ee",
+              weight: 4,
+              opacity: 0.65
+            }).addTo(routeGroup);
+            coreLoopStops.forEach(function (stop) {
+              L.circleMarker(stop.latlng, {
+                radius: 5,
+                color: "#22d3ee",
+                weight: 2,
+                fillColor: "#67e8f9",
+                fillOpacity: 0.95
+              })
+                .addTo(routeGroup)
+                .bindTooltip(stop.name, { permanent: false, direction: "top", offset: [0, -8] });
+            });
           }
 
           function fillRideSelects() {
