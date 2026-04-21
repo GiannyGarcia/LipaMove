@@ -1,6 +1,12 @@
 -- LipaMove commuter tracking — prototype relational model (MySQL 8+ / MariaDB compatible)
 -- Supports: fleet registry, routes as ordered waypoints, live positions, and commuter-facing queries.
 
+CREATE DATABASE IF NOT EXISTS lipamove
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE lipamove;
+
 SET NAMES utf8mb4;
 
 CREATE TABLE IF NOT EXISTS operators (

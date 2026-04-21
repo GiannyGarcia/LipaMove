@@ -9,6 +9,7 @@
       <head>
         <title>LipaMove Commuter App</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="icon" href="Lipa Move log.png" type="image/png"/>
         <style>
           html, body {
             margin: 0;
@@ -77,7 +78,8 @@
             justify-content: space-between;
             align-items: center;
           }
-          .brand { color: #0ea5e9; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+          .brand-lockup { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
+          .brand-logo { height: 40px; width: auto; max-width: min(200px, 50vw); object-fit: contain; object-position: left center; display: block; filter: drop-shadow(0 1px 2px rgba(0,0,0,.35)); }
           .headline { margin: 4px 0 0; font-size: 20px; font-weight: 700; }
           .pill {
             color: #2dd4bf;
@@ -253,8 +255,8 @@
             <div class="map-tint"></div>
             <div class="overlay">
               <div class="top glass">
-                <div>
-                  <div class="brand">LipaMove</div>
+                <div class="brand-lockup">
+                  <img src="Lipa Move log.png" class="brand-logo" alt="LipaMove"/>
                   <div class="headline">Track rides &amp; ETAs</div>
                 </div>
                 <div class="pill">Live Tracking</div>

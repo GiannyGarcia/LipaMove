@@ -4,23 +4,67 @@
     <fleet_management>
         <unit id="LM-BTR-01" vehicle_type="batrasco" speed_kph="26">
             <operator>BATRASCO</operator>
-            <route_assignment>Bayan (T.M. Kalaw) - UB Lipa - SM Lipa - The Outlets Loop</route_assignment>
+            <route_assignment>Ayala Hwy + J.P. Laurel only (not Manila-Batangas Bypass): Bayan - SM - Marauoy/Leviste - UB - Outlets - return</route_assignment>
             <location lat="13.9425265" lng="121.1632107">Bayan - T.M. Kalaw Street</location>
             <last_updated>2026-04-14T08:42:00+08:00</last_updated>
-            <route_path>
-                <point lat="13.9425265" lng="121.1632107">Bayan - T.M. Kalaw Street</point>
-                <point lat="13.9482000" lng="121.1627000">J.P. Laurel Highway northbound</point>
-                <point lat="13.9561000" lng="121.1618000">J.P. Laurel Highway corridor</point>
-                <point lat="13.9681910" lng="121.1595069">University of Batangas Lipa City</point>
-                <point lat="13.9629000" lng="121.1609000">Leviste to Laurel southbound</point>
-                <point lat="13.9581000" lng="121.1621000">Ayala Highway approach</point>
+                        <route_path>
+<point lat="13.9425265" lng="121.1632107">Bayan - T.M. Kalaw Street</point>
+                <point lat="13.9427560" lng="121.1665400">Ayala Highway</point>
+                <point lat="13.9441970" lng="121.1666720">Ayala Highway</point>
+                <point lat="13.9467440" lng="121.1660520">Ayala Highway</point>
+                <point lat="13.9495510" lng="121.1657650">Ayala Highway</point>
+                <point lat="13.9519550" lng="121.1657150">Ayala Highway</point>
+                <point lat="13.9542110" lng="121.1657180">Ayala Highway</point>
+                <point lat="13.9553360" lng="121.1655550">Ayala Highway</point>
+                <point lat="13.9544340" lng="121.1648930">Ayala Highway</point>
+                <point lat="13.9526270" lng="121.1622160">Ayala Highway</point>
+                <point lat="13.9535360" lng="121.1640100">Ayala Highway</point>
+                <point lat="13.9552320" lng="121.1655670">Ayala Highway</point>
+                <point lat="13.9549900" lng="121.1652690">Ayala Highway</point>
+                <point lat="13.9546750" lng="121.1645500">Ayala Highway</point>
                 <point lat="13.9547813" lng="121.1630958">SM Lipa Terminal</point>
-                <point lat="13.9705000" lng="121.1655000">J.P. Laurel Highway to LIMA</point>
-                <point lat="13.9898000" lng="121.1684000">LIMA Estate main corridor</point>
+                <point lat="13.9558160" lng="121.1624190">Ayala Highway</point>
+                <point lat="13.9556330" lng="121.1621090">Ayala Highway</point>
+                <point lat="13.9551640" lng="121.1618600">Leviste Dr / UB access</point>
+                <point lat="13.9555850" lng="121.1615680">Leviste Dr / UB access</point>
+                <point lat="13.9575330" lng="121.1619470">Leviste Dr / UB access</point>
+                <point lat="13.9595800" lng="121.1629640">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9603190" lng="121.1656100">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9619740" lng="121.1656220">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9679650" lng="121.1659040">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9697730" lng="121.1662910">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9703920" lng="121.1646270">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9694130" lng="121.1596840">Leviste Dr / UB access</point>
+                <point lat="13.9681910" lng="121.1595069">University of Batangas Lipa (Leviste Dr)</point>
+                <point lat="13.9706040" lng="121.1631060">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9709880" lng="121.1648630">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9703670" lng="121.1649940">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9713340" lng="121.1666140">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9778940" lng="121.1677680">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9824750" lng="121.1679950">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9894380" lng="121.1680930">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9947600" lng="121.1680870">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="14.0009880" lng="121.1669000">President J.P. Laurel Highway - LIMA / Outlets</point>
+                <point lat="14.0088630" lng="121.1671460">President J.P. Laurel Highway - LIMA / Outlets</point>
                 <point lat="14.0095011" lng="121.1697526">The Outlets at Lipa</point>
-                <point lat="13.9892000" lng="121.1682000">LIMA Estate southbound</point>
-                <point lat="13.9701000" lng="121.1652000">J.P. Laurel Highway southbound</point>
-                <point lat="13.9549000" lng="121.1630000">SM Lipa corridor</point>
+                <point lat="14.0076690" lng="121.1656600">President J.P. Laurel Highway - LIMA / Outlets</point>
+                <point lat="13.9985180" lng="121.1674430">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9940170" lng="121.1681540">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9870470" lng="121.1680790">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9808990" lng="121.1679320">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9762480" lng="121.1676370">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9700890" lng="121.1663560">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9652210" lng="121.1656880">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9603960" lng="121.1656510">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9563140" lng="121.1656220">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9551700" lng="121.1653640">Ayala Highway</point>
+                <point lat="13.9534010" lng="121.1635320">Ayala Highway</point>
+                <point lat="13.9529520" lng="121.1630100">Ayala Highway</point>
+                <point lat="13.9533550" lng="121.1628900">Ayala Highway</point>
+                <point lat="13.9516630" lng="121.1604740">Leviste Dr / UB access</point>
+                <point lat="13.9507770" lng="121.1598860">Leviste Dr / UB access</point>
+                <point lat="13.9466980" lng="121.1616540">Leviste Dr / UB access</point>
+                <point lat="13.9429050" lng="121.1630850">Bayan - T.M. Kalaw Street (loop)</point>
             </route_path>
             <current_occupancy value="22">High Density</current_occupancy>
             <efficiency_score>94%</efficiency_score>
@@ -28,23 +72,67 @@
         </unit>
         <unit id="LM-BTR-02" vehicle_type="batrasco" speed_kph="25">
             <operator>BATRASCO</operator>
-            <route_assignment>Bayan (T.M. Kalaw) - UB Lipa - SM Lipa - The Outlets Loop</route_assignment>
+            <route_assignment>Ayala Hwy + J.P. Laurel only (not Manila-Batangas Bypass): Bayan - SM - Marauoy/Leviste - UB - Outlets - return</route_assignment>
             <location lat="13.9681910" lng="121.1595069">University of Batangas Lipa City</location>
             <last_updated>2026-04-14T08:42:10+08:00</last_updated>
-            <route_path>
-                <point lat="13.9425265" lng="121.1632107">Bayan - T.M. Kalaw Street</point>
-                <point lat="13.9482000" lng="121.1627000">J.P. Laurel Highway northbound</point>
-                <point lat="13.9561000" lng="121.1618000">J.P. Laurel Highway corridor</point>
-                <point lat="13.9681910" lng="121.1595069">University of Batangas Lipa City</point>
-                <point lat="13.9629000" lng="121.1609000">Leviste to Laurel southbound</point>
-                <point lat="13.9581000" lng="121.1621000">Ayala Highway approach</point>
+                        <route_path>
+<point lat="13.9425265" lng="121.1632107">Bayan - T.M. Kalaw Street</point>
+                <point lat="13.9427560" lng="121.1665400">Ayala Highway</point>
+                <point lat="13.9441970" lng="121.1666720">Ayala Highway</point>
+                <point lat="13.9467440" lng="121.1660520">Ayala Highway</point>
+                <point lat="13.9495510" lng="121.1657650">Ayala Highway</point>
+                <point lat="13.9519550" lng="121.1657150">Ayala Highway</point>
+                <point lat="13.9542110" lng="121.1657180">Ayala Highway</point>
+                <point lat="13.9553360" lng="121.1655550">Ayala Highway</point>
+                <point lat="13.9544340" lng="121.1648930">Ayala Highway</point>
+                <point lat="13.9526270" lng="121.1622160">Ayala Highway</point>
+                <point lat="13.9535360" lng="121.1640100">Ayala Highway</point>
+                <point lat="13.9552320" lng="121.1655670">Ayala Highway</point>
+                <point lat="13.9549900" lng="121.1652690">Ayala Highway</point>
+                <point lat="13.9546750" lng="121.1645500">Ayala Highway</point>
                 <point lat="13.9547813" lng="121.1630958">SM Lipa Terminal</point>
-                <point lat="13.9705000" lng="121.1655000">J.P. Laurel Highway to LIMA</point>
-                <point lat="13.9898000" lng="121.1684000">LIMA Estate main corridor</point>
+                <point lat="13.9558160" lng="121.1624190">Ayala Highway</point>
+                <point lat="13.9556330" lng="121.1621090">Ayala Highway</point>
+                <point lat="13.9551640" lng="121.1618600">Leviste Dr / UB access</point>
+                <point lat="13.9555850" lng="121.1615680">Leviste Dr / UB access</point>
+                <point lat="13.9575330" lng="121.1619470">Leviste Dr / UB access</point>
+                <point lat="13.9595800" lng="121.1629640">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9603190" lng="121.1656100">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9619740" lng="121.1656220">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9679650" lng="121.1659040">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9697730" lng="121.1662910">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9703920" lng="121.1646270">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9694130" lng="121.1596840">Leviste Dr / UB access</point>
+                <point lat="13.9681910" lng="121.1595069">University of Batangas Lipa (Leviste Dr)</point>
+                <point lat="13.9706040" lng="121.1631060">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9709880" lng="121.1648630">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9703670" lng="121.1649940">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9713340" lng="121.1666140">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9778940" lng="121.1677680">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9824750" lng="121.1679950">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9894380" lng="121.1680930">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9947600" lng="121.1680870">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="14.0009880" lng="121.1669000">President J.P. Laurel Highway - LIMA / Outlets</point>
+                <point lat="14.0088630" lng="121.1671460">President J.P. Laurel Highway - LIMA / Outlets</point>
                 <point lat="14.0095011" lng="121.1697526">The Outlets at Lipa</point>
-                <point lat="13.9892000" lng="121.1682000">LIMA Estate southbound</point>
-                <point lat="13.9701000" lng="121.1652000">J.P. Laurel Highway southbound</point>
-                <point lat="13.9549000" lng="121.1630000">SM Lipa corridor</point>
+                <point lat="14.0076690" lng="121.1656600">President J.P. Laurel Highway - LIMA / Outlets</point>
+                <point lat="13.9985180" lng="121.1674430">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9940170" lng="121.1681540">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9870470" lng="121.1680790">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9808990" lng="121.1679320">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9762480" lng="121.1676370">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9700890" lng="121.1663560">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9652210" lng="121.1656880">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9603960" lng="121.1656510">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9563140" lng="121.1656220">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9551700" lng="121.1653640">Ayala Highway</point>
+                <point lat="13.9534010" lng="121.1635320">Ayala Highway</point>
+                <point lat="13.9529520" lng="121.1630100">Ayala Highway</point>
+                <point lat="13.9533550" lng="121.1628900">Ayala Highway</point>
+                <point lat="13.9516630" lng="121.1604740">Leviste Dr / UB access</point>
+                <point lat="13.9507770" lng="121.1598860">Leviste Dr / UB access</point>
+                <point lat="13.9466980" lng="121.1616540">Leviste Dr / UB access</point>
+                <point lat="13.9429050" lng="121.1630850">Bayan - T.M. Kalaw Street (loop)</point>
             </route_path>
             <current_occupancy value="8">Low Density</current_occupancy>
             <efficiency_score>88%</efficiency_score>
@@ -52,23 +140,67 @@
         </unit>
         <unit id="LM-BTR-03" vehicle_type="batrasco" speed_kph="26">
             <operator>BATRASCO</operator>
-            <route_assignment>Bayan (T.M. Kalaw) - UB Lipa - SM Lipa - The Outlets Loop</route_assignment>
+            <route_assignment>Ayala Hwy + J.P. Laurel only (not Manila-Batangas Bypass): Bayan - SM - Marauoy/Leviste - UB - Outlets - return</route_assignment>
             <location lat="13.9547813" lng="121.1630958">SM Lipa Terminal</location>
             <last_updated>2026-04-14T08:41:54+08:00</last_updated>
-            <route_path>
-                <point lat="13.9425265" lng="121.1632107">Bayan - T.M. Kalaw Street</point>
-                <point lat="13.9482000" lng="121.1627000">J.P. Laurel Highway northbound</point>
-                <point lat="13.9561000" lng="121.1618000">J.P. Laurel Highway corridor</point>
-                <point lat="13.9681910" lng="121.1595069">University of Batangas Lipa City</point>
-                <point lat="13.9629000" lng="121.1609000">Leviste to Laurel southbound</point>
-                <point lat="13.9581000" lng="121.1621000">Ayala Highway approach</point>
+                        <route_path>
+<point lat="13.9425265" lng="121.1632107">Bayan - T.M. Kalaw Street</point>
+                <point lat="13.9427560" lng="121.1665400">Ayala Highway</point>
+                <point lat="13.9441970" lng="121.1666720">Ayala Highway</point>
+                <point lat="13.9467440" lng="121.1660520">Ayala Highway</point>
+                <point lat="13.9495510" lng="121.1657650">Ayala Highway</point>
+                <point lat="13.9519550" lng="121.1657150">Ayala Highway</point>
+                <point lat="13.9542110" lng="121.1657180">Ayala Highway</point>
+                <point lat="13.9553360" lng="121.1655550">Ayala Highway</point>
+                <point lat="13.9544340" lng="121.1648930">Ayala Highway</point>
+                <point lat="13.9526270" lng="121.1622160">Ayala Highway</point>
+                <point lat="13.9535360" lng="121.1640100">Ayala Highway</point>
+                <point lat="13.9552320" lng="121.1655670">Ayala Highway</point>
+                <point lat="13.9549900" lng="121.1652690">Ayala Highway</point>
+                <point lat="13.9546750" lng="121.1645500">Ayala Highway</point>
                 <point lat="13.9547813" lng="121.1630958">SM Lipa Terminal</point>
-                <point lat="13.9705000" lng="121.1655000">J.P. Laurel Highway to LIMA</point>
-                <point lat="13.9898000" lng="121.1684000">LIMA Estate main corridor</point>
+                <point lat="13.9558160" lng="121.1624190">Ayala Highway</point>
+                <point lat="13.9556330" lng="121.1621090">Ayala Highway</point>
+                <point lat="13.9551640" lng="121.1618600">Leviste Dr / UB access</point>
+                <point lat="13.9555850" lng="121.1615680">Leviste Dr / UB access</point>
+                <point lat="13.9575330" lng="121.1619470">Leviste Dr / UB access</point>
+                <point lat="13.9595800" lng="121.1629640">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9603190" lng="121.1656100">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9619740" lng="121.1656220">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9679650" lng="121.1659040">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9697730" lng="121.1662910">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9703920" lng="121.1646270">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9694130" lng="121.1596840">Leviste Dr / UB access</point>
+                <point lat="13.9681910" lng="121.1595069">University of Batangas Lipa (Leviste Dr)</point>
+                <point lat="13.9706040" lng="121.1631060">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9709880" lng="121.1648630">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9703670" lng="121.1649940">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9713340" lng="121.1666140">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9778940" lng="121.1677680">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9824750" lng="121.1679950">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9894380" lng="121.1680930">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9947600" lng="121.1680870">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="14.0009880" lng="121.1669000">President J.P. Laurel Highway - LIMA / Outlets</point>
+                <point lat="14.0088630" lng="121.1671460">President J.P. Laurel Highway - LIMA / Outlets</point>
                 <point lat="14.0095011" lng="121.1697526">The Outlets at Lipa</point>
-                <point lat="13.9892000" lng="121.1682000">LIMA Estate southbound</point>
-                <point lat="13.9701000" lng="121.1652000">J.P. Laurel Highway southbound</point>
-                <point lat="13.9549000" lng="121.1630000">SM Lipa corridor</point>
+                <point lat="14.0076690" lng="121.1656600">President J.P. Laurel Highway - LIMA / Outlets</point>
+                <point lat="13.9985180" lng="121.1674430">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9940170" lng="121.1681540">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9870470" lng="121.1680790">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9808990" lng="121.1679320">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9762480" lng="121.1676370">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9700890" lng="121.1663560">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9652210" lng="121.1656880">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9603960" lng="121.1656510">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9563140" lng="121.1656220">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9551700" lng="121.1653640">Ayala Highway</point>
+                <point lat="13.9534010" lng="121.1635320">Ayala Highway</point>
+                <point lat="13.9529520" lng="121.1630100">Ayala Highway</point>
+                <point lat="13.9533550" lng="121.1628900">Ayala Highway</point>
+                <point lat="13.9516630" lng="121.1604740">Leviste Dr / UB access</point>
+                <point lat="13.9507770" lng="121.1598860">Leviste Dr / UB access</point>
+                <point lat="13.9466980" lng="121.1616540">Leviste Dr / UB access</point>
+                <point lat="13.9429050" lng="121.1630850">Bayan - T.M. Kalaw Street (loop)</point>
             </route_path>
             <current_occupancy value="25">High Density</current_occupancy>
             <efficiency_score>85%</efficiency_score>
@@ -76,23 +208,67 @@
         </unit>
         <unit id="LM-BTR-04" vehicle_type="batrasco" speed_kph="25">
             <operator>BATRASCO</operator>
-            <route_assignment>Bayan (T.M. Kalaw) - UB Lipa - SM Lipa - The Outlets Loop</route_assignment>
+            <route_assignment>Ayala Hwy + J.P. Laurel only (not Manila-Batangas Bypass): Bayan - SM - Marauoy/Leviste - UB - Outlets - return</route_assignment>
             <location lat="14.0095011" lng="121.1697526">The Outlets at Lipa</location>
             <last_updated>2026-04-14T08:42:04+08:00</last_updated>
-            <route_path>
-                <point lat="13.9425265" lng="121.1632107">Bayan - T.M. Kalaw Street</point>
-                <point lat="13.9482000" lng="121.1627000">J.P. Laurel Highway northbound</point>
-                <point lat="13.9561000" lng="121.1618000">J.P. Laurel Highway corridor</point>
-                <point lat="13.9681910" lng="121.1595069">University of Batangas Lipa City</point>
-                <point lat="13.9629000" lng="121.1609000">Leviste to Laurel southbound</point>
-                <point lat="13.9581000" lng="121.1621000">Ayala Highway approach</point>
+                        <route_path>
+<point lat="13.9425265" lng="121.1632107">Bayan - T.M. Kalaw Street</point>
+                <point lat="13.9427560" lng="121.1665400">Ayala Highway</point>
+                <point lat="13.9441970" lng="121.1666720">Ayala Highway</point>
+                <point lat="13.9467440" lng="121.1660520">Ayala Highway</point>
+                <point lat="13.9495510" lng="121.1657650">Ayala Highway</point>
+                <point lat="13.9519550" lng="121.1657150">Ayala Highway</point>
+                <point lat="13.9542110" lng="121.1657180">Ayala Highway</point>
+                <point lat="13.9553360" lng="121.1655550">Ayala Highway</point>
+                <point lat="13.9544340" lng="121.1648930">Ayala Highway</point>
+                <point lat="13.9526270" lng="121.1622160">Ayala Highway</point>
+                <point lat="13.9535360" lng="121.1640100">Ayala Highway</point>
+                <point lat="13.9552320" lng="121.1655670">Ayala Highway</point>
+                <point lat="13.9549900" lng="121.1652690">Ayala Highway</point>
+                <point lat="13.9546750" lng="121.1645500">Ayala Highway</point>
                 <point lat="13.9547813" lng="121.1630958">SM Lipa Terminal</point>
-                <point lat="13.9705000" lng="121.1655000">J.P. Laurel Highway to LIMA</point>
-                <point lat="13.9898000" lng="121.1684000">LIMA Estate main corridor</point>
+                <point lat="13.9558160" lng="121.1624190">Ayala Highway</point>
+                <point lat="13.9556330" lng="121.1621090">Ayala Highway</point>
+                <point lat="13.9551640" lng="121.1618600">Leviste Dr / UB access</point>
+                <point lat="13.9555850" lng="121.1615680">Leviste Dr / UB access</point>
+                <point lat="13.9575330" lng="121.1619470">Leviste Dr / UB access</point>
+                <point lat="13.9595800" lng="121.1629640">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9603190" lng="121.1656100">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9619740" lng="121.1656220">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9679650" lng="121.1659040">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9697730" lng="121.1662910">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9703920" lng="121.1646270">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9694130" lng="121.1596840">Leviste Dr / UB access</point>
+                <point lat="13.9681910" lng="121.1595069">University of Batangas Lipa (Leviste Dr)</point>
+                <point lat="13.9706040" lng="121.1631060">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9709880" lng="121.1648630">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9703670" lng="121.1649940">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9713340" lng="121.1666140">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9778940" lng="121.1677680">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9824750" lng="121.1679950">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9894380" lng="121.1680930">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9947600" lng="121.1680870">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="14.0009880" lng="121.1669000">President J.P. Laurel Highway - LIMA / Outlets</point>
+                <point lat="14.0088630" lng="121.1671460">President J.P. Laurel Highway - LIMA / Outlets</point>
                 <point lat="14.0095011" lng="121.1697526">The Outlets at Lipa</point>
-                <point lat="13.9892000" lng="121.1682000">LIMA Estate southbound</point>
-                <point lat="13.9701000" lng="121.1652000">J.P. Laurel Highway southbound</point>
-                <point lat="13.9549000" lng="121.1630000">SM Lipa corridor</point>
+                <point lat="14.0076690" lng="121.1656600">President J.P. Laurel Highway - LIMA / Outlets</point>
+                <point lat="13.9985180" lng="121.1674430">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9940170" lng="121.1681540">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9870470" lng="121.1680790">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9808990" lng="121.1679320">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9762480" lng="121.1676370">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9700890" lng="121.1663560">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9652210" lng="121.1656880">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9603960" lng="121.1656510">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9563140" lng="121.1656220">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9551700" lng="121.1653640">Ayala Highway</point>
+                <point lat="13.9534010" lng="121.1635320">Ayala Highway</point>
+                <point lat="13.9529520" lng="121.1630100">Ayala Highway</point>
+                <point lat="13.9533550" lng="121.1628900">Ayala Highway</point>
+                <point lat="13.9516630" lng="121.1604740">Leviste Dr / UB access</point>
+                <point lat="13.9507770" lng="121.1598860">Leviste Dr / UB access</point>
+                <point lat="13.9466980" lng="121.1616540">Leviste Dr / UB access</point>
+                <point lat="13.9429050" lng="121.1630850">Bayan - T.M. Kalaw Street (loop)</point>
             </route_path>
             <current_occupancy value="10">Low Density</current_occupancy>
             <efficiency_score>80%</efficiency_score>
@@ -100,23 +276,67 @@
         </unit>
         <unit id="LM-JP-01" vehicle_type="jeepney" speed_kph="21">
             <operator>Traditional PUJ</operator>
-            <route_assignment>Bayan (T.M. Kalaw) - UB Lipa - SM Lipa - The Outlets Loop (Jeepney)</route_assignment>
+            <route_assignment>Ayala Hwy + J.P. Laurel only (Jeepney, not Manila-Batangas Bypass): Bayan - SM - UB - Outlets - return</route_assignment>
             <location lat="13.9425265" lng="121.1632107">Bayan - T.M. Kalaw Street</location>
             <last_updated>2026-04-14T08:41:20+08:00</last_updated>
-            <route_path>
-                <point lat="13.9425265" lng="121.1632107">Bayan - T.M. Kalaw Street</point>
-                <point lat="13.9482000" lng="121.1627000">J.P. Laurel Highway northbound</point>
-                <point lat="13.9561000" lng="121.1618000">J.P. Laurel Highway corridor</point>
-                <point lat="13.9681910" lng="121.1595069">University of Batangas Lipa City</point>
-                <point lat="13.9629000" lng="121.1609000">Leviste to Laurel southbound</point>
-                <point lat="13.9581000" lng="121.1621000">Ayala Highway approach</point>
+                        <route_path>
+<point lat="13.9425265" lng="121.1632107">Bayan - T.M. Kalaw Street</point>
+                <point lat="13.9427560" lng="121.1665400">Ayala Highway</point>
+                <point lat="13.9441970" lng="121.1666720">Ayala Highway</point>
+                <point lat="13.9467440" lng="121.1660520">Ayala Highway</point>
+                <point lat="13.9495510" lng="121.1657650">Ayala Highway</point>
+                <point lat="13.9519550" lng="121.1657150">Ayala Highway</point>
+                <point lat="13.9542110" lng="121.1657180">Ayala Highway</point>
+                <point lat="13.9553360" lng="121.1655550">Ayala Highway</point>
+                <point lat="13.9544340" lng="121.1648930">Ayala Highway</point>
+                <point lat="13.9526270" lng="121.1622160">Ayala Highway</point>
+                <point lat="13.9535360" lng="121.1640100">Ayala Highway</point>
+                <point lat="13.9552320" lng="121.1655670">Ayala Highway</point>
+                <point lat="13.9549900" lng="121.1652690">Ayala Highway</point>
+                <point lat="13.9546750" lng="121.1645500">Ayala Highway</point>
                 <point lat="13.9547813" lng="121.1630958">SM Lipa Terminal</point>
-                <point lat="13.9705000" lng="121.1655000">J.P. Laurel Highway to LIMA</point>
-                <point lat="13.9898000" lng="121.1684000">LIMA Estate main corridor</point>
+                <point lat="13.9558160" lng="121.1624190">Ayala Highway</point>
+                <point lat="13.9556330" lng="121.1621090">Ayala Highway</point>
+                <point lat="13.9551640" lng="121.1618600">Leviste Dr / UB access</point>
+                <point lat="13.9555850" lng="121.1615680">Leviste Dr / UB access</point>
+                <point lat="13.9575330" lng="121.1619470">Leviste Dr / UB access</point>
+                <point lat="13.9595800" lng="121.1629640">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9603190" lng="121.1656100">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9619740" lng="121.1656220">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9679650" lng="121.1659040">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9697730" lng="121.1662910">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9703920" lng="121.1646270">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9694130" lng="121.1596840">Leviste Dr / UB access</point>
+                <point lat="13.9681910" lng="121.1595069">University of Batangas Lipa (Leviste Dr)</point>
+                <point lat="13.9706040" lng="121.1631060">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9709880" lng="121.1648630">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9703670" lng="121.1649940">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9713340" lng="121.1666140">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9778940" lng="121.1677680">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9824750" lng="121.1679950">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9894380" lng="121.1680930">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9947600" lng="121.1680870">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="14.0009880" lng="121.1669000">President J.P. Laurel Highway - LIMA / Outlets</point>
+                <point lat="14.0088630" lng="121.1671460">President J.P. Laurel Highway - LIMA / Outlets</point>
                 <point lat="14.0095011" lng="121.1697526">The Outlets at Lipa</point>
-                <point lat="13.9892000" lng="121.1682000">LIMA Estate southbound</point>
-                <point lat="13.9701000" lng="121.1652000">J.P. Laurel Highway southbound</point>
-                <point lat="13.9549000" lng="121.1630000">SM Lipa corridor</point>
+                <point lat="14.0076690" lng="121.1656600">President J.P. Laurel Highway - LIMA / Outlets</point>
+                <point lat="13.9985180" lng="121.1674430">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9940170" lng="121.1681540">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9870470" lng="121.1680790">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9808990" lng="121.1679320">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9762480" lng="121.1676370">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9700890" lng="121.1663560">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9652210" lng="121.1656880">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9603960" lng="121.1656510">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9563140" lng="121.1656220">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9551700" lng="121.1653640">Ayala Highway</point>
+                <point lat="13.9534010" lng="121.1635320">Ayala Highway</point>
+                <point lat="13.9529520" lng="121.1630100">Ayala Highway</point>
+                <point lat="13.9533550" lng="121.1628900">Ayala Highway</point>
+                <point lat="13.9516630" lng="121.1604740">Leviste Dr / UB access</point>
+                <point lat="13.9507770" lng="121.1598860">Leviste Dr / UB access</point>
+                <point lat="13.9466980" lng="121.1616540">Leviste Dr / UB access</point>
+                <point lat="13.9429050" lng="121.1630850">Bayan - T.M. Kalaw Street (loop)</point>
             </route_path>
             <current_occupancy value="16">High Density</current_occupancy>
             <efficiency_score>78%</efficiency_score>
@@ -124,23 +344,67 @@
         </unit>
         <unit id="LM-JP-02" vehicle_type="jeepney" speed_kph="21">
             <operator>Traditional PUJ</operator>
-            <route_assignment>Bayan (T.M. Kalaw) - UB Lipa - SM Lipa - The Outlets Loop (Jeepney)</route_assignment>
+            <route_assignment>Ayala Hwy + J.P. Laurel only (Jeepney, not Manila-Batangas Bypass): Bayan - SM - UB - Outlets - return</route_assignment>
             <location lat="14.0095011" lng="121.1697526">The Outlets at Lipa</location>
             <last_updated>2026-04-14T08:41:45+08:00</last_updated>
-            <route_path>
-                <point lat="13.9425265" lng="121.1632107">Bayan - T.M. Kalaw Street</point>
-                <point lat="13.9482000" lng="121.1627000">J.P. Laurel Highway northbound</point>
-                <point lat="13.9561000" lng="121.1618000">J.P. Laurel Highway corridor</point>
-                <point lat="13.9681910" lng="121.1595069">University of Batangas Lipa City</point>
-                <point lat="13.9629000" lng="121.1609000">Leviste to Laurel southbound</point>
-                <point lat="13.9581000" lng="121.1621000">Ayala Highway approach</point>
+                        <route_path>
+<point lat="13.9425265" lng="121.1632107">Bayan - T.M. Kalaw Street</point>
+                <point lat="13.9427560" lng="121.1665400">Ayala Highway</point>
+                <point lat="13.9441970" lng="121.1666720">Ayala Highway</point>
+                <point lat="13.9467440" lng="121.1660520">Ayala Highway</point>
+                <point lat="13.9495510" lng="121.1657650">Ayala Highway</point>
+                <point lat="13.9519550" lng="121.1657150">Ayala Highway</point>
+                <point lat="13.9542110" lng="121.1657180">Ayala Highway</point>
+                <point lat="13.9553360" lng="121.1655550">Ayala Highway</point>
+                <point lat="13.9544340" lng="121.1648930">Ayala Highway</point>
+                <point lat="13.9526270" lng="121.1622160">Ayala Highway</point>
+                <point lat="13.9535360" lng="121.1640100">Ayala Highway</point>
+                <point lat="13.9552320" lng="121.1655670">Ayala Highway</point>
+                <point lat="13.9549900" lng="121.1652690">Ayala Highway</point>
+                <point lat="13.9546750" lng="121.1645500">Ayala Highway</point>
                 <point lat="13.9547813" lng="121.1630958">SM Lipa Terminal</point>
-                <point lat="13.9705000" lng="121.1655000">J.P. Laurel Highway to LIMA</point>
-                <point lat="13.9898000" lng="121.1684000">LIMA Estate main corridor</point>
+                <point lat="13.9558160" lng="121.1624190">Ayala Highway</point>
+                <point lat="13.9556330" lng="121.1621090">Ayala Highway</point>
+                <point lat="13.9551640" lng="121.1618600">Leviste Dr / UB access</point>
+                <point lat="13.9555850" lng="121.1615680">Leviste Dr / UB access</point>
+                <point lat="13.9575330" lng="121.1619470">Leviste Dr / UB access</point>
+                <point lat="13.9595800" lng="121.1629640">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9603190" lng="121.1656100">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9619740" lng="121.1656220">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9679650" lng="121.1659040">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9697730" lng="121.1662910">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9703920" lng="121.1646270">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9694130" lng="121.1596840">Leviste Dr / UB access</point>
+                <point lat="13.9681910" lng="121.1595069">University of Batangas Lipa (Leviste Dr)</point>
+                <point lat="13.9706040" lng="121.1631060">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9709880" lng="121.1648630">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9703670" lng="121.1649940">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9713340" lng="121.1666140">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9778940" lng="121.1677680">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9824750" lng="121.1679950">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9894380" lng="121.1680930">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9947600" lng="121.1680870">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="14.0009880" lng="121.1669000">President J.P. Laurel Highway - LIMA / Outlets</point>
+                <point lat="14.0088630" lng="121.1671460">President J.P. Laurel Highway - LIMA / Outlets</point>
                 <point lat="14.0095011" lng="121.1697526">The Outlets at Lipa</point>
-                <point lat="13.9892000" lng="121.1682000">LIMA Estate southbound</point>
-                <point lat="13.9701000" lng="121.1652000">J.P. Laurel Highway southbound</point>
-                <point lat="13.9549000" lng="121.1630000">SM Lipa corridor</point>
+                <point lat="14.0076690" lng="121.1656600">President J.P. Laurel Highway - LIMA / Outlets</point>
+                <point lat="13.9985180" lng="121.1674430">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9940170" lng="121.1681540">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9870470" lng="121.1680790">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9808990" lng="121.1679320">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9762480" lng="121.1676370">President J.P. Laurel Highway - toward LIMA</point>
+                <point lat="13.9700890" lng="121.1663560">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9652210" lng="121.1656880">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9603960" lng="121.1656510">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9563140" lng="121.1656220">Ayala Highway / J.P. Laurel (Marauoy)</point>
+                <point lat="13.9551700" lng="121.1653640">Ayala Highway</point>
+                <point lat="13.9534010" lng="121.1635320">Ayala Highway</point>
+                <point lat="13.9529520" lng="121.1630100">Ayala Highway</point>
+                <point lat="13.9533550" lng="121.1628900">Ayala Highway</point>
+                <point lat="13.9516630" lng="121.1604740">Leviste Dr / UB access</point>
+                <point lat="13.9507770" lng="121.1598860">Leviste Dr / UB access</point>
+                <point lat="13.9466980" lng="121.1616540">Leviste Dr / UB access</point>
+                <point lat="13.9429050" lng="121.1630850">Bayan - T.M. Kalaw Street (loop)</point>
             </route_path>
             <current_occupancy value="9">Low Density</current_occupancy>
             <efficiency_score>82%</efficiency_score>

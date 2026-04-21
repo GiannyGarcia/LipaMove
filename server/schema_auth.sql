@@ -1,6 +1,10 @@
--- LipaMove authentication tables (run in MySQL Workbench against your database)
--- Create database first: CREATE DATABASE lipamove CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
--- USE lipamove;
+-- LipaMove authentication tables (MySQL Workbench / mysql CLI)
+
+CREATE DATABASE IF NOT EXISTS lipamove
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE lipamove;
 
 CREATE TABLE IF NOT EXISTS users (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -12,7 +16,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   UNIQUE KEY uq_users_username (username),
   UNIQUE KEY uq_users_email (email),
-  KEY idx_users_phone (phone)
+  UNIQUE KEY uq_users_phone (phone)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS otp_codes (
