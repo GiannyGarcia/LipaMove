@@ -10,8 +10,8 @@ const mysql = require("mysql2/promise");
 const { normalizePhone } = require("./phone");
 
 const PORT = Number(process.env.PORT || 3000);
-// Default to showing dev OTP locally unless explicitly disabled.
-const DEV_OTP = process.env.DEV_RETURN_OTP !== "false";
+// Default to hiding dev OTP unless explicitly enabled.
+const DEV_OTP = process.env.DEV_RETURN_OTP === "true";
 
 const pool = mysql.createPool({
   host: process.env.MYSQL_HOST || "127.0.0.1",
@@ -29,6 +29,52 @@ function randomOtp6() {
 
 function randomToken() {
   return crypto.randomBytes(32).toString("hex");
+}
+
+async function hashOtp(code) {
+  return bcrypt.hash(String(code), 10);
+}
+
+async function verifyOtp(code, hash) {
+  if (!hash) return false;
+  return bcrypt.compare(String(code).trim(), String(hash));
+}
+
+const RATE_LIMIT_MAX = Number(process.env.AUTH_RATE_LIMIT_MAX || 12);
+const RATE_LIMIT_WINDOW_MS = Number(process.env.AUTH_RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000);
+const rateBuckets = new Map();
+const CORS_ALLOWED_ORIGINS = String(process.env.CORS_ALLOWED_ORIGINS || "http://127.0.0.1:3000,http://localhost:3000")
+  .split(",")
+  .map((v) => v.trim())
+  .filter(Boolean);
+
+function authRateLimiter(req, res, next) {
+  try {
+    const ip = (req.ip || req.socket?.remoteAddress || "unknown").toString();
+    const key = `${req.path}:${ip}`;
+    const now = Date.now();
+    let bucket = rateBuckets.get(key);
+    if (!bucket || now - bucket.startedAt >= RATE_LIMIT_WINDOW_MS) {
+      bucket = { startedAt: now, count: 0 };
+    }
+    bucket.count += 1;
+    rateBuckets.set(key, bucket);
+    if (bucket.count > RATE_LIMIT_MAX) {
+      const retryAfterSec = Math.max(1, Math.ceil((RATE_LIMIT_WINDOW_MS - (now - bucket.startedAt)) / 1000));
+      res.setHeader("Retry-After", String(retryAfterSec));
+      return res.status(429).json({ error: "Too many authentication attempts. Please try again later." });
+    }
+    next();
+  } catch (_) {
+    next();
+  }
+}
+
+function corsOriginHandler(origin, callback) {
+  // Allow non-browser and same-origin requests (no Origin header).
+  if (!origin) return callback(null, true);
+  if (CORS_ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+  return callback(new Error("Not allowed by CORS"));
 }
 
 async function cleanupExpiredOtps(conn) {
@@ -56,7 +102,8 @@ async function ensureAuthTables() {
       user_id INT UNSIGNED NULL,
       phone VARCHAR(32) NOT NULL,
       purpose ENUM('signup', 'login') NOT NULL,
-      code_plain VARCHAR(6) NOT NULL,
+      code_hash VARCHAR(255) NOT NULL,
+      code_plain VARCHAR(6) NULL DEFAULT NULL,
       expires_at DATETIME(3) NOT NULL,
       consumed_at DATETIME(3) NULL,
       KEY idx_otp_phone_purpose (phone, purpose),
@@ -76,6 +123,8 @@ async function ensureAuthTables() {
       CONSTRAINT fk_sessions_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`
   );
+  await pool.execute("ALTER TABLE otp_codes ADD COLUMN IF NOT EXISTS code_hash VARCHAR(255) NULL AFTER purpose");
+  await pool.execute("ALTER TABLE otp_codes MODIFY COLUMN code_plain VARCHAR(6) NULL DEFAULT NULL");
 }
 
 function isMissingAuthTableError(e) {
@@ -83,8 +132,9 @@ function isMissingAuthTableError(e) {
 }
 
 const app = express();
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: corsOriginHandler, credentials: true }));
 app.use(express.json());
+app.use("/api/auth", authRateLimiter);
 
 const staticRoot = path.join(__dirname, "..");
 
@@ -168,6 +218,7 @@ app.post("/api/auth/register", async (req, res) => {
     }
     const hash = await bcrypt.hash(password, 10);
     const code = randomOtp6();
+    const codeHash = await hashOtp(code);
     const exp = new Date(Date.now() + 10 * 60 * 1000);
     await conn.beginTransaction();
     const [ins] = await conn.execute(
@@ -179,8 +230,8 @@ app.post("/api/auth/register", async (req, res) => {
       throw new Error("Insert failed");
     }
     await conn.execute(
-      "INSERT INTO otp_codes (user_id, phone, purpose, code_plain, expires_at) VALUES (?,?,?,?,?)",
-      [userId, phoneN, "signup", code, exp]
+      "INSERT INTO otp_codes (user_id, phone, purpose, code_hash, code_plain, expires_at) VALUES (?,?,?,?,?,?)",
+      [userId, phoneN, "signup", codeHash, null, exp]
     );
     await conn.commit();
     const out = {
@@ -228,14 +279,26 @@ app.post("/api/auth/verify-signup", async (req, res) => {
       return res.status(400).json({ error: "This account is already verified. Log in." });
     }
     const [rows] = await conn.execute(
-      `SELECT o.id AS otp_id, o.user_id, o.code_plain, o.expires_at
+      `SELECT o.id AS otp_id, o.user_id, o.code_hash, o.code_plain, o.expires_at
        FROM otp_codes o
        WHERE o.user_id = ? AND o.phone = ? AND o.purpose = 'signup' AND o.consumed_at IS NULL
        ORDER BY o.id DESC LIMIT 1`,
       [uid, phoneN]
     );
     const row = rows[0];
-    if (!row || row.code_plain !== String(code).trim()) {
+    if (!row) {
+      return res.status(400).json({ error: "Invalid or expired OTP" });
+    }
+    let valid = false;
+    if (row.code_hash) {
+      valid = await verifyOtp(code, row.code_hash);
+    } else if (row.code_plain) {
+      valid = row.code_plain === String(code).trim();
+      if (valid) {
+        await conn.execute("UPDATE otp_codes SET code_hash = ?, code_plain = NULL WHERE id = ?", [await hashOtp(code), row.otp_id]);
+      }
+    }
+    if (!valid) {
       return res.status(400).json({ error: "Invalid or expired OTP" });
     }
     if (new Date(row.expires_at) < new Date()) {
@@ -283,11 +346,12 @@ app.post("/api/auth/login", async (req, res) => {
     }
     await conn.execute("DELETE FROM otp_codes WHERE user_id = ? AND purpose = 'login' AND consumed_at IS NULL", [u.id]);
     const code = randomOtp6();
+    const codeHash = await hashOtp(code);
     const exp = new Date(Date.now() + 10 * 60 * 1000);
     const phoneN = normalizePhone(u.phone);
     await conn.execute(
-      "INSERT INTO otp_codes (user_id, phone, purpose, code_plain, expires_at) VALUES (?,?,?,?,?)",
-      [u.id, phoneN, "login", code, exp]
+      "INSERT INTO otp_codes (user_id, phone, purpose, code_hash, code_plain, expires_at) VALUES (?,?,?,?,?,?)",
+      [u.id, phoneN, "login", codeHash, null, exp]
     );
     const out = { ok: true, needsOtp: true, phoneHint: u.phone };
     if (DEV_OTP) out.devOtp = code;
@@ -316,14 +380,26 @@ app.post("/api/auth/verify-login-otp", async (req, res) => {
       return res.status(400).json({ error: "Invalid" });
     }
     const [rows] = await conn.execute(
-      `SELECT o.id AS otp_id, o.code_plain, o.expires_at
+      `SELECT o.id AS otp_id, o.code_hash, o.code_plain, o.expires_at
        FROM otp_codes o
        WHERE o.user_id = ? AND o.purpose = 'login' AND o.consumed_at IS NULL
        ORDER BY o.id DESC LIMIT 1`,
       [u.id]
     );
     const row = rows[0];
-    if (!row || row.code_plain !== String(code).trim()) {
+    if (!row) {
+      return res.status(400).json({ error: "Invalid OTP" });
+    }
+    let valid = false;
+    if (row.code_hash) {
+      valid = await verifyOtp(code, row.code_hash);
+    } else if (row.code_plain) {
+      valid = row.code_plain === String(code).trim();
+      if (valid) {
+        await conn.execute("UPDATE otp_codes SET code_hash = ?, code_plain = NULL WHERE id = ?", [await hashOtp(code), row.otp_id]);
+      }
+    }
+    if (!valid) {
       return res.status(400).json({ error: "Invalid OTP" });
     }
     if (new Date(row.expires_at) < new Date()) {
