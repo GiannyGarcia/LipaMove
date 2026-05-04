@@ -19,10 +19,12 @@ async function asJson(res) {
   }
 }
 
-async function post(path, payload) {
+async function post(path, payload, token) {
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(`${BASE}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify(payload),
   });
   return asJson(res);
@@ -32,6 +34,14 @@ async function get(path, token) {
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
   const res = await fetch(`${BASE}${path}`, { headers });
   return asJson(res);
+}
+
+function randomPhMobile() {
+  let d = "";
+  for (let i = 0; i < 9; i++) {
+    d += String(Math.floor(Math.random() * 10));
+  }
+  return "+639" + d;
 }
 
 async function main() {
@@ -46,49 +56,34 @@ async function main() {
   const id = Date.now().toString(36);
   const username = `smoke_${id}`;
   const email = `${username}@example.com`;
-  const phone = "+63917" + Math.floor(1000000 + Math.random() * 8999999);
+  const phone = randomPhMobile();
   const password = "SmokePass123!";
 
   const reg = await post("/api/auth/register", { username, email, phone, password });
-  if (!reg.ok || !reg.body || reg.body.ok !== true) {
+  if (!reg.ok || !reg.body || !reg.body.token) {
     fail("Register flow failed.", JSON.stringify(reg, null, 2));
   }
-  console.log("Register endpoint passed.");
+  console.log("Register endpoint passed (password-only signup + session).");
 
-  if (!reg.body.devOtp) {
-    console.log("DEV_RETURN_OTP is disabled; stopping after register success (expected for secure default).");
-    process.exit(0);
-  }
-
-  const verifySignup = await post("/api/auth/verify-signup", {
-    userId: reg.body.userId,
-    phone,
-    code: reg.body.devOtp,
-  });
-  if (!verifySignup.ok || !verifySignup.body || !verifySignup.body.token) {
-    fail("Verify-signup flow failed.", JSON.stringify(verifySignup, null, 2));
-  }
-  console.log("Signup OTP verify passed.");
-
-  const me = await get("/api/me", verifySignup.body.token);
+  const me = await get("/api/me", reg.body.token);
   if (!me.ok || !me.body || !me.body.user || me.body.user.username !== username) {
     fail("Authenticated /api/me check failed.", JSON.stringify(me, null, 2));
   }
   console.log("Authenticated profile check passed.");
 
   const login = await post("/api/auth/login", { username, password });
-  if (!login.ok || !login.body || login.body.ok !== true || !login.body.devOtp) {
-    fail("Login OTP issuance failed.", JSON.stringify(login, null, 2));
+  if (!login.ok || !login.body || !login.body.token) {
+    fail("Login failed.", JSON.stringify(login, null, 2));
   }
-  console.log("Login OTP issuance passed.");
+  console.log("Login passed.");
 
-  const verifyLogin = await post("/api/auth/verify-login-otp", { username, code: login.body.devOtp });
-  if (!verifyLogin.ok || !verifyLogin.body || !verifyLogin.body.token) {
-    fail("Login OTP verify failed.", JSON.stringify(verifyLogin, null, 2));
+  const me2 = await get("/api/me", login.body.token);
+  if (!me2.ok || !me2.body || !me2.body.user || me2.body.user.username !== username) {
+    fail("Second session /api/me check failed.", JSON.stringify(me2, null, 2));
   }
-  console.log("Login OTP verify passed.");
+  console.log("Second-session profile check passed.");
 
-  const logout = await post("/api/auth/logout", {});
+  const logout = await post("/api/auth/logout", {}, login.body.token);
   if (!logout.ok || !logout.body || logout.body.ok !== true) {
     fail("Logout endpoint failed.", JSON.stringify(logout, null, 2));
   }

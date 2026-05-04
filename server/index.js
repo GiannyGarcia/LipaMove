@@ -7,11 +7,9 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const mysql = require("mysql2/promise");
-const { normalizePhone } = require("./phone");
+const { normalizePhone, isValidPhilippineMobileE164 } = require("./phone");
 
 const PORT = Number(process.env.PORT || 3000);
-// Default to hiding dev OTP unless explicitly enabled.
-const DEV_OTP = process.env.DEV_RETURN_OTP === "true";
 
 const pool = mysql.createPool({
   host: process.env.MYSQL_HOST || "127.0.0.1",
@@ -23,21 +21,48 @@ const pool = mysql.createPool({
   connectionLimit: 10,
 });
 
-function randomOtp6() {
-  return String(Math.floor(100000 + Math.random() * 900000));
-}
-
 function randomToken() {
   return crypto.randomBytes(32).toString("hex");
 }
 
-async function hashOtp(code) {
-  return bcrypt.hash(String(code), 10);
+function validateAccountEmail(email) {
+  const raw = String(email || "").trim();
+  if (!raw.includes("@")) {
+    return { ok: false, error: "Email must contain @.", field: "email" };
+  }
+  const lower = raw.toLowerCase();
+  const at = lower.indexOf("@");
+  const local = lower.slice(0, at);
+  const domain = lower.slice(at + 1);
+  if (!local || !domain || !domain.includes(".")) {
+    return { ok: false, error: "Enter a valid email address (e.g. name@gmail.com).", field: "email" };
+  }
+  if (lower.includes("..") || local.startsWith(".") || domain.startsWith(".") || domain.endsWith(".")) {
+    return { ok: false, error: "Enter a valid email address.", field: "email" };
+  }
+  return { ok: true, value: lower };
 }
 
-async function verifyOtp(code, hash) {
-  if (!hash) return false;
-  return bcrypt.compare(String(code).trim(), String(hash));
+function validateUsername(username) {
+  const t = String(username || "").trim();
+  if (t.length < 3 || t.length > 64) {
+    return { ok: false, error: "Username must be 3–64 characters.", field: "username" };
+  }
+  if (!/^[a-zA-Z0-9._-]+$/.test(t)) {
+    return {
+      ok: false,
+      error: "Username may only use letters, numbers, dot, underscore, and hyphen (no spaces).",
+      field: "username",
+    };
+  }
+  return { ok: true, value: t };
+}
+
+async function insertSession(conn, userId) {
+  const token = randomToken();
+  const exp = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  await conn.execute("INSERT INTO sessions (user_id, token, expires_at) VALUES (?,?,?)", [userId, token, exp]);
+  return token;
 }
 
 const RATE_LIMIT_MAX = Number(process.env.AUTH_RATE_LIMIT_MAX || 12);
@@ -77,10 +102,6 @@ function corsOriginHandler(origin, callback) {
   return callback(new Error("Not allowed by CORS"));
 }
 
-async function cleanupExpiredOtps(conn) {
-  await conn.execute("DELETE FROM otp_codes WHERE expires_at < NOW(3)");
-}
-
 async function ensureAuthTables() {
   await pool.execute(
     `CREATE TABLE IF NOT EXISTS users (
@@ -97,21 +118,6 @@ async function ensureAuthTables() {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`
   );
   await pool.execute(
-    `CREATE TABLE IF NOT EXISTS otp_codes (
-      id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-      user_id INT UNSIGNED NULL,
-      phone VARCHAR(32) NOT NULL,
-      purpose ENUM('signup', 'login') NOT NULL,
-      code_hash VARCHAR(255) NOT NULL,
-      code_plain VARCHAR(6) NULL DEFAULT NULL,
-      expires_at DATETIME(3) NOT NULL,
-      consumed_at DATETIME(3) NULL,
-      KEY idx_otp_phone_purpose (phone, purpose),
-      KEY idx_otp_expires (expires_at),
-      CONSTRAINT fk_otp_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`
-  );
-  await pool.execute(
     `CREATE TABLE IF NOT EXISTS sessions (
       id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
       user_id INT UNSIGNED NOT NULL,
@@ -123,8 +129,6 @@ async function ensureAuthTables() {
       CONSTRAINT fk_sessions_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`
   );
-  await pool.execute("ALTER TABLE otp_codes ADD COLUMN IF NOT EXISTS code_hash VARCHAR(255) NULL AFTER purpose");
-  await pool.execute("ALTER TABLE otp_codes MODIFY COLUMN code_plain VARCHAR(6) NULL DEFAULT NULL");
 }
 
 function isMissingAuthTableError(e) {
@@ -189,15 +193,29 @@ app.post("/api/auth/register", async (req, res) => {
   if (!username || !email || !phone || !password) {
     return res.status(400).json({ error: "Missing fields" });
   }
-  const usernameT = String(username).trim();
-  const emailT = String(email).trim().toLowerCase();
-  const phoneN = normalizePhone(phone);
-  if (!phoneN || phoneN.length < 12) {
-    return res.status(400).json({ error: "Enter a valid Philippine mobile number (e.g. +639171234567).", field: "phone" });
+  const userVal = validateUsername(username);
+  if (!userVal.ok) {
+    return res.status(400).json({ error: userVal.error, field: userVal.field });
   }
+  const emailVal = validateAccountEmail(email);
+  if (!emailVal.ok) {
+    return res.status(400).json({ error: emailVal.error, field: emailVal.field });
+  }
+  const phoneN = normalizePhone(phone);
+  if (!isValidPhilippineMobileE164(phoneN)) {
+    return res.status(400).json({
+      error:
+        "Enter a valid Philippine mobile number in international form (+63…) with 11 national digits (e.g. +639194748917).",
+      field: "phone",
+    });
+  }
+  if (String(password).length < 6) {
+    return res.status(400).json({ error: "Password must be at least 6 characters.", field: "password" });
+  }
+  const usernameT = userVal.value;
+  const emailT = emailVal.value;
   const conn = await pool.getConnection();
   try {
-    await cleanupExpiredOtps(conn);
     const [byUser] = await conn.execute("SELECT id FROM users WHERE username = ? LIMIT 1", [usernameT]);
     if (byUser.length) {
       return res.status(409).json({ error: "This username is already taken.", field: "username" });
@@ -206,41 +224,26 @@ app.post("/api/auth/register", async (req, res) => {
     if (byEmail.length) {
       return res.status(409).json({ error: "This email is already registered.", field: "email" });
     }
-    const [byPhone] = await conn.execute("SELECT id, verified FROM users WHERE phone = ? LIMIT 1", [phoneN]);
+    const [byPhone] = await conn.execute("SELECT id FROM users WHERE phone = ? LIMIT 1", [phoneN]);
     if (byPhone.length) {
-      const v = byPhone[0].verified;
       return res.status(409).json({
-        error: v
-          ? "This mobile number is already registered. Log in instead."
-          : "This mobile number already has a pending sign-up. Log in or use a different number.",
+        error: "This mobile number is already registered. Log in instead.",
         field: "phone",
       });
     }
     const hash = await bcrypt.hash(password, 10);
-    const code = randomOtp6();
-    const codeHash = await hashOtp(code);
-    const exp = new Date(Date.now() + 10 * 60 * 1000);
     await conn.beginTransaction();
     const [ins] = await conn.execute(
-      "INSERT INTO users (username, email, phone, password_hash, verified) VALUES (?,?,?,?,0)",
+      "INSERT INTO users (username, email, phone, password_hash, verified) VALUES (?,?,?,?,1)",
       [usernameT, emailT, phoneN, hash]
     );
     const userId = ins.insertId;
     if (!userId) {
       throw new Error("Insert failed");
     }
-    await conn.execute(
-      "INSERT INTO otp_codes (user_id, phone, purpose, code_hash, code_plain, expires_at) VALUES (?,?,?,?,?,?)",
-      [userId, phoneN, "signup", codeHash, null, exp]
-    );
+    const token = await insertSession(conn, userId);
     await conn.commit();
-    const out = {
-      ok: true,
-      userId,
-      message: "OTP generated. Enter the code to verify and save your account.",
-    };
-    if (DEV_OTP) out.devOtp = code;
-    res.json(out);
+    res.json({ ok: true, userId, token, message: "Signed up and logged in." });
   } catch (e) {
     try {
       await conn.rollback();
@@ -258,74 +261,6 @@ app.post("/api/auth/register", async (req, res) => {
   }
 });
 
-app.post("/api/auth/verify-signup", async (req, res) => {
-  const { userId, phone, code } = req.body || {};
-  const uid = Number(userId);
-  if (!uid || !phone || !code) {
-    return res.status(400).json({ error: "userId, phone, and OTP code are required" });
-  }
-  const phoneN = normalizePhone(phone);
-  const conn = await pool.getConnection();
-  try {
-    const [users] = await conn.execute(
-      "SELECT id, verified FROM users WHERE id = ? AND phone = ? LIMIT 1",
-      [uid, phoneN]
-    );
-    const user = users[0];
-    if (!user) {
-      return res.status(400).json({ error: "Invalid verification — user and phone do not match." });
-    }
-    if (user.verified) {
-      return res.status(400).json({ error: "This account is already verified. Log in." });
-    }
-    const [rows] = await conn.execute(
-      `SELECT o.id AS otp_id, o.user_id, o.code_hash, o.code_plain, o.expires_at
-       FROM otp_codes o
-       WHERE o.user_id = ? AND o.phone = ? AND o.purpose = 'signup' AND o.consumed_at IS NULL
-       ORDER BY o.id DESC LIMIT 1`,
-      [uid, phoneN]
-    );
-    const row = rows[0];
-    if (!row) {
-      return res.status(400).json({ error: "Invalid or expired OTP" });
-    }
-    let valid = false;
-    if (row.code_hash) {
-      valid = await verifyOtp(code, row.code_hash);
-    } else if (row.code_plain) {
-      valid = row.code_plain === String(code).trim();
-      if (valid) {
-        await conn.execute("UPDATE otp_codes SET code_hash = ?, code_plain = NULL WHERE id = ?", [await hashOtp(code), row.otp_id]);
-      }
-    }
-    if (!valid) {
-      return res.status(400).json({ error: "Invalid or expired OTP" });
-    }
-    if (new Date(row.expires_at) < new Date()) {
-      return res.status(400).json({ error: "OTP expired. Start sign-up again." });
-    }
-    await conn.beginTransaction();
-    await conn.execute("UPDATE users SET verified = 1 WHERE id = ? AND phone = ?", [uid, phoneN]);
-    await conn.execute("UPDATE otp_codes SET consumed_at = NOW(3) WHERE id = ?", [row.otp_id]);
-    const token = randomToken();
-    const exp = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    await conn.execute("INSERT INTO sessions (user_id, token, expires_at) VALUES (?,?,?)", [uid, token, exp]);
-    await conn.commit();
-    res.json({ ok: true, token, userId: uid });
-  } catch (e) {
-    try {
-      await conn.rollback();
-    } catch (_) {}
-    if (isMissingAuthTableError(e)) {
-      return res.status(500).json({ error: "Auth database is not initialized. Run database/lipamove_full_setup.sql in MySQL Workbench." });
-    }
-    console.error(e);
-    res.status(500).json({ error: "Verify failed" });
-  } finally {
-    conn.release();
-  }
-});
-
 app.post("/api/auth/login", async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) {
@@ -334,88 +269,21 @@ app.post("/api/auth/login", async (req, res) => {
   const conn = await pool.getConnection();
   try {
     const [users] = await conn.execute(
-      "SELECT id, username, email, phone, password_hash, verified FROM users WHERE username = ? LIMIT 1",
-      [username.trim()]
+      "SELECT id, username, email, phone, password_hash FROM users WHERE username = ? LIMIT 1",
+      [String(username).trim()]
     );
     const u = users[0];
     if (!u || !(await bcrypt.compare(password, u.password_hash))) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ error: "Invalid username or password." });
     }
-    if (!u.verified) {
-      return res.status(403).json({ error: "Account not verified. Complete signup OTP first." });
-    }
-    await conn.execute("DELETE FROM otp_codes WHERE user_id = ? AND purpose = 'login' AND consumed_at IS NULL", [u.id]);
-    const code = randomOtp6();
-    const codeHash = await hashOtp(code);
-    const exp = new Date(Date.now() + 10 * 60 * 1000);
-    const phoneN = normalizePhone(u.phone);
-    await conn.execute(
-      "INSERT INTO otp_codes (user_id, phone, purpose, code_hash, code_plain, expires_at) VALUES (?,?,?,?,?,?)",
-      [u.id, phoneN, "login", codeHash, null, exp]
-    );
-    const out = { ok: true, needsOtp: true, phoneHint: u.phone };
-    if (DEV_OTP) out.devOtp = code;
-    res.json(out);
-  } catch (e) {
-    if (isMissingAuthTableError(e)) {
-      return res.status(500).json({ error: "Auth database is not initialized. Run database/lipamove_full_setup.sql in MySQL Workbench." });
-    }
-    console.error(e);
-    res.status(500).json({ error: "Login failed" });
-  } finally {
-    conn.release();
-  }
-});
-
-app.post("/api/auth/verify-login-otp", async (req, res) => {
-  const { username, code } = req.body || {};
-  if (!username || !code) {
-    return res.status(400).json({ error: "Username and code required" });
-  }
-  const conn = await pool.getConnection();
-  try {
-    const [users] = await conn.execute("SELECT id, phone FROM users WHERE username = ? LIMIT 1", [username.trim()]);
-    const u = users[0];
-    if (!u) {
-      return res.status(400).json({ error: "Invalid" });
-    }
-    const [rows] = await conn.execute(
-      `SELECT o.id AS otp_id, o.code_hash, o.code_plain, o.expires_at
-       FROM otp_codes o
-       WHERE o.user_id = ? AND o.purpose = 'login' AND o.consumed_at IS NULL
-       ORDER BY o.id DESC LIMIT 1`,
-      [u.id]
-    );
-    const row = rows[0];
-    if (!row) {
-      return res.status(400).json({ error: "Invalid OTP" });
-    }
-    let valid = false;
-    if (row.code_hash) {
-      valid = await verifyOtp(code, row.code_hash);
-    } else if (row.code_plain) {
-      valid = row.code_plain === String(code).trim();
-      if (valid) {
-        await conn.execute("UPDATE otp_codes SET code_hash = ?, code_plain = NULL WHERE id = ?", [await hashOtp(code), row.otp_id]);
-      }
-    }
-    if (!valid) {
-      return res.status(400).json({ error: "Invalid OTP" });
-    }
-    if (new Date(row.expires_at) < new Date()) {
-      return res.status(400).json({ error: "OTP expired" });
-    }
-    await conn.execute("UPDATE otp_codes SET consumed_at = NOW(3) WHERE id = ?", [row.otp_id]);
-    const token = randomToken();
-    const exp = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    await conn.execute("INSERT INTO sessions (user_id, token, expires_at) VALUES (?,?,?)", [u.id, token, exp]);
+    const token = await insertSession(conn, u.id);
     res.json({ ok: true, token });
   } catch (e) {
     if (isMissingAuthTableError(e)) {
       return res.status(500).json({ error: "Auth database is not initialized. Run database/lipamove_full_setup.sql in MySQL Workbench." });
     }
     console.error(e);
-    res.status(500).json({ error: "Verify failed" });
+    res.status(500).json({ error: "Login failed" });
   } finally {
     conn.release();
   }

@@ -28,4 +28,11 @@ function normalizePhone(phone) {
   return s.startsWith("+") ? s : "+" + d;
 }
 
-module.exports = { normalizePhone };
+/** Philippine mobile in E.164 after normalization: +63 and 9 + nine digits (e.g. +639194748917). */
+const PH_MOBILE_E164 = /^\+639\d{9}$/;
+
+function isValidPhilippineMobileE164(normalized) {
+  return PH_MOBILE_E164.test(String(normalized || ""));
+}
+
+module.exports = { normalizePhone, isValidPhilippineMobileE164 };

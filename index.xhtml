@@ -126,7 +126,6 @@
     .auth-tabs button.active { border-color: rgba(14,165,233,.5); color: #075985; background: rgba(14,165,233,.14); }
     .auth-step { display: none; }
     .auth-step.visible { display: block; }
-    .otp-dev-hint { font-size: 12px; color: #fcd34d; margin-top: 8px; }
     .muted { color: #64748b; font-size: 12px; }
     .status-ok { color: #5eead4; font-size: 13px; margin-top: 8px; }
     .input, .select, textarea.area {
@@ -353,7 +352,7 @@
             <label for="login-password">Password</label>
             <input id="login-password" class="input" type="password" autocomplete="current-password" />
           </div>
-          <button type="button" id="login-submit" class="action-btn primary block">Continue (send OTP)</button>
+          <button type="button" id="login-submit" class="action-btn primary block">Log in</button>
         </div>
         <div id="auth-step-signup" class="auth-step">
           <div class="form-group">
@@ -365,23 +364,14 @@
             <input id="signup-email" class="input" type="email" autocomplete="email" />
           </div>
           <div class="form-group">
-            <label for="signup-phone">Mobile (for OTP)</label>
-            <input id="signup-phone" class="input" type="tel" placeholder="+63912..." autocomplete="tel" />
+            <label for="signup-phone">Mobile number</label>
+            <input id="signup-phone" class="input" type="tel" placeholder="+639194748917" autocomplete="tel" />
           </div>
           <div class="form-group">
             <label for="signup-password">Password</label>
             <input id="signup-password" class="input" type="password" autocomplete="new-password" />
           </div>
-          <button type="button" id="signup-submit" class="action-btn primary block">Create account (send OTP)</button>
-        </div>
-        <div id="auth-step-otp" class="auth-step">
-          <p class="muted" id="otp-context"></p>
-          <div class="form-group">
-            <label for="otp-code">6-digit OTP</label>
-            <input id="otp-code" class="input" type="text" inputmode="numeric" maxlength="6" placeholder="000000" />
-          </div>
-          <button type="button" id="otp-verify" class="action-btn primary block">Verify OTP</button>
-          <p class="otp-dev-hint" id="otp-dev-hint" style="display:none;"></p>
+          <button type="button" id="signup-submit" class="action-btn primary block">Create account</button>
         </div>
         <p class="muted" id="auth-status"></p>
       </section>
@@ -867,18 +857,11 @@
         simRafId = requestAnimationFrame(step);
       }
 
-      var authMode = "login";
-      var pendingOtpPhone = "";
-      var pendingOtpUsername = "";
-      var pendingOtpUserId = null;
-
       function showAuthStep(step) {
         var loginEl = document.getElementById("auth-step-login");
         var signupEl = document.getElementById("auth-step-signup");
-        var otpEl = document.getElementById("auth-step-otp");
         if (loginEl) { loginEl.classList.toggle("visible", step === "login"); }
         if (signupEl) { signupEl.classList.toggle("visible", step === "signup"); }
-        if (otpEl) { otpEl.classList.toggle("visible", step === "otp"); }
       }
 
       function refreshAuthUi() {
@@ -1006,22 +989,14 @@
         var tabSignup = document.getElementById("auth-tab-signup");
         if (tabLogin && tabSignup) {
           tabLogin.addEventListener("click", function () {
-            authMode = "login";
-            pendingOtpUserId = null;
             tabLogin.classList.add("active");
             tabSignup.classList.remove("active");
             showAuthStep("login");
-            var hint0 = document.getElementById("otp-dev-hint");
-            if (hint0) { hint0.style.display = "none"; hint0.textContent = ""; }
           });
           tabSignup.addEventListener("click", function () {
-            authMode = "signup";
-            pendingOtpUserId = null;
             tabSignup.classList.add("active");
             tabLogin.classList.remove("active");
             showAuthStep("signup");
-            var hint1 = document.getElementById("otp-dev-hint");
-            if (hint1) { hint1.style.display = "none"; hint1.textContent = ""; }
           });
         }
         var signupSubmit = document.getElementById("signup-submit");
@@ -1036,6 +1011,14 @@
               if (st) { st.textContent = "Fill in all fields."; }
               return;
             }
+            if (em.indexOf("@") === -1 || em.indexOf(".", em.indexOf("@")) === -1) {
+              if (st) { st.textContent = "Email must include @ and a domain (e.g. name@gmail.com)."; }
+              return;
+            }
+            if (u.length < 3) {
+              if (st) { st.textContent = "Username must be at least 3 characters."; }
+              return;
+            }
             fetch(apiUrl("/api/auth/register"), {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -1043,22 +1026,14 @@
             })
               .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
               .then(function (x) {
-                if (!x.ok) {
-                  if (st) { st.textContent = x.j.error || "Register failed"; }
+                if (!x.ok || !x.j.token) {
+                  if (st) { st.textContent = (x.j && x.j.error) || "Register failed"; }
                   return;
                 }
-                pendingOtpPhone = ph;
-                pendingOtpUsername = u;
-                pendingOtpUserId = typeof x.j.userId !== "undefined" && x.j.userId !== null ? Number(x.j.userId) : null;
-                authMode = "signup";
-                showAuthStep("otp");
-                if (st) { st.textContent = "Enter the OTP sent to your phone."; }
-                var hint = document.getElementById("otp-dev-hint");
-                if (hint) {
-                  hint.style.display = "block";
-                  hint.textContent = x.j.devOtp ? ("OTP: " + x.j.devOtp) : "OTP hidden by server config.";
-                }
-                document.getElementById("otp-context").textContent = "Sign up: " + ph;
+                localStorage.setItem("lipamove_token", x.j.token);
+                if (st) { st.textContent = "Signed up successfully."; }
+                refreshAuthUi();
+                navigateTo("profile");
               })
               .catch(function () {
                 if (st) { st.textContent = "API unreachable. Run: cd server && npm install && npm start"; }
@@ -1082,78 +1057,18 @@
             })
               .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
               .then(function (x) {
-                if (!x.ok) {
-                  if (st) { st.textContent = x.j.error || "Login failed"; }
+                if (!x.ok || !x.j.token) {
+                  if (st) { st.textContent = (x.j && x.j.error) || "Login failed"; }
                   return;
                 }
-                pendingOtpUsername = u;
-                pendingOtpPhone = x.j.phoneHint || "";
-                authMode = "login";
-                showAuthStep("otp");
-                if (st) { st.textContent = "Enter the OTP for login."; }
-                var hint = document.getElementById("otp-dev-hint");
-                if (hint) {
-                  hint.style.display = "block";
-                  hint.textContent = x.j.devOtp ? ("OTP: " + x.j.devOtp) : "OTP hidden by server config.";
-                }
-                document.getElementById("otp-context").textContent = "Login: " + u;
+                localStorage.setItem("lipamove_token", x.j.token);
+                if (st) { st.textContent = "Logged in."; }
+                refreshAuthUi();
+                navigateTo("profile");
               })
               .catch(function () {
                 if (st) { st.textContent = "API unreachable. Start the Node server from the server folder."; }
               });
-          });
-        }
-        var otpVerify = document.getElementById("otp-verify");
-        if (otpVerify) {
-          otpVerify.addEventListener("click", function () {
-            var code = (document.getElementById("otp-code") || {}).value.trim();
-            var st = document.getElementById("auth-status");
-            if (!code || code.length !== 6) {
-              if (st) { st.textContent = "Enter 6-digit OTP."; }
-              return;
-            }
-            if (authMode === "signup") {
-              if (!pendingOtpUserId) {
-                if (st) { st.textContent = "Session expired. Start sign up again."; }
-                return;
-              }
-              fetch(apiUrl("/api/auth/verify-signup"), {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId: pendingOtpUserId, phone: pendingOtpPhone, code: code })
-              })
-                .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
-                .then(function (x) {
-                  if (!x.ok) {
-                    if (st) { st.textContent = x.j.error || "Invalid OTP"; }
-                    return;
-                  }
-                  localStorage.setItem("lipamove_token", x.j.token);
-                  pendingOtpUserId = null;
-                  if (st) { st.textContent = "Signed up successfully."; }
-                  refreshAuthUi();
-                  navigateTo("profile");
-                })
-                .catch(function () { if (st) { st.textContent = "Verify failed. Is the API running?"; } });
-            } else {
-              fetch(apiUrl("/api/auth/verify-login-otp"), {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username: pendingOtpUsername, code: code })
-              })
-                .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
-                .then(function (x) {
-                  if (!x.ok) {
-                    if (st) { st.textContent = x.j.error || "Invalid OTP"; }
-                    return;
-                  }
-                  localStorage.setItem("lipamove_token", x.j.token);
-                  if (st) { st.textContent = "Logged in."; }
-                  refreshAuthUi();
-                  navigateTo("profile");
-                })
-                .catch(function () { if (st) { st.textContent = "Verify failed."; } });
-            }
           });
         }
         var logoutBtn = document.getElementById("logout-btn");
@@ -1163,7 +1078,6 @@
               .catch(function () {})
               .finally(function () {
                 localStorage.removeItem("lipamove_token");
-                pendingOtpUserId = null;
                 refreshAuthUi();
                 navigateTo("auth");
                 showAuthStep("login");
