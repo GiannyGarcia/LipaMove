@@ -238,6 +238,7 @@ app.get("/api/me", authMiddleware, async (req, res) => {
   });
 });
 
+
 app.post("/api/auth/register", async (req, res) => {
   const { username, email, phone, password } = req.body || {};
   if (!username || !email || !phone || !password) {

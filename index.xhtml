@@ -195,8 +195,6 @@
         <button type="button" class="panel-tab active" data-goto="home">Map</button>
         <button type="button" class="panel-tab" data-goto="plan">Plan</button>
         <button type="button" class="panel-tab" data-goto="share">Share</button>
-        <button type="button" class="panel-tab" data-goto="dispatch">Dispatch</button>
-        <button type="button" class="panel-tab" data-goto="request">Request</button>
         <button type="button" class="panel-tab" data-goto="auth">Account</button>
         <button type="button" class="panel-tab" data-goto="profile" id="panel-tab-profile" style="display:none;">Profile</button>
       </nav>
@@ -212,8 +210,6 @@
           <div class="actions">
             <button id="plan-trip" type="button" class="action-btn">Plan Trip</button>
             <button id="share-eta" type="button" class="action-btn">Share ETA</button>
-            <button id="call-dispatch" type="button" class="action-btn">Call Dispatch</button>
-            <button id="request-ride" type="button" class="action-btn">Request Ride</button>
           </div>
           <div id="eta-list"></div>
         </div>
@@ -276,63 +272,6 @@
         <p class="muted" id="share-status"></p>
       </section>
 
-      <section id="screen-dispatch" class="screen" aria-label="Dispatch">
-        <div class="screen-head">
-          <button type="button" class="back-mob" data-goto="home">Back</button>
-          <h2>Dispatch &amp; help</h2>
-        </div>
-        <p class="screen-intro">Mabilisang tulong at hotline para sa biyahe.</p>
-        <div class="dispatch-card">
-          <h3>Central dispatch</h3>
-          <p>Hotline: <a href="tel:+639171234567">+63 917 123 4567</a></p>
-          <p style="margin-top:8px;"><a href="sms:+639171234567?body=LipaMove%20commuter%20inquiry">Send SMS</a></p>
-        </div>
-        <div class="dispatch-card">
-          <h3>Terminal advisories</h3>
-          <div id="dispatch-terminals"><p class="muted">Loading…</p></div>
-        </div>
-        <div class="dispatch-card">
-          <h3>Emergency</h3>
-          <p>For emergencies call <a href="tel:911">911</a> or local PNP / BFP as appropriate.</p>
-        </div>
-      </section>
-
-      <section id="screen-request" class="screen" aria-label="Request ride">
-        <div class="screen-head">
-          <button type="button" class="back-mob" data-goto="home">Back</button>
-          <h2>Request ride</h2>
-        </div>
-        <p class="screen-intro">Mag-request ng sundo gamit ang simpleng form na ito.</p>
-        <div class="form-group">
-          <label for="req-ride-select">Preferred unit / route</label>
-          <select id="req-ride-select" class="select"><option value="">Loading…</option></select>
-        </div>
-        <div class="form-group">
-          <label for="pickup-input">Pickup point</label>
-          <input id="pickup-input" class="input" type="text" placeholder="e.g. SM Lipa North entrance" />
-        </div>
-        <div class="form-group">
-          <label for="dropoff-select">Drop-off</label>
-          <select id="dropoff-select" class="select">
-            <option value="SM Lipa Terminal">SM Lipa Terminal</option>
-            <option value="Robinsons Lipa">Robinsons Lipa</option>
-            <option value="UB Lipa">UB Lipa</option>
-            <option value="Lipa Outlets">Lipa Outlets</option>
-            <option value="Tambo Exit">Tambo Exit</option>
-            <option value="Lipa Poblacion">Lipa Poblacion</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="req-notes">Notes (optional)</label>
-          <textarea id="req-notes" class="area" placeholder="Passengers, landmark, special needs…"></textarea>
-        </div>
-        <div class="sheet-row">
-          <button id="confirm-request" type="button" class="action-btn primary">Submit request</button>
-        </div>
-        <div class="muted" id="request-status"></div>
-        <div class="muted" id="request-last" style="margin-top:12px;"></div>
-      </section>
-
       <section id="screen-auth" class="screen" aria-label="Account">
         <div class="screen-head">
           <button type="button" class="back-mob" data-goto="home">Back</button>
@@ -393,8 +332,6 @@
     <button type="button" data-goto="home" class="active"><span class="ico" aria-hidden="true">◎</span>Map</button>
     <button type="button" data-goto="plan"><span class="ico" aria-hidden="true">⎘</span>Plan</button>
     <button type="button" data-goto="share"><span class="ico" aria-hidden="true">↗</span>Share</button>
-    <button type="button" data-goto="dispatch"><span class="ico" aria-hidden="true">☎</span>Call</button>
-    <button type="button" data-goto="request"><span class="ico" aria-hidden="true">✎</span>Ride</button>
     <button type="button" id="bottom-nav-auth"><span class="ico" aria-hidden="true">👤</span>Account</button>
   </nav>
 
@@ -741,7 +678,7 @@
 
       function syncRideSelects(rid) {
         if (!rid) { return; }
-        ["plan-ride-select", "share-ride-select", "req-ride-select"].forEach(function (selId) {
+        ["plan-ride-select", "share-ride-select"].forEach(function (selId) {
           var el = document.getElementById(selId);
           if (el && el.querySelector("option[value=\"" + rid + "\"]")) {
             el.value = rid;
@@ -952,14 +889,6 @@
             navigateTo("share");
             updateSharePreview();
           });
-        }
-        var callD = document.getElementById("call-dispatch");
-        if (callD) {
-          callD.addEventListener("click", function () { navigateTo("dispatch"); });
-        }
-        var reqR = document.getElementById("request-ride");
-        if (reqR) {
-          reqR.addEventListener("click", function () { navigateTo("request"); });
         }
         var authEntry = document.getElementById("auth-entry-btn");
         if (authEntry) {
@@ -1244,39 +1173,6 @@
           });
         }
 
-        var cr = document.getElementById("confirm-request");
-        if (cr) {
-          cr.addEventListener("click", function () {
-            var reqSel = document.getElementById("req-ride-select");
-            var rid = (reqSel && reqSel.value) ? reqSel.value : selectedRideId;
-            if (!rid) {
-              document.getElementById("request-status").textContent = "Pumili ng unit o pumili muna sa Map feed.";
-              return;
-            }
-            var pickup = document.getElementById("pickup-input").value.trim();
-            var drop = document.getElementById("dropoff-select").value;
-            var notesEl = document.getElementById("req-notes");
-            var notes = notesEl ? notesEl.value.trim() : "";
-            if (!pickup) {
-              document.getElementById("request-status").textContent = "Ilagay ang pickup point.";
-              return;
-            }
-            var payload = {
-              rideId: rid,
-              pickup: pickup,
-              dropoff: drop,
-              notes: notes,
-              requestedAt: new Date().toISOString()
-            };
-            localStorage.setItem("lipamove_last_request", JSON.stringify(payload));
-            document.getElementById("request-status").textContent = "Na-save ang request sa device mo. Hintayin ang tawag o SMS mula dispatch.";
-            var lastEl = document.getElementById("request-last");
-            if (lastEl) {
-              lastEl.textContent = "Huling request: " + rid + " · " + pickup + " → " + drop;
-            }
-          });
-        }
-
         var gpsBtn = document.getElementById("gps-toggle");
         if (gpsBtn) {
           gpsBtn.addEventListener("click", function () {
@@ -1315,16 +1211,6 @@
           if (!map || !markerGroup) {
             if (etaList) {
               etaList.innerHTML = "<div class=\"card\">Map did not start (Leaflet failed to load). Serve this app over HTTP (e.g. run <code>start-server.bat</code> or <code>npm start</code> in the <code>server</code> folder) so <code>vendor/leaflet/leaflet.js</code> loads. Navigation and Account still work.</div>";
-            }
-            var dtEarly = document.getElementById("dispatch-terminals");
-            if (dtEarly) {
-              dtEarly.innerHTML = nodes.map(function (n) {
-                var name = escHtml((n.querySelector("name") || {}).textContent || "Terminal");
-                var wait = escHtml((n.querySelector("avg_wait_time") || {}).textContent || "—");
-                var surge = escHtml((n.querySelector("surge_prediction_status") || {}).textContent || "");
-                var comm = escHtml((n.querySelector("commuter_count") || {}).textContent || "");
-                return "<div class=\"dispatch-card\" style=\"margin-bottom:8px\"><h3>" + name + "</h3><p>Avg wait: " + wait + (comm ? " · Commuters: ~" + comm : "") + "</p><p>" + surge + "</p></div>";
-              }).join("") || "<p class=\"muted\">Walang terminal data.</p>";
             }
             return;
           }
@@ -1489,7 +1375,7 @@
               var safe = (r.route + "").replace(/</g, "").replace(/"/g, "'");
               return "<option value=\"" + r.id + "\">" + r.id + " — " + safe.substring(0, 48) + (safe.length > 48 ? "…" : "") + "</option>";
             }).join("");
-            ["plan-ride-select", "share-ride-select", "req-ride-select"].forEach(function (selId) {
+            ["plan-ride-select", "share-ride-select"].forEach(function (selId) {
               var el = document.getElementById(selId);
               if (el) {
                 el.innerHTML = "<option value=\"\">Any unit / choose on map</option>" + opts;
@@ -1501,28 +1387,6 @@
           if (selectedRideId) { syncRideSelects(selectedRideId); }
           updateSharePreview();
           updatePlanSummary();
-
-          var dt = document.getElementById("dispatch-terminals");
-          if (dt) {
-            dt.innerHTML = nodes.map(function (n) {
-              var name = escHtml((n.querySelector("name") || {}).textContent || "Terminal");
-              var wait = escHtml((n.querySelector("avg_wait_time") || {}).textContent || "—");
-              var surge = escHtml((n.querySelector("surge_prediction_status") || {}).textContent || "");
-              var comm = escHtml((n.querySelector("commuter_count") || {}).textContent || "");
-              return "<div class=\"dispatch-card\" style=\"margin-bottom:8px\"><h3>" + name + "</h3><p>Avg wait: " + wait + (comm ? " · Commuters: ~" + comm : "") + "</p><p>" + surge + "</p></div>";
-            }).join("") || "<p class=\"muted\">Walang terminal data.</p>";
-          }
-
-          var lastReq = localStorage.getItem("lipamove_last_request");
-          var lastEl = document.getElementById("request-last");
-          if (lastEl && lastReq) {
-            try {
-              var p = JSON.parse(lastReq);
-              lastEl.textContent = "Huling request: " + (p.rideId || "—") + " · " + (p.pickup || "") + " → " + (p.dropoff || "") + " · " + (p.requestedAt || "").slice(0, 16);
-            } catch (e) {
-              lastEl.textContent = "";
-            }
-          }
 
           if (markerGroup.getLayers().length || routeGroup.getLayers().length) {
             map.fitBounds(routeGroup.getBounds().isValid() ? routeGroup.getBounds().pad(0.2) : markerGroup.getBounds().pad(0.25));
@@ -1542,7 +1406,7 @@
             var nm = (critical.querySelector("name") || {}).textContent || "SM Lipa";
             var box = document.getElementById("surge-alert");
             box.style.display = "block";
-            box.textContent = "Uy, mataas ang demand sa " + nm + ". 3 units dispatched na.";
+            box.textContent = "Uy, mataas ang demand sa " + nm + ". Expect longer waits and plan a little earlier.";
           }
 
           startSimulation();
@@ -1553,10 +1417,6 @@
           var etaList = document.getElementById("eta-list");
           if (etaList) {
             etaList.innerHTML = "<div class=\"card\">Hindi ma-load ang live feed. I-serve ang project sa HTTP at tingnan ang <code>data.xml</code>.</div>";
-          }
-          var dt = document.getElementById("dispatch-terminals");
-          if (dt) {
-            dt.innerHTML = "<p class=\"muted\">Hindi ma-load ang terminal data.</p>";
           }
           updateGpsFreshness();
         });
