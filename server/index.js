@@ -369,8 +369,12 @@ app.use(
 ensureAuthTables()
   .then(function () {
     app.listen(PORT, "0.0.0.0", function () {
-      console.log("LipaMove API + static files at http://127.0.0.1:" + PORT);
-      console.log("Open http://127.0.0.1:" + PORT + "/  or  http://127.0.0.1:" + PORT + "/index.xhtml");
+      console.log("LipaMove listening on port " + PORT + " (server bind; not your laptop).");
+      if (process.env.RAILWAY_ENVIRONMENT) {
+        console.log("Open the public domain from Railway (Networking), not http://127.0.0.1 in your browser.");
+      } else {
+        console.log("Local: http://127.0.0.1:" + PORT + "/  or  /index.xhtml");
+      }
     });
   })
   .catch(function (e) {
