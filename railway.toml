@@ -1,0 +1,6 @@
+# Railway (https://railway.app) — optional; package.json "start" is enough for many setups.
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "npm install --prefix server && node index.js"

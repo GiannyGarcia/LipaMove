@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "npm install --prefix server && node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "vendor:leaflet": "node -e \"const fs=require('fs');const p=require('path');const src=p.join('node_modules','leaflet','dist');const dst='vendor/leaflet';if(!fs.existsSync(src))process.exit(1);fs.mkdirSync(p.join(dst,'images'),{recursive:true});['leaflet.css','leaflet.js'].forEach(f=>fs.copyFileSync(p.join(src,f),p.join(dst,f)));fs.readdirSync(p.join(src,'images')).forEach(f=>fs.copyFileSync(p.join(src,'images',f),p.join(dst,'images',f)));console.log('Copied Leaflet to vendor/leaflet');\""
   },

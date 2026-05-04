@@ -11,15 +11,65 @@ const { normalizePhone, isValidPhilippineMobileE164 } = require("./phone");
 
 const PORT = Number(process.env.PORT || 3000);
 
-const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST || "127.0.0.1",
-  port: Number(process.env.MYSQL_PORT || 3306),
-  user: process.env.MYSQL_USER || "root",
-  password: process.env.MYSQL_PASSWORD || "",
-  database: process.env.MYSQL_DATABASE || "lipamove",
-  waitForConnections: true,
-  connectionLimit: 10,
-});
+function buildMysqlPoolOptions() {
+  const fromEnv = process.env.MYSQL_URL || process.env.MYSQL_PRIVATE_URL || "";
+  const fromDatabaseUrl =
+    process.env.DATABASE_URL && /^mysql2?:\/\//i.test(process.env.DATABASE_URL) ? process.env.DATABASE_URL : "";
+  const rawUrl = fromEnv || fromDatabaseUrl;
+  const dbUrl = rawUrl && /^mysql2?:\/\//i.test(rawUrl) ? rawUrl : "";
+  if (dbUrl) {
+    try {
+      const u = new URL(dbUrl);
+      const database = (u.pathname || "/").replace(/^\//, "").split("?")[0] || process.env.MYSQL_DATABASE || "lipamove";
+      const opts = {
+        host: u.hostname,
+        port: Number(u.port || 3306),
+        user: decodeURIComponent(u.username || ""),
+        password: decodeURIComponent(u.password || ""),
+        database,
+        waitForConnections: true,
+        connectionLimit: 10,
+      };
+      const sslMode = u.searchParams.get("ssl-mode") || u.searchParams.get("sslmode");
+      if (
+        process.env.MYSQL_SSL === "true" ||
+        process.env.MYSQL_SSL === "required" ||
+        (sslMode && String(sslMode).toLowerCase() === "required")
+      ) {
+        opts.ssl = { rejectUnauthorized: true };
+      }
+      return opts;
+    } catch (e) {
+      console.error("Invalid MYSQL_URL — fix the connection string in your host.", e.message);
+    }
+  }
+  const opts = {
+    host: process.env.MYSQL_HOST || "127.0.0.1",
+    port: Number(process.env.MYSQL_PORT || 3306),
+    user: process.env.MYSQL_USER || "root",
+    password: process.env.MYSQL_PASSWORD || "",
+    database: process.env.MYSQL_DATABASE || "lipamove",
+    waitForConnections: true,
+    connectionLimit: 10,
+  };
+  if (process.env.MYSQL_SSL === "true" || process.env.MYSQL_SSL === "required") {
+    opts.ssl = { rejectUnauthorized: true };
+  }
+  return opts;
+}
+
+const mysqlConfig = buildMysqlPoolOptions();
+if (process.env.RAILWAY_ENVIRONMENT && mysqlConfig.host === "127.0.0.1") {
+  console.error(
+    "[lipamove] MYSQL_URL is missing — the app defaults to 127.0.0.1 and will crash on Railway. On the LipaMove service add variable MYSQL_URL = ${{ MySQL.MYSQL_URL }} (or set MYSQL_HOST / MYSQL_PASSWORD from the MySQL service)."
+  );
+}
+console.log(
+  "[lipamove] MySQL:",
+  mysqlConfig.host + ":" + mysqlConfig.port + "/" + mysqlConfig.database,
+  process.env.MYSQL_URL || process.env.MYSQL_PRIVATE_URL ? "(from URL)" : "(from MYSQL_* env)"
+);
+const pool = mysql.createPool(mysqlConfig);
 
 function randomToken() {
   return crypto.randomBytes(32).toString("hex");
