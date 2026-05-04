@@ -21,16 +21,17 @@
       pointer-events: none;
       background: linear-gradient(180deg, rgba(15,23,42,.06) 0%, rgba(15,23,42,.16) 45%, rgba(15,23,42,.28) 100%);
     }
-    .overlay { position: relative; z-index: 500; padding: 12px; pointer-events: none; }
+    .overlay { position: relative; z-index: 500; padding: 12px; pointer-events: none; display: flex; flex-direction: column; gap: 8px; box-sizing: border-box; max-height: 100%; }
     .glass { pointer-events: auto; border-radius: 20px; border: 1px solid rgba(148,163,184,.25); background: rgba(255,255,255,.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-    .top { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; }
-    .brand-lockup { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
+    .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 12px 14px; }
+    .top-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+    .brand-lockup { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; flex: 1; }
     .brand-logo { height: 42px; width: auto; max-width: min(220px, 52vw); object-fit: contain; object-position: left center; display: block; }
-    .headline { margin-top: 4px; font-size: 30px; font-weight: 700; letter-spacing: -.3px; }
-    .sub { margin-top: 3px; color: #334155; font-size: 12px; }
-    .pill { border-radius: 999px; border: 1px solid rgba(14,165,233,.35); color: #0369a1; background: rgba(14,165,233,.10); padding: 6px 10px; font-size: 12px; }
-    .alert { margin-top: 10px; padding: 10px 12px; border-radius: 14px; border: 1px solid rgba(251,113,133,.40); color: #fda4af; background: rgba(251,113,133,.10); font-size: 13px; animation: pulse 2.6s infinite; }
-    .chips { margin-top: 8px; display: flex; gap: 7px; flex-wrap: wrap; opacity: 1; }
+    .headline { margin-top: 4px; font-size: 30px; font-weight: 700; letter-spacing: -.3px; line-height: 1.12; }
+    .sub { margin-top: 3px; color: #334155; font-size: 12px; line-height: 1.35; }
+    .pill { border-radius: 999px; border: 1px solid rgba(14,165,233,.35); color: #0369a1; background: rgba(14,165,233,.10); padding: 6px 10px; font-size: 12px; white-space: nowrap; }
+    .alert { margin-top: 0; padding: 10px 12px; border-radius: 14px; border: 1px solid rgba(190,24,93,.35); color: #831843; background: rgba(255,241,242,.94); font-size: 13px; line-height: 1.4; font-weight: 600; animation: pulse 2.6s infinite; box-shadow: 0 2px 12px rgba(15,23,42,.08); }
+    .chips { margin-top: 0; display: flex; gap: 7px; flex-wrap: wrap; opacity: 1; align-items: center; flex-shrink: 0; }
     .chip { border-radius: 999px; border: 1px solid rgba(148,163,184,.35); background: rgba(255,255,255,.96); color: #334155; padding: 6px 10px; font-size: 11px; }
     .chip.button { cursor: pointer; pointer-events: auto; touch-action: manipulation; -webkit-tap-highlight-color: rgba(14,165,233,.2); }
     .chip.button:hover { border-color: rgba(14,165,233,.45); color: #0f172a; }
@@ -44,6 +45,11 @@
     .unit { color: #94a3b8; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
     .route { margin-top: 3px; font-size: 14px; font-weight: 600; line-height: 1.35; color: #0f172a; }
     .eta { border-radius: 999px; border: 1px solid rgba(2,132,199,.35); color: #075985; background: rgba(14,165,233,.12); padding: 6px 9px; font-size: 12px; white-space: nowrap; font-weight: 700; }
+    .eta-meta { margin-top: 7px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .eta-chip { font-size: 10px; border-radius: 999px; padding: 3px 8px; border: 1px solid rgba(148,163,184,.35); color: #475569; background: rgba(255,255,255,.9); }
+    .eta-chip.conf-high { border-color: rgba(16,185,129,.45); color: #047857; background: rgba(16,185,129,.12); }
+    .eta-chip.conf-medium { border-color: rgba(245,158,11,.45); color: #92400e; background: rgba(245,158,11,.14); }
+    .eta-chip.conf-low { border-color: rgba(239,68,68,.45); color: #991b1b; background: rgba(239,68,68,.14); }
     .crowd { margin-top: 9px; font-size: 12px; color: #475569; display: flex; justify-content: space-between; }
     .barwrap { margin-top: 7px; height: 10px; border-radius: 999px; overflow: hidden; background: rgba(71,85,105,.6); }
     .bar { height: 100%; border-radius: 999px; }
@@ -81,7 +87,8 @@
       box-shadow: 0 4px 20px rgba(0,0,0,.35) !important;
     }
     .leaflet-tooltip.live-puv-tip.jeepney-tip { border-color: rgba(251,146,60,.5) !important; }
-    .actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+    .actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+    #copy-spot-btn { grid-column: 1 / -1; }
     .action-btn { border-radius: 12px; border: 1px solid rgba(148,163,184,.35); background: #ffffff; color: #0f172a; font-size: 12px; padding: 10px 8px; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: rgba(14,165,233,.2); }
     .action-btn:hover { border-color: rgba(14,165,233,.45); background: #f8fafc; }
     .action-btn.primary { background: #0284c7; border-color: #0284c7; color: #ffffff; }
@@ -137,6 +144,76 @@
     @keyframes pulse { 0% { opacity: .85; } 50% { opacity: 1; } 100% { opacity: .85; } }
     .leaflet-control-attribution { background: rgba(255,255,255,.88) !important; color: #64748b !important; font-size: 10px; }
     .leaflet-popup-content { margin: 10px 12px; color: #0f172a; }
+    .home-tools { margin-bottom: 14px; }
+    .mini-label { display: block; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: #64748b; margin-bottom: 6px; font-weight: 700; }
+    .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+    .seg button {
+      flex: 1 1 auto; min-width: 0; border-radius: 999px; border: 1px solid rgba(148,163,184,.38);
+      background: #ffffff; color: #475569; padding: 7px 10px; font-size: 11px; cursor: pointer;
+      touch-action: manipulation; -webkit-tap-highlight-color: rgba(14,165,233,.2);
+    }
+    .seg button.active { border-color: rgba(14,165,233,.55); background: rgba(14,165,233,.14); color: #075985; font-weight: 700; }
+    .guide-ul { margin: 0 0 12px; padding-left: 18px; color: #334155; font-size: 13px; line-height: 1.5; }
+    .guide-ul li { margin-bottom: 6px; }
+    .stop-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .toast {
+      position: fixed; bottom: calc(72px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(20px);
+      z-index: 950; max-width: min(92vw, 360px); padding: 10px 14px; border-radius: 12px;
+      background: rgba(15,23,42,.92); color: #f1f5f9; font-size: 13px; line-height: 1.35;
+      box-shadow: 0 8px 28px rgba(0,0,0,.25); opacity: 0; pointer-events: none; transition: opacity .22s ease, transform .22s ease;
+    }
+    .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .chip.net-offline { border-color: rgba(239,68,68,.5); color: #991b1b; background: rgba(254,226,226,.95); }
+    body.lipamove-zoom-text { font-size: 106%; }
+    body.lipamove-zoom-text .headline { font-size: clamp(22px, 5.5vw, 32px); }
+    body.lipamove-zoom-text .mini-label,
+    body.lipamove-zoom-text .muted { font-size: 13px !important; }
+    .feed-meta-line,
+    #nearest-landmark-line { font-size: 11px; color: #64748b; line-height: 1.35; margin: 10px 0 0 0; }
+    #guide-weather-line { margin-top: 6px; }
+    .weather-line { padding: 8px 10px; border-radius: 10px; background: rgba(14,165,233,.09); border: 1px solid rgba(14,165,233,.28); font-size: 12px; color: #0f172a; margin-bottom: 10px; }
+    .card-head-row .card-grow { flex: 1; min-width: 0; }
+    .card-head-row { align-items: flex-start !important; gap: 8px !important; }
+    .card-star-btn {
+      flex-shrink: 0; touch-action: manipulation; -webkit-tap-highlight-color: rgba(251,191,36,.25);
+      width: 40px; height: 38px; border-radius: 12px !important;
+      padding: 0 !important; font-size: 20px !important; line-height: 1 !important;
+      align-self: flex-start !important;
+    }
+    .card-star-btn.starred { border-color: rgba(245,158,11,.6) !important; background: rgba(251,191,36,.15) !important; }
+    .commuter-extras { font-size: 11px; color: #64748b; line-height: 1.45; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(148,163,184,.35); }
+    .ns-extra { margin-top: 8px; font-size: 12px; line-height: 1.45; }
+    .phrase-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .phrase-grid .phrase-copy { font-size: 11px; padding: 7px 10px; }
+    .peak-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+    .peak-table th, .peak-table td { border: 1px solid rgba(148,163,184,.35); padding: 6px 8px; text-align: left; }
+    .peak-table th { background: rgba(14,165,233,.1); color: #0f172a; }
+    .prep-wrap { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 8px; align-items: center; }
+    .prep-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #475569; cursor: pointer; touch-action: manipulation; }
+    .prep-item input { width: auto; accent-color: #0284c7; }
+    .memo-area { min-height: 56px !important; font-size: 12px; margin-top: 6px !important; }
+    .tracking-mini {
+      display: none;
+      margin: 0 14px 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      position: sticky;
+      top: 8px;
+      z-index: 8;
+    }
+    .tracking-mini .tm-title { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #64748b; margin: 0 0 4px; }
+    .tracking-mini .tm-main { font-size: 12px; color: #0f172a; line-height: 1.35; margin: 0; }
+    .tracking-mini .tm-actions { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+    .tracking-mini .tm-btn { border-radius: 999px; border: 1px solid rgba(148,163,184,.35); background: #fff; color: #334155; padding: 5px 10px; font-size: 11px; cursor: pointer; }
+    .tracking-mini .tm-btn:hover { border-color: rgba(14,165,233,.45); color: #0f172a; }
+    .wait-pin-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #f8fafc;
+      box-shadow: 0 0 0 2px rgba(2,132,199,.6);
+      background: #0284c7;
+    }
     @media (min-width: 900px) {
       .app { max-width: none; display: grid; grid-template-columns: minmax(0, 1fr) min(420px, 38vw); align-items: stretch; min-height: 100vh; }
       .map-wrap { height: 100vh; min-height: 0; border-bottom: none; border-right: 1px solid rgba(255,255,255,.07); display: block !important; }
@@ -162,6 +239,37 @@
       .headline { font-size: 24px; }
       .map-wrap { min-height: 340px; height: 52vh; }
     }
+    /* Mobile map chrome: avoid stacked chips overlapping and free map space */
+    @media (max-width: 899px) {
+      .overlay { padding: 8px 8px 10px; gap: 6px; }
+      .top { flex-direction: column; align-items: stretch; padding: 10px 12px; gap: 8px; }
+      .top-actions { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
+      .top-actions .pill { font-size: 11px; padding: 5px 9px; }
+      .brand-logo { height: 36px; max-width: min(200px, 70vw); }
+      .headline { font-size: 22px; margin-top: 2px; }
+      .sub { font-size: 11px; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+      .alert { font-size: 12px; padding: 8px 10px; font-weight: 600; }
+      .chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        gap: 6px;
+        padding: 2px 2px 6px;
+        margin: 0 -2px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scroll-snap-type: x proximity;
+      }
+      .chips::-webkit-scrollbar { height: 4px; }
+      .chips::-webkit-scrollbar-thumb { background: rgba(100,116,139,.45); border-radius: 4px; }
+      .chips .chip { flex: 0 0 auto; scroll-snap-align: start; max-width: min(260px, 82vw); }
+      .chips .chip-route { max-width: min(200px, 55vw); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .map-wrap { min-height: 280px; height: 48vh; }
+    }
+    @media (max-width: 380px) {
+      .headline { font-size: 20px; }
+      .map-wrap { min-height: 260px; height: 44vh; }
+    }
   </style>
 </head>
 <body data-screen="home">
@@ -175,17 +283,20 @@
             <div class="headline">Saan na ang sakay?</div>
             <div class="sub">Madaling makita kung saan na ang masasakyan, para mas simple at panatag ang biyahe.</div>
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+          <div class="top-actions">
             <div class="pill" id="live-sim-pill">Live vehicle tracking</div>
             <button type="button" id="auth-entry-btn" class="chip button">Account</button>
           </div>
         </div>
         <div id="surge-alert" class="alert glass" style="display:none;"></div>
         <div class="chips">
-          <span class="chip">Live updates</span><span class="chip">Ayala / J.P. Laurel (no bypass)</span>
+          <span id="net-status-chip" class="chip" aria-live="polite">Online</span>
+          <span class="chip">Live updates</span><span class="chip chip-route" title="Ayala / J.P. Laurel (no bypass)">Ayala / J.P. Laurel (no bypass)</span>
+          <span id="refresh-feed" class="chip button" title="I-refresh ang ETA o live positions">Refresh</span>
           <span id="locate-me" class="chip button">Locate me</span>
           <span id="fit-rides" class="chip button">Fit all rides</span>
           <span id="gps-toggle" class="chip button" title="Live tracking of vehicles on the route.">Live tracking: On</span>
+          <span id="copy-spot-chip" class="chip button" title="Kopyahin ang lokasyon ng spot mo (meetup/SOS gabay)">Kopyahin spot</span>
         </div>
       </div>
     </section>
@@ -194,15 +305,62 @@
       <nav class="panel-nav" aria-label="Screens">
         <button type="button" class="panel-tab active" data-goto="home">Map</button>
         <button type="button" class="panel-tab" data-goto="plan">Plan</button>
+        <button type="button" class="panel-tab" data-goto="guide">Guide</button>
         <button type="button" class="panel-tab" data-goto="share">Share</button>
         <button type="button" class="panel-tab" data-goto="auth">Account</button>
         <button type="button" class="panel-tab" data-goto="profile" id="panel-tab-profile" style="display:none;">Profile</button>
       </nav>
+      <div id="tracking-mini" class="tracking-mini glass" aria-live="polite" style="display:none;">
+        <p class="tm-title">Now tracking</p>
+        <p class="tm-main" id="tracking-mini-main">—</p>
+        <div class="tm-actions">
+          <button type="button" id="tracking-center-btn" class="tm-btn">Center</button>
+          <button type="button" id="tracking-share-btn" class="tm-btn">Share</button>
+          <button type="button" id="tracking-clear-btn" class="tm-btn">Clear</button>
+        </div>
+      </div>
 
       <section id="screen-home" class="screen active" aria-label="Live feed">
         <div class="cards" style="margin-top:0;border-radius:0;background:transparent;padding:0;">
           <div class="label">Mga pinakamalapit na sakay</div>
           <div class="tagline">Pinaka-malalapit na sakay mula sa lokasyon mo, may simple ETA para madaling pumili.</div>
+          <div class="home-tools glass" style="padding:12px 14px;border-radius:16px;margin-bottom:12px;">
+            <label class="mini-label" for="eta-basis-select">ETA mula sa</label>
+            <select id="eta-basis-select" class="select" style="margin-bottom:10px;font-size:12px;">
+              <option value="gps">📍 Lokasyon ko (GPS)</option>
+              <option value="map">◎ Gitna ng mapa (i-drag)</option>
+              <option value="pin">📌 Pinned waiting spot (long-press map)</option>
+              <option value="stop-2">🏢 SM Lipa Grand Terminal</option>
+              <option value="stop-0">🏢 Bayan (T.M. Kalaw)</option>
+              <option value="stop-1">🏢 Univ. ng Batangas Lipa</option>
+              <option value="stop-3">🏢 The Outlets at Lipa</option>
+            </select>
+            <span class="mini-label">Ipakita ang sasakyan</span>
+            <div class="seg" id="vehicle-filter-seg" role="group" aria-label="Filter by vehicle type">
+              <button type="button" data-vfil="all" class="active">Lahat</button>
+              <button type="button" data-vfil="jeepney">Jeepney</button>
+              <button type="button" data-vfil="batrasco">Batra</button>
+            </div>
+            <label class="mini-label" for="list-sort-select" style="margin-top:12px;">Ayusin ang listahan</label>
+            <select id="list-sort-select" class="select" style="margin-bottom:8px;font-size:12px;">
+              <option value="distance">Pinakamalapit muna (layo)</option>
+              <option value="eta">Maaga ang dating (ETA)</option>
+              <option value="crowd">Komportable muna (hindi overloaded)</option>
+            </select>
+            <p id="basis-hint" class="muted" style="margin-top:8px;margin-bottom:0;font-size:11px;line-height:1.4;"></p>
+            <p id="nearest-landmark-line" aria-live="polite"></p>
+            <p id="walk-hint-line" class="muted" style="margin-top:6px;font-size:11px;line-height:1.4;" aria-live="polite"></p>
+            <div id="weather-chip-home" class="weather-line" style="display:none;" aria-live="polite"></div>
+            <span class="mini-label" style="margin-top:10px;">Biyahe checklist (naka-save sa phone)</span>
+            <div class="prep-wrap">
+              <label class="prep-item"><input type="checkbox" id="prep-payong" /> Payong / paypay</label>
+              <label class="prep-item"><input type="checkbox" id="prep-barya" /> Barya (sakay)</label>
+              <label class="prep-item"><input type="checkbox" id="prep-phone" /> Load / charged phone</label>
+              <label class="prep-item"><input type="checkbox" id="prep-tubig" /> Tubig / maliit na snack</label>
+            </div>
+            <label class="mini-label" for="trip-memo" style="margin-top:10px;">Alalahanin / memo ngayong biyahe</label>
+            <textarea id="trip-memo" class="area memo-area" maxlength="420" placeholder="Hal. UWIAN 5pm — SM Terminal hilera ng…"></textarea>
+          </div>
           <div id="nearest-summary" class="nearest-summary glass" style="display:none;">
             <div class="ns-title">Pinaka-malapit</div>
             <div id="nearest-body" class="ns-body">—</div>
@@ -210,8 +368,10 @@
           <div class="actions">
             <button id="plan-trip" type="button" class="action-btn">Plan Trip</button>
             <button id="share-eta" type="button" class="action-btn">Share ETA</button>
+            <button id="copy-spot-btn" type="button" class="action-btn" title="Lagyan ng lokasyon para sa mga kasama">Kopyahin spot</button>
           </div>
           <div id="eta-list"></div>
+          <p id="feed-sync-line" class="feed-meta-line muted" aria-live="polite"></p>
         </div>
       </section>
 
@@ -254,6 +414,118 @@
         </div>
       </section>
 
+      <section id="screen-guide" class="screen" aria-label="Commuter guide">
+        <div class="screen-head">
+          <button type="button" class="back-mob" data-goto="home">Back</button>
+          <h2>Commuter guide</h2>
+        </div>
+        <p class="screen-intro">Mga tip at tool para mas gamitin ang LipaMove araw-araw — prediksyon, hindi booking.</p>
+        <div class="dispatch-card">
+          <h3>Trapik ngayon</h3>
+          <p id="guide-rush-blurb">Kinakalkula…</p>
+        </div>
+        <div class="dispatch-card">
+          <h3>Major stops (quick map)</h3>
+          <p class="muted" style="margin-bottom:8px;">Ilipat ang mapa papunta sa terminal — maaari mo ring piliin ito sa <strong>ETA mula sa</strong> sa home.</p>
+          <div class="stop-chip-row" id="guide-stop-buttons"></div>
+        </div>
+        <div class="dispatch-card">
+          <h3>Paalala kapag malapit na</h3>
+          <p class="muted" style="margin-bottom:10px;">Nagpapadala ng isang browser notification kapag ang <strong>pinaka-malapit</strong> na pinapakitang sasakyan ay nasa iyong lain ng minuto (masyadong hindi perpekto kapag nakasara ang tab).</p>
+          <div class="form-group">
+            <label for="notify-threshold-select">Kapag pinakamalapit na ETA ay hanggang</label>
+            <select id="notify-threshold-select" class="select">
+              <option value="0" selected="selected">Naka-off</option>
+              <option value="15">15 minuto</option>
+              <option value="10">10 minuto</option>
+              <option value="7">7 minuto</option>
+              <option value="5">5 minuto</option>
+              <option value="3">3 minuto</option>
+            </select>
+          </div>
+          <button type="button" id="notify-permission-btn" class="action-btn primary block">Pahintulutan ang notifications</button>
+          <p class="muted" id="notify-status-line" style="margin-top:8px;margin-bottom:0;"></p>
+        </div>
+        <div class="dispatch-card">
+          <h3>Paliwanag ng ETA</h3>
+          <ul class="guide-ul">
+            <li>Ginagamit ang layo sa iyong napiling punto (GPS, gitna ng mapa, o terminal) at kasalukuyang oras/trapik model.</li>
+            <li>Ang hanay (hal. 5–8 min) ay abang-hanay, hindi garantiya — lalo na kung medyo luma na ang datos.</li>
+            <li>Kapag naka-live ang IoT feed, mas tumpak; ang simulation ay pinakamahusay para sa demo.</li>
+          </ul>
+        </div>
+        <div class="dispatch-card">
+          <h3>Weather sa Lipa (gabay lang)</h3>
+          <p class="muted" style="margin-bottom:6px;">Mula Open-Meteo, walang API key — maaari mong isaalang-alang kapag uwian o-ulan.</p>
+          <div id="guide-weather-line" class="weather-line">Sinisimulan ang weather…</div>
+          <button type="button" id="guide-weather-refresh" class="action-btn">I-refresh ang weather</button>
+        </div>
+        <div class="dispatch-card">
+          <h3>Ano ang makikita sa map</h3>
+          <ul class="guide-ul">
+            <li><strong>Orange</strong> icon — jeepney; <strong>asul</strong> — batrasco / batang jeep opsyon.</li>
+            <li><strong>Orange o asul na linya</strong> sa daan — tinatayong ruta ng kada unit mula sa <code>data.xml</code>.</li>
+            <li><strong>Cyan na linya</strong> may mga punto — pangunahing loop terminals (sandigan sa pag-abang).</li>
+            <li><strong>Maliit na asul na tuldok/pakete</strong> — ikaw (pagkatapos ng Locate me).</li>
+          </ul>
+        </div>
+        <div class="dispatch-card">
+          <h3>Mga bitbit sa commuter</h3>
+          <ul class="guide-ul">
+            <li>Paypay o payong sa init/ulan — ang Lipa corridor ay mabilis lumipat ng panahon.</li>
+            <li>Barya naka-hand para sa sakay — mas mabilis kaysa maghanap kapag nakapila.</li>
+            <li>I-check ang <strong>Priority unit</strong> (★ sa card ng sasakyan) kung lagi mong sinasakyang ruta.</li>
+            <li>Kung hindi ka sigurado sa ETA, tingnan din ang kulay ng kabanata sa demand at ang “Confidence” chip.</li>
+          </ul>
+        </div>
+        <div class="dispatch-card">
+          <h3>Emergency at serbisyo</h3>
+          <ul class="guide-ul">
+            <li>National Emergency Hotline Philippines: <strong>911</strong> (kung gumagana sa iyong lugar/network).</li>
+            <li>Para medical/pulis/suno: humingi din ng lugar sa mga guwardiya sa terminal kapag urgent.</li>
+            <li>Ang LipaMove ay para sa ETA/tracking lamang — hindi official dispatch ng operator.</li>
+          </ul>
+        </div>
+        <div class="dispatch-card">
+          <h3>Accessibility — mas malaking texto</h3>
+          <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:#334155;cursor:pointer;">
+            <input type="checkbox" id="access-zoom-toggle" />
+            Dagdagan laki ng font ng buong app (sa device mo lang)
+          </label>
+        </div>
+        <div class="dispatch-card">
+          <h3>Data saver (live feed)</h3>
+          <p class="muted" style="margin-bottom:8px;">Mas mabagal ang auto-refresh ng <code>data.xml</code> para tipid sa mobile data. Hindi naaapektuhan ang simulation.</p>
+          <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:#334155;cursor:pointer;">
+            <input type="checkbox" id="data-saver-toggle" />
+            Mas kaunting pull (≈22s) kaysa default (≈7s)
+          </label>
+        </div>
+        <div class="dispatch-card">
+          <h3>Tipikal na siksikan (gabay lamang)</h3>
+          <p class="muted" style="margin-bottom:6px;">Hindi opisyal na oras ng operator — kombinasyon ng karaniwang Lipa corridor at trapik model ng app.</p>
+          <table class="peak-table">
+            <thead><tr><th>Window</th><th>Inaasahan</th></tr></thead>
+            <tbody>
+              <tr><td>6:00–9:00</td><td>Mataas ang demand (pasok / pa-eskwela)</td></tr>
+              <tr><td>11:00–14:00</td><td>Banayad na siksikan (tanghalian)</td></tr>
+              <tr><td>17:00–20:00</td><td>Peak uwian — mas malawak ang ETA</td></tr>
+              <tr><td>Linggo / holiday</td><td>Mag-iba — tingnan ang live demand sa card</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="dispatch-card">
+          <h3>Mabilis na sasakyan phrases</h3>
+          <p class="muted" style="margin-bottom:4px;">Tap para kopyahin (pakiusap / bayad).</p>
+          <div class="phrase-grid">
+            <button type="button" class="action-btn phrase-copy" data-phrase="Para po, sa tabi lang.">Para po</button>
+            <button type="button" class="action-btn phrase-copy" data-phrase="Bayad po.">Bayad po</button>
+            <button type="button" class="action-btn phrase-copy" data-phrase="Sa terminal na lang po ako bababa.">Bababa sa terminal</button>
+            <button type="button" class="action-btn phrase-copy" data-phrase="Magkano po hanggang dito?">Tanong pasahe</button>
+          </div>
+        </div>
+      </section>
+
       <section id="screen-share" class="screen" aria-label="Share ETA">
         <div class="screen-head">
           <button type="button" class="back-mob" data-goto="home">Back</button>
@@ -268,6 +540,9 @@
         <div class="sheet-row">
           <button id="share-copy-btn" type="button" class="action-btn">Copy message</button>
           <button id="share-native-btn" type="button" class="action-btn primary">Share…</button>
+        </div>
+        <div class="sheet-row" style="margin-top:8px;">
+          <button id="share-sms-btn" type="button" class="action-btn block">Buksan sa SMS (text)</button>
         </div>
         <p class="muted" id="share-status"></p>
       </section>
@@ -331,9 +606,11 @@
   <nav class="bottom-nav" aria-label="Main navigation">
     <button type="button" data-goto="home" class="active"><span class="ico" aria-hidden="true">◎</span>Map</button>
     <button type="button" data-goto="plan"><span class="ico" aria-hidden="true">⎘</span>Plan</button>
+    <button type="button" data-goto="guide"><span class="ico" aria-hidden="true">📋</span>Guide</button>
     <button type="button" data-goto="share"><span class="ico" aria-hidden="true">↗</span>Share</button>
-    <button type="button" id="bottom-nav-auth"><span class="ico" aria-hidden="true">👤</span>Account</button>
+    <button type="button" id="bottom-nav-auth"><span class="ico" aria-hidden="true">👤</span>Acct</button>
   </nav>
+  <div id="app-toast" class="toast" role="status" aria-live="polite"></div>
 
   <script src="vendor/leaflet/leaflet.js"></script>
   <script type="text/javascript">
@@ -348,6 +625,8 @@
       var userLocation = null;
       var rides = [];
       var etaByRide = {};
+      var etaMetaByRide = {};
+      var commuterExtrasByRide = {};
       var defaultFallback = [[13.9425265,121.1632107],[13.9547813,121.1630958],[13.9681910,121.1595069],[14.0095011,121.1697526]];
       var lipaBounds = null;
       var simEnabled = true;
@@ -366,6 +645,454 @@
       var gpsPollTimer = null;
       var userWatchId = null;
       var selectedRideId = null;
+      var vehicleFilter = localStorage.getItem("lipamove_vehicle_filter") || "all";
+      var toastHideTimer = null;
+      var lastNotifyKey = "";
+      var lastLiveFetchMs = null;
+      var weatherLastOkMs = 0;
+      var manualBasisPoint = null;
+      var manualBasisMarker = null;
+
+      function getListSortMode() {
+        var sel = document.getElementById("list-sort-select");
+        if (sel && sel.value) {
+          return sel.value;
+        }
+        return localStorage.getItem("lipamove_list_sort") || "distance";
+      }
+
+      function setCardOrdersFromSortedRideIds(sortedIdsOrdered) {
+        var rank = {};
+        sortedIdsOrdered.forEach(function (id, idx) {
+          rank[id] = idx;
+        });
+        Array.prototype.forEach.call(document.querySelectorAll(".card[data-ride-id]"), function (card) {
+          var rid = card.getAttribute("data-ride-id");
+          var rideObj = rides.find(function (rr) {
+            return rr.id === rid;
+          });
+          if (!rideObj || !rideMatchesFilter(rideObj)) {
+            card.style.order = "99999999";
+            return;
+          }
+          if (typeof rank[rid] === "number") {
+            card.style.order = String(100 + rank[rid]);
+          }
+        });
+      }
+
+      function applyListSortOrder() {
+        var basis = getEtaBasis();
+        var mode = getListSortMode();
+        var starId = localStorage.getItem("lipamove_star_rid") || "";
+        var list = rides.filter(rideMatchesFilter);
+        list.sort(function (a, b) {
+          var ap = starId && a.id === starId ? -1 : 0;
+          var bp = starId && b.id === starId ? -1 : 0;
+          if (ap !== bp) {
+            return ap - bp;
+          }
+          var kmA = distanceKm(basis, [a.lat, a.lng]);
+          var kmB = distanceKm(basis, [b.lat, b.lng]);
+          var etaA = getEtaRangeData(a).mid;
+          var etaB = getEtaRangeData(b).mid;
+          if (mode === "eta") {
+            if (etaA !== etaB) { return etaA - etaB; }
+            return kmA - kmB;
+          }
+          if (mode === "crowd") {
+            if (!!a.high !== !!b.high) {
+              return a.high ? 1 : -1;
+            }
+            if (etaA !== etaB) { return etaA - etaB; }
+            return kmA - kmB;
+          }
+          if (kmA !== kmB) { return kmA - kmB; }
+          return etaA - etaB;
+        });
+        var idsOrdered = list.map(function (x) {
+          return x.id;
+        });
+        setCardOrdersFromSortedRideIds(idsOrdered);
+      }
+
+      function updateStarButtonStates() {
+        var starId = localStorage.getItem("lipamove_star_rid") || "";
+        Array.prototype.forEach.call(document.querySelectorAll(".card-star-btn"), function (btn) {
+          var rid = btn.getAttribute("data-ride-id");
+          var on = !!(rid && starId === rid);
+          btn.textContent = on ? "\u2605" : "\u2606";
+          btn.classList.toggle("starred", on);
+          btn.setAttribute("aria-pressed", on ? "true" : "false");
+          btn.title = on ? "Tanggalin sa priority unit" : "Priority unit ★";
+        });
+      }
+
+      function updateNearestLandmarkLine() {
+        var el = document.getElementById("nearest-landmark-line");
+        if (!el) { return; }
+        var basis = getEtaBasis();
+        var best = null;
+        coreLoopStops.forEach(function (stop) {
+          var km = distanceKm(basis, stop.latlng);
+          if (!best || km < best.km) {
+            best = { name: stop.name, km: km };
+          }
+        });
+        el.textContent = best
+          ? "Malapit kang ~" + best.km.toFixed(2) + " km mula sa " + best.name + " (sanggunian sa punto ng ETA)."
+          : "";
+      }
+
+      function updateFeedSyncLine() {
+        var el = document.getElementById("feed-sync-line");
+        if (!el) { return; }
+        if (!rides.length) {
+          el.textContent = "";
+          return;
+        }
+        if (simEnabled) {
+          el.textContent =
+            'Simulation — ETA ay gabay lamang (★ priority unit mo). Gamitin ang Ayusin listahan kapag gustong unloaded muna.';
+          return;
+        }
+        if (lastLiveFetchMs) {
+          var ago = Math.max(0, Math.round((Date.now() - lastLiveFetchMs) / 1000));
+          var minAgo = Math.floor(ago / 60);
+          var txtAgo = minAgo > 0 ? "~" + minAgo + " min (" + ago + "s)" : ago + "s";
+          var pollSec = Math.round(getLivePollIntervalMs() / 1000);
+          el.textContent =
+            "Huling pull ng live feed: " +
+            txtAgo +
+            " — auto kada ~" +
+            pollSec +
+            "s (data saver: " +
+            (localStorage.getItem("lipamove_data_saver") === "1" ? "on" : "off") +
+            ").";
+          return;
+        }
+        el.textContent = 'Live pull — tap "Refresh" o i-check ang connection / data.xml.';
+      }
+
+      function wmoWeatherPhrase(code) {
+        var c = Number(code);
+        if (c === 0) { return "Malinaw ang langit"; }
+        if (c <= 3) { return "Bahagyang makulimlim"; }
+        if (c <= 49) { return "Fog/mist"; }
+        if (c <= 69) { return "Posibleng ulan"; }
+        if (c <= 82) { return "Biglaang showers"; }
+        if (c <= 94) { return "Malakas na ulan"; }
+        if (c >= 95) { return "Kulog at ulan"; }
+        return "Gabay lamang na lagay ng panahon";
+      }
+
+      function fetchLipaWeather(showToastHint) {
+        var gxInit = document.getElementById("guide-weather-line");
+        var hxInit = document.getElementById("weather-chip-home");
+        var guideOpen = typeof document !== "undefined" && document.body && document.body.getAttribute("data-screen") === "guide";
+        if (typeof navigator !== "undefined" && !navigator.onLine) {
+          if (gxInit && guideOpen) { gxInit.textContent = "Offline — hindi makukuha ang weather."; }
+          return;
+        }
+        var lat = 13.941;
+        var lon = 121.16;
+        var url =
+          "https://api.open-meteo.com/v1/forecast?latitude=" +
+          lat +
+          "&longitude=" +
+          lon +
+          "&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FManila";
+        fetch(url)
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (data) {
+            var cur = (data && data.current) || {};
+            var t = cur.temperature_2m;
+            var hum = cur.relative_humidity_2m;
+            var code = cur.weather_code;
+            var txt =
+              typeof t === "number"
+                ? Math.round(t) + "\u00B0C" +
+                  (typeof hum === "number" ? ", " + hum + "%RH" : "") +
+                  ", " +
+                  wmoWeatherPhrase(code) +
+                  ". (Open-Meteo, Lipa area)"
+                : "Walang datos ng weather.";
+            weatherLastOkMs = Date.now();
+            var gx = document.getElementById("guide-weather-line");
+            var hx = document.getElementById("weather-chip-home");
+            if (gx) {
+              gx.textContent = txt;
+              gx.dataset.seenWeather = "1";
+            }
+            if (hx) {
+              hx.style.display = "block";
+              hx.textContent = "\u2638 Weather: " + txt;
+            }
+            if (showToastHint) { showToast("Weather na-update."); }
+          })
+          .catch(function () {
+            var gx = document.getElementById("guide-weather-line");
+            if (gx && !gx.dataset.seenWeather && guideOpen) {
+              gx.textContent = "Hindi makuha ang weather.";
+            }
+          });
+      }
+
+      function scheduleWeatherIfStale(force) {
+        var now = Date.now();
+        if (!force && now - weatherLastOkMs < 12 * 60 * 1000) { return; }
+        fetchLipaWeather(false);
+      }
+
+      function showToast(msg) {
+        var t = document.getElementById("app-toast");
+        if (!t) { return; }
+        t.textContent = msg || "";
+        t.classList.add("visible");
+        clearTimeout(toastHideTimer);
+        toastHideTimer = setTimeout(function () { t.classList.remove("visible"); }, 2400);
+      }
+
+      function setManualWaitSpot(latlng, flyToIt) {
+        if (!latlng || !isFinite(latlng[0]) || !isFinite(latlng[1])) { return; }
+        manualBasisPoint = [Number(latlng[0]), Number(latlng[1])];
+        localStorage.setItem("lipamove_manual_basis", JSON.stringify(manualBasisPoint));
+        if (map) {
+          if (!manualBasisMarker) {
+            var pinIcon = L.divIcon({
+              className: "vehicle-marker-wrap",
+              html: '<div class="wait-pin-icon" title="Pinned waiting spot"></div>',
+              iconSize: [18, 18],
+              iconAnchor: [9, 9]
+            });
+            manualBasisMarker = L.marker(manualBasisPoint, { icon: pinIcon }).addTo(map).bindTooltip("Pinned waiting spot", {
+              permanent: false,
+              direction: "top",
+              offset: [0, -10]
+            });
+          } else {
+            manualBasisMarker.setLatLng(manualBasisPoint);
+          }
+          if (flyToIt) {
+            map.flyTo(manualBasisPoint, Math.max(map.getZoom(), 15), { duration: 0.7 });
+          }
+        }
+        var sel = document.getElementById("eta-basis-select");
+        if (sel) { sel.value = "pin"; }
+        localStorage.setItem("lipamove_eta_basis", "pin");
+        updateBasisHint();
+        refreshEtas();
+      }
+
+      function getSelectedRide() {
+        if (!selectedRideId) { return null; }
+        return rides.find(function (r) { return r.id === selectedRideId; }) || null;
+      }
+
+      function updateTrackingMiniCard() {
+        var box = document.getElementById("tracking-mini");
+        var body = document.getElementById("tracking-mini-main");
+        if (!box || !body) { return; }
+        var ride = getSelectedRide();
+        if (!ride) {
+          box.style.display = "none";
+          return;
+        }
+        var etaData = getEtaRangeData(ride);
+        var basis = getEtaBasis();
+        var km = distanceKm(basis, [ride.lat, ride.lng]);
+        var vtype = ride.vtype === "jeepney" ? "Jeepney" : "Batra jeepney";
+        body.textContent = ride.id + " • " + vtype + " • " + etaData.lower + "-" + etaData.upper + " min • " + km.toFixed(2) + " km";
+        box.style.display = "block";
+      }
+
+      function rideMatchesFilter(r) {
+        if (!r) { return false; }
+        if (vehicleFilter === "all") { return true; }
+        return r.vtype === vehicleFilter;
+      }
+
+      function syncVehicleFilterVisuals() {
+        rides.forEach(function (r) {
+          var match = rideMatchesFilter(r);
+          var el = r.marker && r.marker.getElement && r.marker.getElement();
+          if (el) { el.style.opacity = match ? "" : "0.32"; }
+          var card = document.querySelector(".card[data-ride-id=\"" + r.id + "\"]");
+          if (card) {
+            card.style.display = match ? "" : "none";
+            card.setAttribute("aria-hidden", match ? "false" : "true");
+          }
+        });
+      }
+
+      function getEtaBasis() {
+        var sel = document.getElementById("eta-basis-select");
+        if (sel && !sel.dataset.restored) {
+          var saved = localStorage.getItem("lipamove_eta_basis");
+          if (saved && sel.querySelector("option[value=\"" + saved + "\"]")) {
+            sel.value = saved;
+          }
+          sel.dataset.restored = "1";
+        }
+        var mode = (sel && sel.value) ? sel.value : localStorage.getItem("lipamove_eta_basis") || "gps";
+        if (mode.indexOf("stop-") === 0) {
+          var si = parseInt(mode.slice(5), 10);
+          if (coreLoopStops[si]) { return coreLoopStops[si].latlng; }
+        }
+        if (mode === "pin") {
+          if (!manualBasisPoint) {
+            try {
+              var savedPin = JSON.parse(localStorage.getItem("lipamove_manual_basis") || "null");
+              if (savedPin && isFinite(savedPin[0]) && isFinite(savedPin[1])) {
+                manualBasisPoint = [Number(savedPin[0]), Number(savedPin[1])];
+              }
+            } catch (ePin) {}
+          }
+          if (manualBasisPoint) { return manualBasisPoint; }
+        }
+        if (mode === "gps" && userLocation) { return userLocation; }
+        if (map) { return [map.getCenter().lat, map.getCenter().lng]; }
+        return [13.9411, 121.1600];
+      }
+
+      function updateBasisHint() {
+        var el = document.getElementById("basis-hint");
+        var sel = document.getElementById("eta-basis-select");
+        if (!el || !sel) { return; }
+        var v = sel.value;
+        if (v === "gps") {
+          el.textContent = userLocation
+            ? "Ginagamit ang GPS mo para sa layo at ETA."
+            : "Walang GPS — pansamantalang gumagamit ng gitna ng mapa. Pindutin ang Locate me o pumili ng terminal.";
+        } else if (v === "map") {
+          el.textContent = "Ginagamit ang gitna ng mapa: i-drag ang mapa kung saan ka nag-aabang.";
+        } else if (v.indexOf("stop-") === 0) {
+          var si = parseInt(v.slice(5), 10);
+          el.textContent = coreLoopStops[si]
+            ? "Parang nag-aantay ka sa " + coreLoopStops[si].name + "."
+            : "";
+        } else if (v === "pin") {
+          el.textContent = manualBasisPoint
+            ? "Pinned waiting spot ang gamit sa ETA. Long-press ulit sa map para ilipat."
+            : "Wala pang pinned waiting spot. Long-press sa map para maglagay.";
+        } else {
+          el.textContent = "";
+        }
+      }
+
+      function updateGuideRushBlurb() {
+        var el = document.getElementById("guide-rush-blurb");
+        if (!el) { return; }
+        var hour = new Date().getHours();
+        var mult = getTrafficMultiplier();
+        var period =
+          hour >= 6 && hour < 9
+            ? "rush hour umaga"
+            : hour >= 17 && hour < 20
+              ? "rush hour hapon/gabi"
+              : hour >= 11 && hour < 14
+                ? "tanghalian"
+                : "karaniwang oras";
+        var etaNote =
+          mult >= 1.4
+            ? "Mas malawak dapat ang ETA range; maglaan ng ekstra panahon."
+            : mult >= 1.35
+              ? "Bahagyang mas mabagal ang average; subukan ang hanay ng ETA sa listahan."
+              : "Mas magagaan ang modelo ng trapik; mas maaasahan ang midpoint ng ETA.";
+        var dow = new Date().getDay();
+        var weekendLead =
+          dow === 0 || dow === 6
+            ? "Linggo o Sabado: kadalasang iba ang ulan at daloy ng tao — basahin ang demand sa mga card at ang ulat ng panahon. "
+            : "";
+        el.textContent =
+          weekendLead +
+          period.charAt(0).toUpperCase() +
+          period.slice(1) +
+          " (" +
+          Math.round(mult * 100 - 100) +
+          "% modelo vs baseline). " +
+          etaNote;
+      }
+
+      function getNotifyThresholdMin() {
+        var raw = localStorage.getItem("lipamove_notify_min");
+        if (raw === null || raw === "") { return 0; }
+        var n = Number(raw);
+        return isFinite(n) ? n : 0;
+      }
+
+      function updateNotifyStatusLine() {
+        var el = document.getElementById("notify-status-line");
+        var thr = getNotifyThresholdMin();
+        if (!el) { return; }
+        if (!thr) {
+          el.textContent = "Naka-off ang paalala.";
+          return;
+        }
+        if (typeof Notification === "undefined") {
+          el.textContent = "Hindi suportado ang notifications sa browser na ito.";
+          return;
+        }
+        el.textContent =
+          Notification.permission === "granted"
+            ? "Active: isa-isang alert kapag pinaka-malapit na ETA ay ≤ " + thr + " min."
+            : Notification.permission === "denied"
+              ? "Blocked ang notifications — baguhin sa browser settings."
+              : "Pindutin ang button sa itaas para payagan.";
+      }
+
+      function maybeNearestEtaNotification() {
+        var thr = getNotifyThresholdMin();
+        if (!thr || typeof Notification === "undefined" || Notification.permission !== "granted") { return; }
+        var basis = getEtaBasis();
+        var filtered = rides.filter(rideMatchesFilter);
+        var nearest = null;
+        filtered.forEach(function (r) {
+          var km = distanceKm(basis, [r.lat, r.lng]);
+          if (!nearest || km < nearest.km) { nearest = { ride: r, km: km }; }
+        });
+        if (!nearest) { return; }
+        var upper = getEtaRangeData(nearest.ride).upper;
+        if (upper > thr) { return; }
+        var key = nearest.ride.id + ":" + upper;
+        if (lastNotifyKey === key) { return; }
+        lastNotifyKey = key;
+        try {
+          new Notification("LipaMove — malapit na", {
+            body: nearest.ride.id + ": humigit-kumulang " + upper + " min (pinakamataas sa hanay).",
+            tag: "lipamove-eta"
+          });
+        } catch (e) { /* ignore */ }
+      }
+
+      function initGuideStopButtons() {
+        var row = document.getElementById("guide-stop-buttons");
+        if (!row || row.dataset.wired) { return; }
+        row.dataset.wired = "1";
+        coreLoopStops.forEach(function (stop, idx) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "action-btn";
+          b.textContent = stop.name.replace(/ \(.*\)/, "");
+          b.setAttribute("data-stop-idx", String(idx));
+          b.addEventListener("click", function () {
+            if (!map) { return; }
+            map.flyTo(stop.latlng, 15, { duration: 0.75 });
+            var sel = document.getElementById("eta-basis-select");
+            if (sel) {
+              sel.value = "stop-" + idx;
+              localStorage.setItem("lipamove_eta_basis", sel.value);
+            }
+            updateBasisHint();
+            refreshEtas();
+            navigateTo("home");
+            showToast("Mapa + ETA: " + stop.name);
+          });
+          row.appendChild(b);
+        });
+      }
 
       function navigateTo(name) {
         document.body.setAttribute("data-screen", name);
@@ -392,7 +1119,26 @@
           pTab.classList.toggle("active", name === "profile");
         }
         if (name === "home") {
-          setTimeout(function () { map.invalidateSize(); }, 150);
+          setTimeout(function () {
+            map.invalidateSize();
+          }, 150);
+          updateBasisHint();
+          scheduleWeatherIfStale(false);
+        }
+        if (name === "guide") {
+          updateGuideRushBlurb();
+          updateNotifyStatusLine();
+          initGuideStopButtons();
+          scheduleWeatherIfStale(false);
+          var zk = document.getElementById("access-zoom-toggle");
+          if (zk) {
+            zk.checked = localStorage.getItem("lipamove_access_zoom") === "1";
+          }
+          var dsTog = document.getElementById("data-saver-toggle");
+          if (dsTog) {
+            dsTog.checked = localStorage.getItem("lipamove_data_saver") === "1";
+          }
+          fetchLipaWeather(false);
         }
         if (name === "profile") {
           try {
@@ -425,6 +1171,21 @@
           el = el.parentElement;
         }
         if (!el || !el.closest) { return; }
+        var phraseBtn = el.closest(".phrase-copy");
+        if (phraseBtn) {
+          e.preventDefault();
+          var ptxt = phraseBtn.getAttribute("data-phrase") || "";
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(ptxt).then(function () {
+              showToast("Nakopya ang phrase.");
+            }).catch(function () {
+              showToast(ptxt);
+            });
+          } else {
+            showToast(ptxt);
+          }
+          return;
+        }
         var t = el.closest("[data-goto]");
         if (!t) { return; }
         var g = t.getAttribute("data-goto");
@@ -449,6 +1210,156 @@
         if (hour >= 17 && hour < 20) { return 1.45; }
         if (hour >= 11 && hour < 14) { return 1.15; }
         return 1;
+      }
+
+      function getLivePollIntervalMs() {
+        return localStorage.getItem("lipamove_data_saver") === "1" ? 22000 : 7000;
+      }
+
+      function restartLiveGpsPollingIfNeeded() {
+        if (simEnabled) { return; }
+        if (!gpsPollTimer) { return; }
+        stopLiveGpsPolling();
+        startLiveGpsPolling();
+      }
+
+      function crowWalkMinutesFromKm(km) {
+        var speedKmh = 4.5;
+        if (!isFinite(km) || km <= 0) { return 1; }
+        return Math.max(1, Math.round((km / speedKmh) * 60));
+      }
+
+      function fareBandHint(km) {
+        if (!isFinite(km) || km < 0) { return ""; }
+        if (km < 0.25) { return "Sobrang lapit na — handang barya."; }
+        if (km < 1.2) { return "Tantiyang pamasada (hindi opisyal na LTFRB matrix): ~₱12–₱16."; }
+        if (km < 3) { return "Tantiya lang: ~₱15–₱22 — magtanong sa kundoktor."; }
+        if (km < 6) { return "Tantiya lang: ~₱20–₱28+."; }
+        return "Mahaba ang tuwid na layo — kumunsulta sa taripa sa terminal.";
+      }
+
+      function nearestTerminalWalkSentence(basis) {
+        var best = null;
+        coreLoopStops.forEach(function (stop) {
+          var km = distanceKm(basis, stop.latlng);
+          if (!best || km < best.km) {
+            best = { name: stop.name, km: km };
+          }
+        });
+        if (!best || best.km < 0.03) {
+          return "";
+        }
+        var mins = crowWalkMinutesFromKm(best.km);
+        var shortName = (best.name || "").split("(")[0].trim();
+        return "Kung lakad papunta sa " + shortName + ": ~" + mins + " min (\u2248" + best.km.toFixed(2) + " km tuwid — maaaring mas mahaba sa aktwal na daan).";
+      }
+
+      function updateWalkHintLine() {
+        var el = document.getElementById("walk-hint-line");
+        if (!el) { return; }
+        if (!rides.length) {
+          el.textContent = "";
+          return;
+        }
+        el.textContent = nearestTerminalWalkSentence(getEtaBasis());
+      }
+
+      function updateCommuterExtrasOnCards() {
+        var basis = getEtaBasis();
+        rides.forEach(function (ride) {
+          var box = commuterExtrasByRide[ride.id];
+          if (!box) { return; }
+          var km = distanceKm(basis, [ride.lat, ride.lng]);
+          var wmin = crowWalkMinutesFromKm(km);
+          box.textContent =
+            "Mula sa punto mo: ~" +
+            wmin +
+            " min lakad (\u2248" +
+            km.toFixed(2) +
+            " km tuwid) bago sumampa. " +
+            fareBandHint(km);
+        });
+      }
+
+      function buildSpotShareText() {
+        var basis = getEtaBasis();
+        var lat = basis[0];
+        var lng = basis[1];
+        var sel = document.getElementById("eta-basis-select");
+        var modeLabel = "Map";
+        if (sel && sel.options && sel.selectedIndex >= 0) {
+          modeLabel = sel.options[sel.selectedIndex].text.replace(/\s+/g, " ").trim();
+        }
+        var memoEl = document.getElementById("trip-memo");
+        var memoRaw = memoEl ? String(memoEl.value || "").trim() : "";
+        var memoChunk =
+          memoRaw
+            ? "\nAlalahanin: " +
+              memoRaw.substring(0, 220) +
+              (memoRaw.length > 220 ? "…" : "")
+            : "";
+        return (
+          "[LipaMove • Lipa City]\n" +
+          "Spot (gabay): " +
+          modeLabel +
+          "\nCoords: " +
+          lat.toFixed(5) +
+          ", " +
+          lng.toFixed(5) +
+          "\nMap: https://maps.google.com/?q=" +
+          encodeURIComponent(lat + "," + lng) +
+          "\n(Hindi ito EMS — meetup/reference lamang; i-verify pa.)" +
+          memoChunk
+        );
+      }
+
+      function copyMySpotLine() {
+        var text = buildSpotShareText();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            showToast("Na-copy ang spotting point.");
+          }).catch(function () {
+            showToast(text.substring(0, 100) + "…");
+          });
+        } else {
+          showToast(text);
+        }
+      }
+
+      function initPrepCheckboxesAndMemo() {
+        var ids = ["prep-payong", "prep-barya", "prep-phone", "prep-tubig"];
+        var key = "lipamove_prep_v1";
+        function read() {
+          try {
+            return JSON.parse(localStorage.getItem(key) || "{}") || {};
+          } catch (ePrep) {
+            return {};
+          }
+        }
+        function write(o) {
+          localStorage.setItem(key, JSON.stringify(o));
+        }
+        ids.forEach(function (kid) {
+          var el = document.getElementById(kid);
+          if (!el) { return; }
+          var prev = read();
+          el.checked = !!prev[kid];
+          el.addEventListener("change", function () {
+            var n = read();
+            n[kid] = !!el.checked;
+            write(n);
+          });
+        });
+        var memoEl = document.getElementById("trip-memo");
+        if (!memoEl) { return; }
+        memoEl.value = localStorage.getItem("lipamove_trip_memo") || "";
+        var memoT = null;
+        memoEl.addEventListener("input", function () {
+          clearTimeout(memoT);
+          memoT = setTimeout(function () {
+            localStorage.setItem("lipamove_trip_memo", memoEl.value.trim().substring(0, 420));
+          }, 280);
+        });
       }
 
       function interpolate(a, b, t) {
@@ -518,7 +1429,7 @@
       }
 
       function computeEta(ride) {
-        var basis = userLocation || (map ? [map.getCenter().lat, map.getCenter().lng] : [13.9411, 121.1600]);
+        var basis = getEtaBasis();
         var km = distanceKm(basis, [ride.lat, ride.lng]);
         var demandWeight = ride.occVal * 0.08;
         var rushWeight = getTrafficMultiplier();
@@ -528,13 +1439,41 @@
         return Math.max(2, Math.round(eta));
       }
 
+      function getRideFreshnessSec(ride) {
+        if (simEnabled) { return 0; }
+        if (!ride || !ride.lastUpdatedMs) { return 9999; }
+        return Math.max(0, Math.round((Date.now() - ride.lastUpdatedMs) / 1000));
+      }
+
+      function getEtaRangeData(ride) {
+        var mid = computeEta(ride);
+        var freshness = getRideFreshnessSec(ride);
+        var spread = 1;
+        if (freshness > 30) { spread += 1; }
+        if (freshness > 90) { spread += 1; }
+        if (ride && ride.high) { spread += 1; }
+        if (getTrafficMultiplier() >= 1.35) { spread += 1; }
+        var lower = Math.max(1, mid - spread);
+        var upper = Math.max(lower + 1, mid + spread);
+        return { mid: mid, lower: lower, upper: upper, spread: spread };
+      }
+
+      function getRideConfidence(ride) {
+        if (simEnabled) { return { level: "high", label: "Confidence: High (sim)" }; }
+        var freshness = getRideFreshnessSec(ride);
+        if (freshness > 120) { return { level: "low", label: "Confidence: Low" }; }
+        if (freshness > 45) { return { level: "medium", label: "Confidence: Medium" }; }
+        return { level: "high", label: "Confidence: High" };
+      }
+
       function updateNearestAndOrder() {
-        var basis = userLocation || (map ? [map.getCenter().lat, map.getCenter().lng] : [13.9411, 121.1600]);
+        var basis = getEtaBasis();
         var panel = document.getElementById("nearest-summary");
         var body = document.getElementById("nearest-body");
         if (!rides.length || !panel || !body) { return; }
         var nearest = null;
         rides.forEach(function (r) {
+          if (!rideMatchesFilter(r)) { return; }
           var km = distanceKm(basis, [r.lat, r.lng]);
           if (!nearest || km < nearest.km) {
             nearest = { ride: r, km: km };
@@ -542,15 +1481,29 @@
         });
         panel.style.display = "block";
         if (nearest) {
-          var eta = computeEta(nearest.ride);
+          var etaData = getEtaRangeData(nearest.ride);
           var typeLabel = nearest.ride.vtype === "jeepney" ? "Jeepney" : "Batra jeepney";
-          body.innerHTML = "<strong>" + nearest.ride.id + "</strong> · " + typeLabel + " · ~<strong>" + eta + "</strong> min · <span class=\"km\">" + nearest.km.toFixed(2) + " km</span>";
+          var mainHtml =
+            "<strong>" +
+            nearest.ride.id +
+            "</strong> · " +
+            typeLabel +
+            " · ~<strong>" +
+            etaData.lower +
+            "-" +
+            etaData.upper +
+            "</strong> min · <span class=\"km\">" +
+            nearest.km.toFixed(2) +
+            " km</span> <span class=\"muted\">(tuwid na linya)</span>";
+          var fareN = fareBandHint(nearest.km);
+          body.innerHTML = mainHtml + '<p class="ns-extra muted">' + fareN + "</p>";
+        } else {
+          body.innerHTML = '<span class="muted">Walang sasakyang tumutugma sa filter mo. Piliin ang Lahat.</span>';
         }
         rides.forEach(function (r) {
           var card = document.querySelector(".card[data-ride-id=\"" + r.id + "\"]");
           if (card) {
-            card.classList.toggle("nearest", nearest && r.id === nearest.ride.id);
-            card.style.order = String(Math.round(distanceKm(basis, [r.lat, r.lng]) * 10000));
+            card.classList.toggle("nearest", nearest && nearest.ride && r.id === nearest.ride.id && rideMatchesFilter(r));
           }
         });
       }
@@ -558,10 +1511,28 @@
       function refreshEtas() {
         rides.forEach(function (ride) {
           if (etaByRide[ride.id]) {
-            etaByRide[ride.id].textContent = computeEta(ride) + " min ETA";
+            var etaData = getEtaRangeData(ride);
+            etaByRide[ride.id].textContent = etaData.lower + "-" + etaData.upper + " min ETA";
+          }
+          if (etaMetaByRide[ride.id]) {
+            var conf = getRideConfidence(ride);
+            var freshness = getRideFreshnessSec(ride);
+            var freshTxt = simEnabled ? "Updated: live sim" : (freshness > 120 ? "Updated: stale " + freshness + "s" : "Updated: " + freshness + "s ago");
+            etaMetaByRide[ride.id].freshnessEl.textContent = freshTxt;
+            etaMetaByRide[ride.id].confidenceEl.textContent = conf.label;
+            etaMetaByRide[ride.id].confidenceEl.className = "eta-chip conf-" + conf.level;
           }
         });
         updateNearestAndOrder();
+        syncVehicleFilterVisuals();
+        applyListSortOrder();
+        updateStarButtonStates();
+        updateNearestLandmarkLine();
+        updateWalkHintLine();
+        updateCommuterExtrasOnCards();
+        updateFeedSyncLine();
+        updateTrackingMiniCard();
+        maybeNearestEtaNotification();
         if (document.body.getAttribute("data-screen") === "share" && typeof window._lipamoveUpdateSharePreview === "function") {
           window._lipamoveUpdateSharePreview();
         }
@@ -603,6 +1574,7 @@
             r.trailLine.setStyle({ opacity: simEnabled ? 0.4 : 0.12 });
           }
         });
+        updateFeedSyncLine();
       }
 
       function startUserWatch() {
@@ -618,6 +1590,7 @@
             userCircle = L.circle(user, { radius: Math.max(60, pos.coords.accuracy), color: "#0ea5e9", fillColor: "#0ea5e9", fillOpacity: 0.08, weight: 1 }).addTo(map);
           }
           refreshEtas();
+          updateBasisHint();
         }, function () {}, { enableHighAccuracy: true, maximumAge: 3000, timeout: 12000 });
       }
 
@@ -630,6 +1603,7 @@
 
       function applyLiveGpsSnapshot(xmlDoc) {
         if (simEnabled) { return; }
+        lastLiveFetchMs = Date.now();
         var unitNodes = Array.prototype.slice.call(xmlDoc.querySelectorAll("fleet_management unit"));
         unitNodes.forEach(function (u) {
           var id = u.getAttribute("id");
@@ -666,7 +1640,7 @@
             .catch(function () {});
         };
         tick();
-        gpsPollTimer = setInterval(tick, 7000);
+        gpsPollTimer = setInterval(tick, getLivePollIntervalMs());
       }
 
       function stopLiveGpsPolling() {
@@ -688,7 +1662,7 @@
 
       function buildShareMessage(ride) {
         if (!ride) { return ""; }
-        var basis = userLocation || (map ? [map.getCenter().lat, map.getCenter().lng] : [13.9411, 121.1600]);
+        var basis = getEtaBasis();
         var km = distanceKm(basis, [ride.lat, ride.lng]);
         var typeLabel = ride.vtype === "jeepney" ? "Jeepney" : "Batra jeepney";
         return "LipaMove: " + ride.id + " (" + typeLabel + ") — " + ride.route + ". ~" + computeEta(ride) + " min ETA, " + km.toFixed(2) + " km from my spot.";
@@ -721,6 +1695,10 @@
 
       function escHtml(s) {
         return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      function escAttr(s) {
+        return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
       }
 
       function updateLiveSimVisuals(ride) {
@@ -776,6 +1754,7 @@
               var prevIdx = ride.pathIndex;
               var distStep = (ride.effectiveSpeedKmh / 3600) * dt * SIM_MOVEMENT_SCALE;
               advanceRideAlongPath(ride, distStep);
+              ride.lastUpdatedMs = Date.now();
               if (prevIdx !== ride.pathIndex && isCoreLoopStop(ride.path[ride.pathIndex])) {
                 ride.dwellUntilMs = now + STOP_DWELL_MS + Math.random() * 1500;
               }
@@ -854,6 +1833,11 @@
             L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
               subdomains: "abcd", maxZoom: 19, opacity: 0.8, attribution: "&copy; OpenStreetMap &copy; CARTO"
             }).addTo(map);
+            map.on("contextmenu", function (ev) {
+              if (!ev || !ev.latlng) { return; }
+              setManualWaitSpot([ev.latlng.lat, ev.latlng.lng], false);
+              showToast("Pinned waiting spot set.");
+            });
           }
           if (!markerGroup) { markerGroup = L.featureGroup().addTo(map); }
           if (!routeGroup) { routeGroup = L.featureGroup().addTo(map); }
@@ -1053,8 +2037,15 @@
                 userCircle = L.circle(user, { radius: Math.max(60, pos.coords.accuracy), color: "#0ea5e9", fillColor: "#0ea5e9", fillOpacity: 0.08, weight: 1 }).addTo(map);
               }
               map.flyTo(user, 15, { duration: 0.8 });
+              var ebsLocate = document.getElementById("eta-basis-select");
+              if (ebsLocate) {
+                ebsLocate.value = "gps";
+                localStorage.setItem("lipamove_eta_basis", "gps");
+                updateBasisHint();
+              }
               var nearest = null;
               rides.forEach(function (r) {
+                if (!rideMatchesFilter(r)) { return; }
                 var km = distanceKm(user, [r.lat, r.lng]);
                 if (!nearest || km < nearest.km) {
                   nearest = { ride: r, km: km };
@@ -1187,8 +2178,252 @@
               }
             }
             updateGpsFreshness();
+            lastNotifyKey = "";
+            refreshEtas();
           });
         }
+
+        function syncVehicleFilterButtons() {
+          var seg = document.getElementById("vehicle-filter-seg");
+          if (!seg) { return; }
+          Array.prototype.forEach.call(seg.querySelectorAll("button[data-vfil]"), function (b) {
+            b.classList.toggle("active", b.getAttribute("data-vfil") === vehicleFilter);
+          });
+        }
+        syncVehicleFilterButtons();
+
+        var vseg = document.getElementById("vehicle-filter-seg");
+        if (vseg && !vseg.dataset.wired) {
+          vseg.dataset.wired = "1";
+          vseg.addEventListener("click", function (ev) {
+            var b = ev.target && ev.target.closest && ev.target.closest("button[data-vfil]");
+            if (!b) { return; }
+            vehicleFilter = b.getAttribute("data-vfil") || "all";
+            localStorage.setItem("lipamove_vehicle_filter", vehicleFilter);
+            syncVehicleFilterButtons();
+            lastNotifyKey = "";
+            refreshEtas();
+          });
+        }
+
+        var etaBasisEl = document.getElementById("eta-basis-select");
+        if (etaBasisEl && !etaBasisEl.dataset.wired) {
+          etaBasisEl.dataset.wired = "1";
+          etaBasisEl.addEventListener("change", function () {
+            localStorage.setItem("lipamove_eta_basis", etaBasisEl.value);
+            if (etaBasisEl.value === "pin" && !manualBasisPoint && map) {
+              setManualWaitSpot([map.getCenter().lat, map.getCenter().lng], false);
+              showToast("Pinned waiting spot set at map center.");
+              return;
+            }
+            if (etaBasisEl.value.indexOf("stop-") === 0 && map) {
+              var ix = parseInt(etaBasisEl.value.slice(5), 10);
+              if (!isNaN(ix) && coreLoopStops[ix]) {
+                map.flyTo(coreLoopStops[ix].latlng, 15, { duration: 0.7 });
+              }
+            }
+            updateBasisHint();
+            lastNotifyKey = "";
+            refreshEtas();
+          });
+        }
+        updateBasisHint();
+
+        var tCenter = document.getElementById("tracking-center-btn");
+        if (tCenter && !tCenter.dataset.wired) {
+          tCenter.dataset.wired = "1";
+          tCenter.addEventListener("click", function () {
+            var ride = getSelectedRide();
+            if (!ride || !map) { return; }
+            map.flyTo([ride.lat, ride.lng], 16, { duration: 0.7 });
+            showToast("Centered on tracked unit.");
+          });
+        }
+        var tShare = document.getElementById("tracking-share-btn");
+        if (tShare && !tShare.dataset.wired) {
+          tShare.dataset.wired = "1";
+          tShare.addEventListener("click", function () {
+            var ride = getSelectedRide();
+            if (!ride) { return; }
+            syncRideSelects(ride.id);
+            navigateTo("share");
+            updateSharePreview();
+          });
+        }
+        var tClear = document.getElementById("tracking-clear-btn");
+        if (tClear && !tClear.dataset.wired) {
+          tClear.dataset.wired = "1";
+          tClear.addEventListener("click", function () {
+            selectedRideId = null;
+            Array.prototype.forEach.call(document.querySelectorAll(".card[data-ride-id]"), function (el) { el.classList.remove("active"); });
+            refreshEtas();
+            showToast("Tracking cleared.");
+          });
+        }
+
+        var refreshFeed = document.getElementById("refresh-feed");
+        if (refreshFeed) {
+          refreshFeed.addEventListener("click", function () {
+            if (simEnabled) {
+              refreshEtas();
+              showToast("Na-refresh ang mga ETA.");
+              return;
+            }
+            fetch("data.xml")
+              .then(function (r) {
+                return r.text();
+              })
+              .then(function (xmlText) {
+                var xml = new DOMParser().parseFromString(xmlText, "application/xml");
+                applyLiveGpsSnapshot(xml);
+                showToast("Na-update mula sa data.xml.");
+              })
+              .catch(function () {
+                showToast("Hindi makuhang muli ang data.xml.");
+              });
+          });
+        }
+
+        function syncNetStatusChip() {
+          var chip = document.getElementById("net-status-chip");
+          if (!chip || typeof navigator === "undefined") { return; }
+          var on = navigator.onLine;
+          chip.textContent = on ? "Online" : "Offline";
+          chip.classList.toggle("net-offline", !on);
+        }
+        syncNetStatusChip();
+        window.addEventListener("online", function () {
+          syncNetStatusChip();
+          showToast("Online na muli.");
+        });
+        window.addEventListener("offline", function () {
+          syncNetStatusChip();
+          showToast("Offline — limitado ang live update.");
+        });
+
+        var notifyThr = document.getElementById("notify-threshold-select");
+        if (notifyThr && !notifyThr.dataset.wired) {
+          notifyThr.dataset.wired = "1";
+          var storedN = localStorage.getItem("lipamove_notify_min");
+          if (storedN !== null && notifyThr.querySelector("option[value=\"" + storedN + "\"]")) {
+            notifyThr.value = storedN;
+          }
+          notifyThr.addEventListener("change", function () {
+            localStorage.setItem("lipamove_notify_min", notifyThr.value);
+            lastNotifyKey = "";
+            updateNotifyStatusLine();
+          });
+        }
+        var notifyPerm = document.getElementById("notify-permission-btn");
+        if (notifyPerm) {
+          notifyPerm.addEventListener("click", function () {
+            if (typeof Notification === "undefined") {
+              showToast("Hindi suportado ang notifications dito.");
+              return;
+            }
+            Notification.requestPermission().then(function (perm) {
+              updateNotifyStatusLine();
+              if (perm === "granted") {
+                showToast("Sige — mag-aalerto kapag malapit na ang pinakamalapit na sasakyan.");
+              }
+            });
+          });
+        }
+
+        if (localStorage.getItem("lipamove_access_zoom") === "1") {
+          document.body.classList.add("lipamove-zoom-text");
+        }
+
+        var dataSaver = document.getElementById("data-saver-toggle");
+        if (dataSaver && !dataSaver.dataset.wired) {
+          dataSaver.dataset.wired = "1";
+          dataSaver.checked = localStorage.getItem("lipamove_data_saver") === "1";
+          dataSaver.addEventListener("change", function () {
+            if (dataSaver.checked) {
+              localStorage.setItem("lipamove_data_saver", "1");
+            } else {
+              localStorage.removeItem("lipamove_data_saver");
+            }
+            restartLiveGpsPollingIfNeeded();
+            updateFeedSyncLine();
+            showToast(dataSaver.checked ? "Data saver: mas kaunting data sa live pull." : "Balik sa mas madalas na live pull.");
+          });
+        }
+
+        var shareSms = document.getElementById("share-sms-btn");
+        if (shareSms && !shareSms.dataset.wired) {
+          shareSms.dataset.wired = "1";
+          shareSms.addEventListener("click", function () {
+            if (!rides.length) {
+              var st0 = document.getElementById("share-status");
+              if (st0) { st0.textContent = "Walang ride data."; }
+              return;
+            }
+            var sel = document.getElementById("share-ride-select");
+            var rid = (sel && sel.value) ? sel.value : selectedRideId;
+            var ride = rides.find(function (r) { return r.id === rid; }) || rides[0];
+            if (!ride) { return; }
+            var msg = buildShareMessage(ride);
+            window.location.href = "sms:?body=" + encodeURIComponent(msg);
+            var st = document.getElementById("share-status");
+            if (st) {
+              st.textContent = "Kung hindi bumukas ang SMS app, gamitin ang Copy message.";
+            }
+          });
+        }
+
+        var accZoom = document.getElementById("access-zoom-toggle");
+        if (accZoom && !accZoom.dataset.wired) {
+          accZoom.dataset.wired = "1";
+          accZoom.checked = localStorage.getItem("lipamove_access_zoom") === "1";
+          accZoom.addEventListener("change", function () {
+            var on = !!accZoom.checked;
+            document.body.classList.toggle("lipamove-zoom-text", on);
+            if (on) {
+              localStorage.setItem("lipamove_access_zoom", "1");
+            } else {
+              localStorage.removeItem("lipamove_access_zoom");
+            }
+          });
+        }
+
+        var listSort = document.getElementById("list-sort-select");
+        if (listSort && !listSort.dataset.wired) {
+          listSort.dataset.wired = "1";
+          var prefSort = localStorage.getItem("lipamove_list_sort");
+          if (prefSort && listSort.querySelector("option[value=\"" + prefSort + "\"]")) {
+            listSort.value = prefSort;
+          }
+          listSort.addEventListener("change", function () {
+            localStorage.setItem("lipamove_list_sort", listSort.value);
+            refreshEtas();
+          });
+        }
+
+        var wr = document.getElementById("guide-weather-refresh");
+        if (wr && !wr.dataset.wired) {
+          wr.dataset.wired = "1";
+          wr.addEventListener("click", function () {
+            weatherLastOkMs = 0;
+            fetchLipaWeather(true);
+          });
+        }
+
+        initPrepCheckboxesAndMemo();
+        ["copy-spot-chip", "copy-spot-btn"].forEach(function (cid) {
+          var bx = document.getElementById(cid);
+          if (bx && !bx.dataset.wiredSpot) {
+            bx.dataset.wiredSpot = "1";
+            bx.addEventListener("click", function (xe) {
+              xe.preventDefault();
+              copyMySpotLine();
+            });
+          }
+        });
+
+        setInterval(function () {
+          scheduleWeatherIfStale(false);
+        }, 18 * 60 * 1000);
       }
 
       initWireNavigationOnly();
@@ -1196,6 +2431,12 @@
       refreshAuthUi();
 
       ensureMapReady(6).then(function () {
+        try {
+          var rawPin = JSON.parse(localStorage.getItem("lipamove_manual_basis") || "null");
+          if (rawPin && isFinite(rawPin[0]) && isFinite(rawPin[1])) {
+            setManualWaitSpot([Number(rawPin[0]), Number(rawPin[1])], false);
+          }
+        } catch (eSavedPin) {}
         return fetch("data.xml");
       })
         .then(function (r) { return r.text(); })
@@ -1275,6 +2516,18 @@
               offset: [0, -16],
               className: "live-puv-tip " + (vtype === "jeepney" ? "jeepney-tip" : "")
             });
+            marker.on("click", function () {
+              selectedRideId = id;
+              syncRideSelects(id);
+              updatePlanSummary();
+              if (typeof window._lipamoveUpdateSharePreview === "function") {
+                window._lipamoveUpdateSharePreview();
+              }
+              Array.prototype.forEach.call(document.querySelectorAll(".card[data-ride-id]"), function (el) { el.classList.remove("active"); });
+              var linked = document.querySelector(".card[data-ride-id=\"" + id + "\"]");
+              if (linked) { linked.classList.add("active"); }
+              refreshEtas();
+            });
             markers[id] = marker;
             var lineColor = vtype === "jeepney" ? "#fb923c" : "#38bdf8";
             L.polyline(routePoints, {
@@ -1326,12 +2579,55 @@
             card.className = "card";
             card.setAttribute("data-ride-id", id);
             card.innerHTML =
-              '<div class="row"><div><div class="vtype"><span class="vtag ' + vtype + '">' + vtagLabel + "</span></div><div class=\"route\">" + route + '</div></div><div class="eta">-- min ETA</div></div>' +
-              '<div class="crowd"><span>' + id + '</span><span style="color:' + (high ? "#f59e0b" : "#5eead4") + ';">' + (high ? "Mataas ang sakay" : "Magaan ang sakay") + '</span></div>';
+              '<div class="row card-head-row">' +
+              '<button type="button" class="card-star-btn chip button" aria-pressed="false" aria-label="Priority star" data-ride-id="' +
+              escAttr(id) +
+              '" title="Priority unit \u2605">\u2606</button>' +
+              '<div class="card-grow"><div class="vtype"><span class="vtag ' +
+              vtype +
+              '">' +
+              vtagLabel +
+              "</span></div><div class=\"route\">" +
+              route +
+              '</div></div><div class="eta">-- min ETA</div></div>' +
+              '<div class="eta-meta"><span class="eta-chip conf-medium">Confidence: Medium</span><span class="eta-chip">Updated: --</span></div>' +
+              '<div class="crowd"><span>' +
+              id +
+              '</span><span style="color:' +
+              (high ? "#f59e0b" : "#5eead4") +
+              ';">' +
+              (high ? "Mataas ang sakay" : "Magaan ang sakay") +
+              '</span></div><div class="commuter-extras" aria-label="Gabay sa lakad at pamasada"></div>';
             etaList.appendChild(card);
             etaByRide[id] = card.querySelector(".eta");
+            etaMetaByRide[id] = {
+              confidenceEl: card.querySelector(".eta-meta .eta-chip"),
+              freshnessEl: card.querySelectorAll(".eta-meta .eta-chip")[1]
+            };
+            commuterExtrasByRide[id] = card.querySelector(".commuter-extras");
 
-            card.addEventListener("click", function () {
+            var starBtnEl = card.querySelector(".card-star-btn");
+            if (starBtnEl) {
+              starBtnEl.addEventListener("click", function (ev) {
+                ev.stopPropagation();
+                var curStar = localStorage.getItem("lipamove_star_rid");
+                var nextStar = curStar === id ? "" : id;
+                if (nextStar) {
+                  localStorage.setItem("lipamove_star_rid", nextStar);
+                  showToast("Priority: " + nextStar + " ★");
+                } else {
+                  localStorage.removeItem("lipamove_star_rid");
+                  showToast("Tinanggal ang priority unit.");
+                }
+                updateStarButtonStates();
+                applyListSortOrder();
+              });
+            }
+
+            card.addEventListener("click", function (ev) {
+              if (ev.target.closest && ev.target.closest(".card-star-btn")) {
+                return;
+              }
               Array.prototype.forEach.call(document.querySelectorAll(".card[data-ride-id]"), function (el) { el.classList.remove("active"); });
               card.classList.add("active");
               selectedRideId = id;
@@ -1344,6 +2640,7 @@
                 map.flyTo([rideRef.lat, rideRef.lng], 16, { duration: 0.8 });
               }
               marker.openPopup();
+              refreshEtas();
             });
           });
 
@@ -1393,6 +2690,7 @@
             if (lipaBounds) { map.setMaxBounds(lipaBounds); }
           }
           refreshEtas();
+          scheduleWeatherIfStale(false);
 
           map.on("moveend", function () {
             refreshEtas();
