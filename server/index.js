@@ -11,6 +11,7 @@ const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const mysql = require("mysql2/promise");
 const { normalizePhone, isValidPhilippineMobileE164 } = require("./phone");
+const puvLiveStore = require("./puvLiveStore");
 
 const PORT = Number(process.env.PORT || 3000);
 
@@ -180,6 +181,21 @@ async function ensureAuthTables() {
       UNIQUE KEY uq_sessions_token (token),
       KEY idx_sessions_user (user_id),
       CONSTRAINT fk_sessions_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`
+  );
+  await pool.execute(
+    `CREATE TABLE IF NOT EXISTS puv_live_state (
+      puv_id VARCHAR(64) NOT NULL PRIMARY KEY,
+      lat DECIMAL(10,7) NOT NULL,
+      lng DECIMAL(10,7) NOT NULL,
+      bearing DECIMAL(10,5) NULL,
+      speed_kph DECIMAL(10,5) NULL,
+      progress DECIMAL(8,4) NULL,
+      plate_number VARCHAR(32) NULL,
+      route_id INT NULL,
+      status VARCHAR(32) NOT NULL DEFAULT 'active',
+      updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+      KEY idx_puv_live_updated (updated_at)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`
   );
 }
@@ -395,6 +411,99 @@ async function handleSnapRoadsRoute(req, res) {
 
 app.post("/api/route/snap-roads", handleSnapRoadsRoute);
 app.post("/api/route/snap", handleSnapRoadsRoute);
+
+/**
+ * Last-known vehicle positions from MySQL (for merging with data.xml on the client).
+ * Public read — same data powers Socket.io snapshots.
+ */
+app.get("/api/fleet", async function (req, res) {
+  try {
+    const rows = await puvLiveStore.fetchAllLiveForSnapshot(pool);
+    const liveByPuvId = {};
+    rows.forEach(function (p) {
+      liveByPuvId[String(p.puvId)] = {
+        puvId: p.puvId,
+        lat: p.lat,
+        lng: p.lng,
+        bearing: p.bearing,
+        speedKph: p.speedKph,
+        progress: p.progress,
+        status: p.status,
+        timestamp: p.timestamp,
+        plateNumber: p.plateNumber,
+        routeId: p.routeId,
+      };
+    });
+    res.json({
+      ok: true,
+      generatedAt: new Date().toISOString(),
+      hasLivePositions: rows.length > 0,
+      unitCount: rows.length,
+      liveByPuvId: liveByPuvId,
+    });
+  } catch (e) {
+    console.error("[lipamove] GET /api/fleet", e);
+    res.status(500).json({
+      ok: false,
+      error: "fleet_unavailable",
+      hasLivePositions: false,
+      unitCount: 0,
+      liveByPuvId: {},
+    });
+  }
+});
+
+/**
+ * Ingest live GPS / telemetry for a PUV (devices, simulators, dispatch).
+ * Auth: header X-PUV-Ingest-Key or Authorization: Bearer <PUV_INGEST_KEY>
+ * Body: { puvId, lat, lng, bearing?, speedKph?, progress?, status?, plateNumber?, routeId? }
+ * Persists to MySQL, broadcasts puv:update over Socket.io (same shape as internal broadcast).
+ */
+app.post("/api/puv/position", async function (req, res) {
+  const secret = (process.env.PUV_INGEST_KEY || "").trim();
+  if (!secret) {
+    return res.status(503).json({
+      error: "PUV_INGEST_KEY is not set",
+      hint: "Add PUV_INGEST_KEY to server/.env (long random string).",
+    });
+  }
+  const hdr = String(req.get("x-puv-ingest-key") || "").trim();
+  const auth = String(req.headers.authorization || "");
+  const bearer = auth.match(/^Bearer\s+(.+)$/i);
+  const token = hdr || (bearer ? bearer[1].trim() : "");
+  if (token !== secret) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  try {
+    const normalized = await puvLiveStore.upsertPuvPosition(pool, req.body || {});
+    if (!normalized) {
+      return res.status(400).json({
+        error: "Invalid body — require puvId (string) and numeric lat, lng",
+      });
+    }
+    const broadcastPayload = {
+      puvId: normalized.puvId,
+      lat: normalized.lat,
+      lng: normalized.lng,
+      bearing: normalized.bearing,
+      speedKph: normalized.speedKph,
+      progress: normalized.progress,
+      status: normalized.status || "active",
+      plateNumber: normalized.plateNumber,
+      routeId: normalized.routeId,
+    };
+    socketService.broadcastPUVUpdate(broadcastPayload);
+    res.json({ ok: true, puvId: normalized.puvId, persisted: true });
+  } catch (e) {
+    if (isMissingAuthTableError(e)) {
+      return res.status(500).json({
+        error: "Database missing puv_live_state — restart server after DB upgrade or run migrations.",
+      });
+    }
+    console.error("[lipamove] /api/puv/position", e);
+    res.status(500).json({ error: "Ingest failed" });
+  }
+});
 
 app.post("/api/puv/broadcast", function (req, res) {
   const key = process.env.INTERNAL_PUV_BROADCAST_KEY;

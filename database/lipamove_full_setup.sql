@@ -107,4 +107,22 @@ CREATE TABLE IF NOT EXISTS sessions (
   CONSTRAINT fk_sessions_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ---------------------------------------------------------------------------
+-- Live PUV positions (optional — also auto-created by Node on startup)
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS puv_live_state (
+  puv_id VARCHAR(64) NOT NULL PRIMARY KEY,
+  lat DECIMAL(10,7) NOT NULL,
+  lng DECIMAL(10,7) NOT NULL,
+  bearing DECIMAL(10,5) NULL,
+  speed_kph DECIMAL(10,5) NULL,
+  progress DECIMAL(8,4) NULL,
+  plate_number VARCHAR(32) NULL,
+  route_id INT NULL,
+  status VARCHAR(32) NOT NULL DEFAULT 'active',
+  updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+  KEY idx_puv_live_updated (updated_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Done. Verify: SHOW TABLES IN lipamove;

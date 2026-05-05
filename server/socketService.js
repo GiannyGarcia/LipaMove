@@ -32,6 +32,7 @@
  */
 
 const { Server } = require("socket.io");
+const puvLiveStore = require("./puvLiveStore");
 
 /** @type {import("socket.io").Server | null} */
 let io = null;
@@ -122,13 +123,26 @@ function initSocket(httpServer, opts) {
     }
   });
 
-  io.on("connection", (socket) => {
+  io.on("connection", async (socket) => {
     const u = socket.data.user;
     socket.emit("puv:welcome", {
       ok: true,
       authenticated: !!u,
       user: u ? { id: u.id, username: u.username } : null,
     });
+
+    try {
+      const vehicles = await puvLiveStore.fetchAllLiveForSnapshot(pool);
+      if (vehicles.length) {
+        socket.emit("puv:snapshot", {
+          vehicles,
+          timestamp: new Date().toISOString(),
+          source: "mysql",
+        });
+      }
+    } catch (e) {
+      console.warn("[lipamove] socket puv snapshot (mysql):", e && e.message);
+    }
 
     socket.on("joinRoute", (routeId) => {
       const id = Number(routeId);

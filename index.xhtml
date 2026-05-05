@@ -166,6 +166,8 @@
     }
     .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
     .chip.net-offline { border-color: rgba(239,68,68,.5); color: #991b1b; background: rgba(254,226,226,.95); }
+    .chip.fleet-truth-live { border-color: rgba(16,185,129,.55); color: #047857; background: rgba(16,185,129,.14); font-weight: 600; }
+    .chip.fleet-truth-sim { border-color: rgba(245,158,11,.5); color: #92400e; background: rgba(251,191,36,.14); font-weight: 600; }
     body.lipamove-zoom-text { font-size: 106%; }
     body.lipamove-zoom-text .headline { font-size: clamp(22px, 5.5vw, 32px); }
     body.lipamove-zoom-text .mini-label,
@@ -282,95 +284,101 @@
         <div class="top glass">
           <div class="brand-lockup">
             <img src="Lipa Move log.png" class="brand-logo" alt="LipaMove" />
-            <div class="headline">Saan na ang sakay?</div>
-            <div class="sub">Madaling makita kung saan na ang masasakyan, para mas simple at panatag ang biyahe.</div>
+            <div class="headline" data-i18n="map.headline">Where's my ride?</div>
+            <div class="sub" data-i18n="map.sub">See where vehicles are so waiting feels simpler and calmer.</div>
           </div>
           <div class="top-actions">
-            <div class="pill" id="live-sim-pill">Live vehicle tracking</div>
-            <button type="button" id="auth-entry-btn" class="chip button">Account</button>
+            <div class="pill" id="live-sim-pill" data-i18n="pill.live_tracking">Live vehicle tracking</div>
+            <button type="button" id="auth-entry-btn" class="chip button" data-i18n="nav.account">Account</button>
           </div>
         </div>
         <div id="surge-alert" class="alert glass" style="display:none;"></div>
         <div class="chips">
-          <span id="net-status-chip" class="chip" aria-live="polite">Online</span>
-          <span class="chip">Live updates</span><span class="chip chip-route" title="Ayala / J.P. Laurel (no bypass)">Ayala / J.P. Laurel (no bypass)</span>
-          <span id="refresh-feed" class="chip button" title="I-refresh ang ETA o live positions">Refresh</span>
-          <span id="locate-me" class="chip button">Locate me</span>
-          <span id="fit-rides" class="chip button">Fit all rides</span>
-          <span id="gps-toggle" class="chip button" title="Live tracking of vehicles on the route.">Live tracking: On</span>
-          <span id="copy-spot-chip" class="chip button" title="Kopyahin ang lokasyon ng spot mo (meetup/SOS gabay)">Kopyahin spot</span>
+          <span id="net-status-chip" class="chip" aria-live="polite" data-i18n="net.online">Online</span>
+          <span class="chip" data-i18n="chip.live_updates">Live updates</span><span class="chip chip-route" data-i18n="chip.route_label" data-i18n-title="chip.route_tooltip" title="">Ayala / J.P. Laurel (no bypass)</span>
+          <span id="fleet-truth-chip" class="chip fleet-truth-sim" title="">Positions: …</span>
+          <span id="refresh-feed" class="chip button" data-i18n-title="chip.refresh_title" title="">Refresh</span>
+          <span id="locate-me" class="chip button" data-i18n="locate.me">Locate me</span>
+          <span id="fit-rides" class="chip button" data-i18n="fit.all">Fit all rides</span>
+          <span id="gps-toggle" class="chip button" data-i18n-title="gps.toggle_title" data-i18n="gps.on" title="">Live tracking: On</span>
+          <span id="copy-spot-chip" class="chip button" data-i18n-title="chip.copy_spot_title" data-i18n="chip.copy_spot">Copy spot</span>
         </div>
       </div>
     </section>
 
     <div class="app-panel">
       <nav class="panel-nav" aria-label="Screens">
-        <button type="button" class="panel-tab active" data-goto="home">Map</button>
-        <button type="button" class="panel-tab" data-goto="plan">Plan</button>
-        <button type="button" class="panel-tab" data-goto="guide">Guide</button>
-        <button type="button" class="panel-tab" data-goto="share">Share</button>
-        <button type="button" class="panel-tab" data-goto="auth">Account</button>
-        <button type="button" class="panel-tab" data-goto="profile" id="panel-tab-profile" style="display:none;">Profile</button>
+        <button type="button" class="panel-tab active" data-goto="home" data-i18n="nav.map">Map</button>
+        <button type="button" class="panel-tab" data-goto="plan" data-i18n="nav.plan">Plan</button>
+        <button type="button" class="panel-tab" data-goto="guide" data-i18n="nav.guide">Guide</button>
+        <button type="button" class="panel-tab" data-goto="share" data-i18n="nav.share">Share</button>
+        <button type="button" class="panel-tab" data-goto="auth" data-i18n="nav.account">Account</button>
+        <button type="button" class="panel-tab" data-goto="profile" id="panel-tab-profile" style="display:none;" data-i18n="nav.profile">Profile</button>
       </nav>
       <div id="tracking-mini" class="tracking-mini glass" aria-live="polite" style="display:none;">
-        <p class="tm-title">Now tracking</p>
+        <p class="tm-title" data-i18n="tracking.title">Now tracking</p>
         <p class="tm-main" id="tracking-mini-main">—</p>
         <div class="tm-actions">
-          <button type="button" id="tracking-center-btn" class="tm-btn">Center</button>
-          <button type="button" id="tracking-share-btn" class="tm-btn">Share</button>
-          <button type="button" id="tracking-clear-btn" class="tm-btn">Clear</button>
+          <button type="button" id="tracking-center-btn" class="tm-btn" data-i18n="tracking.center">Center</button>
+          <button type="button" id="tracking-share-btn" class="tm-btn" data-i18n="tracking.share">Share</button>
+          <button type="button" id="tracking-clear-btn" class="tm-btn" data-i18n="tracking.clear">Clear</button>
         </div>
       </div>
 
       <section id="screen-home" class="screen active" aria-label="Live feed">
         <div class="cards" style="margin-top:0;border-radius:0;background:transparent;padding:0;">
-          <div class="label">Mga pinakamalapit na sakay</div>
-          <div class="tagline">Pinaka-malalapit na sakay mula sa lokasyon mo, may simple ETA para madaling pumili.</div>
+          <div class="label" data-i18n="home.nearest_label">Closest rides</div>
+          <div class="tagline" data-i18n="home.nearest_tagline">Nearest rides from your chosen spot, with simple ETA bands.</div>
           <div class="home-tools glass" style="padding:12px 14px;border-radius:16px;margin-bottom:12px;">
-            <label class="mini-label" for="eta-basis-select">ETA mula sa</label>
-            <select id="eta-basis-select" class="select" style="margin-bottom:10px;font-size:12px;">
-              <option value="gps">📍 Lokasyon ko (GPS)</option>
-              <option value="map">◎ Gitna ng mapa (i-drag)</option>
-              <option value="pin">📌 Pinned waiting spot (long-press map)</option>
-              <option value="stop-2">🏢 SM Lipa Grand Terminal</option>
-              <option value="stop-0">🏢 Bayan (T.M. Kalaw)</option>
-              <option value="stop-1">🏢 Univ. ng Batangas Lipa</option>
-              <option value="stop-3">🏢 The Outlets at Lipa</option>
-            </select>
-            <span class="mini-label">Ipakita ang sasakyan</span>
-            <div class="seg" id="vehicle-filter-seg" role="group" aria-label="Filter by vehicle type">
-              <button type="button" data-vfil="all" class="active">Lahat</button>
-              <button type="button" data-vfil="jeepney">Jeepney</button>
-              <button type="button" data-vfil="batrasco">Batra</button>
+            <span class="mini-label" data-i18n="chip.lang_label">Language</span>
+            <div class="seg lang-seg" role="group" data-i18n-aria="chip.lang_label" aria-label="">
+              <button type="button" data-lang="en" class="active" data-i18n="lang.en">English</button>
+              <button type="button" data-lang="tl" data-i18n="lang.tl">Tagalog</button>
             </div>
-            <label class="mini-label" for="list-sort-select" style="margin-top:12px;">Ayusin ang listahan</label>
+            <label class="mini-label" for="eta-basis-select" data-i18n="home.eta_basis">ETA from</label>
+            <select id="eta-basis-select" class="select" style="margin-bottom:10px;font-size:12px;">
+              <option value="gps" data-i18n="home.opt_gps">📍 My location (GPS)</option>
+              <option value="map" data-i18n="home.opt_map">◎ Map center (drag map)</option>
+              <option value="pin" data-i18n="home.opt_pin">📌 Pinned waiting spot (long-press map)</option>
+              <option value="stop-2" data-i18n="home.opt_stop_sm">🏢 SM Lipa Grand Terminal</option>
+              <option value="stop-0" data-i18n="home.opt_stop_bayan">🏢 Bayan (T.M. Kalaw)</option>
+              <option value="stop-1" data-i18n="home.opt_stop_ub">🏢 Univ. of Batangas Lipa</option>
+              <option value="stop-3" data-i18n="home.opt_stop_outlets">🏢 The Outlets at Lipa</option>
+            </select>
+            <span class="mini-label" data-i18n="home.show_vehicle">Show vehicles</span>
+            <div class="seg" id="vehicle-filter-seg" role="group" data-i18n-aria="home.show_vehicle" aria-label="">
+              <button type="button" data-vfil="all" class="active" data-i18n="home.filter_all">All</button>
+              <button type="button" data-vfil="jeepney" data-i18n="jeepney">Jeepney</button>
+              <button type="button" data-vfil="batrasco" data-i18n="batra">Batra</button>
+            </div>
+            <label class="mini-label" for="list-sort-select" style="margin-top:12px;" data-i18n="home.sort_label">Sort list</label>
             <select id="list-sort-select" class="select" style="margin-bottom:8px;font-size:12px;">
-              <option value="distance">Pinakamalapit muna (layo)</option>
-              <option value="eta">Maaga ang dating (ETA)</option>
-              <option value="crowd">Komportable muna (hindi overloaded)</option>
+              <option value="distance" data-i18n="home.sort_distance">Closest first (distance)</option>
+              <option value="eta" data-i18n="home.sort_eta">Soonest ETA first</option>
+              <option value="crowd" data-i18n="home.sort_crowd">Comfort first (lower crowd)</option>
             </select>
             <p id="basis-hint" class="muted" style="margin-top:8px;margin-bottom:0;font-size:11px;line-height:1.4;"></p>
             <p id="nearest-landmark-line" aria-live="polite"></p>
             <p id="walk-hint-line" class="muted" style="margin-top:6px;font-size:11px;line-height:1.4;" aria-live="polite"></p>
             <div id="weather-chip-home" class="weather-line" style="display:none;" aria-live="polite"></div>
-            <span class="mini-label" style="margin-top:10px;">Biyahe checklist (naka-save sa phone)</span>
+            <span class="mini-label" style="margin-top:10px;" data-i18n="home.checklist_title">Trip checklist (saved on device)</span>
             <div class="prep-wrap">
-              <label class="prep-item"><input type="checkbox" id="prep-payong" /> Payong / paypay</label>
-              <label class="prep-item"><input type="checkbox" id="prep-barya" /> Barya (sakay)</label>
-              <label class="prep-item"><input type="checkbox" id="prep-phone" /> Load / charged phone</label>
-              <label class="prep-item"><input type="checkbox" id="prep-tubig" /> Tubig / maliit na snack</label>
+              <label class="prep-item"><input type="checkbox" id="prep-payong" /><span data-i18n="home.prep_umbrella">Umbrella / fan</span></label>
+              <label class="prep-item"><input type="checkbox" id="prep-barya" /><span data-i18n="home.prep_fare">Fare coins ready</span></label>
+              <label class="prep-item"><input type="checkbox" id="prep-phone" /><span data-i18n="home.prep_phone">Phone load / charged</span></label>
+              <label class="prep-item"><input type="checkbox" id="prep-tubig" /><span data-i18n="home.prep_water">Water / small snack</span></label>
             </div>
-            <label class="mini-label" for="trip-memo" style="margin-top:10px;">Alalahanin / memo ngayong biyahe</label>
-            <textarea id="trip-memo" class="area memo-area" maxlength="420" placeholder="Hal. UWIAN 5pm — SM Terminal hilera ng…"></textarea>
+            <label class="mini-label" for="trip-memo" style="margin-top:10px;" data-i18n="home.memo_label">Notes / memo for this trip</label>
+            <textarea id="trip-memo" class="area memo-area" maxlength="420" data-i18n-placeholder="home.memo_placeholder" placeholder=""></textarea>
           </div>
           <div id="nearest-summary" class="nearest-summary glass" style="display:none;">
-            <div class="ns-title">Pinaka-malapit</div>
+            <div class="ns-title" data-i18n="home.nearest_summary_title">Closest</div>
             <div id="nearest-body" class="ns-body">—</div>
           </div>
           <div class="actions">
-            <button id="plan-trip" type="button" class="action-btn">Plan Trip</button>
-            <button id="share-eta" type="button" class="action-btn">Share ETA</button>
-            <button id="copy-spot-btn" type="button" class="action-btn" title="Lagyan ng lokasyon para sa mga kasama">Kopyahin spot</button>
+            <button id="plan-trip" type="button" class="action-btn" data-i18n="home.plan_trip">Plan Trip</button>
+            <button id="share-eta" type="button" class="action-btn" data-i18n="home.share_eta">Share ETA</button>
+            <button id="copy-spot-btn" type="button" class="action-btn" data-i18n-title="home.copy_spot_btn_title" data-i18n="chip.copy_spot" title="">Copy spot</button>
           </div>
           <div id="eta-list"></div>
           <p id="feed-sync-line" class="feed-meta-line muted" aria-live="polite"></p>
@@ -379,10 +387,10 @@
 
       <section id="screen-plan" class="screen" aria-label="Plan trip">
         <div class="screen-head">
-          <button type="button" class="back-mob" data-goto="home">Back</button>
-          <h2>Plan Trip</h2>
+          <button type="button" class="back-mob" data-goto="home" data-i18n="nav.back">Back</button>
+          <h2 data-i18n="home.plan_trip">Plan Trip</h2>
         </div>
-        <p class="screen-intro">Piliin ang simula at pupuntahan para mabilis mong makita ang direksyon.</p>
+        <p class="screen-intro" data-i18n="plan.intro">Pick start and destination to open directions quickly.</p>
         <div class="form-group">
           <label for="plan-origin-preset">Origin</label>
           <select id="plan-origin-preset" class="select">
@@ -407,118 +415,123 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="plan-ride-select">Track unit (for destination)</label>
-          <select id="plan-ride-select" class="select"><option value="">Loading…</option></select>
+          <label for="plan-ride-select" data-i18n="plan.track_unit">Track unit (for destination)</label>
+          <select id="plan-ride-select" class="select"><option value="" data-i18n="plan.loading">Loading…</option></select>
         </div>
-        <p class="muted" id="plan-summary">Select a ride on the map feed or choose a fixed stop above.</p>
+        <p class="muted" id="plan-summary" data-i18n="plan.summary_default">Select a ride on the map feed or choose a fixed stop above.</p>
         <div class="sheet-row">
-          <button id="plan-open-maps" type="button" class="action-btn primary block">Open in Google Maps</button>
+          <button id="plan-open-maps" type="button" class="action-btn primary block" data-i18n="plan.open_maps">Open in Google Maps</button>
         </div>
       </section>
 
       <section id="screen-guide" class="screen" aria-label="Commuter guide">
         <div class="screen-head">
-          <button type="button" class="back-mob" data-goto="home">Back</button>
-          <h2>Commuter guide</h2>
+          <button type="button" class="back-mob" data-goto="home" data-i18n="nav.back">Back</button>
+          <h2 data-i18n="guide.title">Commuter guide</h2>
         </div>
-        <p class="screen-intro">Mga tip at tool para mas gamitin ang LipaMove araw-araw — prediksyon, hindi booking.</p>
-        <div class="dispatch-card">
-          <h3>Trapik ngayon</h3>
-          <p id="guide-rush-blurb">Kinakalkula…</p>
+        <p class="screen-intro" data-i18n="guide.intro">Tips and tools for daily LipaMove — prediction, not booking.</p>
+        <span class="mini-label" data-i18n="chip.lang_label">Language</span>
+        <div class="seg lang-seg" style="margin-bottom:12px;" role="group" data-i18n-aria="chip.lang_label" aria-label="">
+          <button type="button" data-lang="en" class="active" data-i18n="lang.en">English</button>
+          <button type="button" data-lang="tl" data-i18n="lang.tl">Tagalog</button>
         </div>
         <div class="dispatch-card">
-          <h3>Major stops (quick map)</h3>
-          <p class="muted" style="margin-bottom:8px;">Ilipat ang mapa papunta sa terminal — maaari mo ring piliin ito sa <strong>ETA mula sa</strong> sa home.</p>
+          <h3 data-i18n="guide.traffic_now">Traffic now</h3>
+          <p id="guide-rush-blurb" data-i18n="guide.calculating">Calculating…</p>
+        </div>
+        <div class="dispatch-card">
+          <h3 data-i18n="guide.major_stops">Major stops (quick map)</h3>
+          <p class="muted" style="margin-bottom:8px;" data-i18n="guide.major_stops_hint">Jump the map to a terminal — you can also pick this under ETA from on Home.</p>
           <div class="stop-chip-row" id="guide-stop-buttons"></div>
         </div>
         <div class="dispatch-card">
-          <h3>Paalala kapag malapit na</h3>
-          <p class="muted" style="margin-bottom:10px;">Nagpapadala ng isang browser notification kapag ang <strong>pinaka-malapit</strong> na pinapakitang sasakyan ay nasa iyong lain ng minuto (masyadong hindi perpekto kapag nakasara ang tab).</p>
+          <h3 data-i18n="guide.reminders_title">Near-me reminders</h3>
+          <p class="muted" style="margin-bottom:10px;" data-i18n="guide.reminders_body">Sends one browser notification when the closest listed ride's ETA band reaches your threshold (not perfect when the tab is closed).</p>
           <div class="form-group">
-            <label for="notify-threshold-select">Kapag pinakamalapit na ETA ay hanggang</label>
+            <label for="notify-threshold-select" data-i18n="guide.notify_when">When closest ETA is within</label>
             <select id="notify-threshold-select" class="select">
-              <option value="0" selected="selected">Naka-off</option>
-              <option value="15">15 minuto</option>
-              <option value="10">10 minuto</option>
-              <option value="7">7 minuto</option>
-              <option value="5">5 minuto</option>
-              <option value="3">3 minuto</option>
+              <option value="0" selected="selected" data-i18n="guide.notify_off">Off</option>
+              <option value="15" data-i18n="guide.notify_15">15 minutes</option>
+              <option value="10" data-i18n="guide.notify_10">10 minutes</option>
+              <option value="7" data-i18n="guide.notify_7">7 minutes</option>
+              <option value="5" data-i18n="guide.notify_5">5 minutes</option>
+              <option value="3" data-i18n="guide.notify_3">3 minutes</option>
             </select>
           </div>
-          <button type="button" id="notify-permission-btn" class="action-btn primary block">Pahintulutan ang notifications</button>
+          <button type="button" id="notify-permission-btn" class="action-btn primary block" data-i18n="guide.notify_allow">Allow notifications</button>
           <p class="muted" id="notify-status-line" style="margin-top:8px;margin-bottom:0;"></p>
         </div>
         <div class="dispatch-card">
-          <h3>Paliwanag ng ETA</h3>
+          <h3 data-i18n="guide.eta_expl_title">How ETA works</h3>
           <ul class="guide-ul">
-            <li>Ginagamit ang layo sa iyong napiling punto (GPS, gitna ng mapa, o terminal) at kasalukuyang oras/trapik model.</li>
-            <li>Ang hanay (hal. 5–8 min) ay abang-hanay, hindi garantiya — lalo na kung medyo luma na ang datos.</li>
-            <li>Kapag naka-live ang IoT feed, mas tumpak; ang simulation ay pinakamahusay para sa demo.</li>
+            <li data-i18n="guide.eta_li1">Uses distance from your chosen point (GPS, map center, or terminal) and a simple traffic model.</li>
+            <li data-i18n="guide.eta_li2">The band (e.g. 5–8 min) is a guide, not a guarantee — especially if data is stale.</li>
+            <li data-i18n="guide.eta_li3">With a live IoT feed it's tighter; simulation is best for demos.</li>
           </ul>
         </div>
         <div class="dispatch-card">
-          <h3>Weather sa Lipa (gabay lang)</h3>
-          <p class="muted" style="margin-bottom:6px;">Mula Open-Meteo, walang API key — maaari mong isaalang-alang kapag uwian o-ulan.</p>
-          <div id="guide-weather-line" class="weather-line">Sinisimulan ang weather…</div>
-          <button type="button" id="guide-weather-refresh" class="action-btn">I-refresh ang weather</button>
+          <h3 data-i18n="guide.weather_title">Weather in Lipa (guide only)</h3>
+          <p class="muted" style="margin-bottom:6px;" data-i18n="guide.weather_note">From Open-Meteo, no API key — useful for rain / commute timing.</p>
+          <div id="guide-weather-line" class="weather-line">Loading weather…</div>
+          <button type="button" id="guide-weather-refresh" class="action-btn" data-i18n="guide.weather_refresh">Refresh weather</button>
         </div>
         <div class="dispatch-card">
-          <h3>Ano ang makikita sa map</h3>
+          <h3 data-i18n="guide.map_key_title">What you see on the map</h3>
           <ul class="guide-ul">
-            <li><strong>Orange</strong> icon — jeepney; <strong>asul</strong> — batrasco / batang jeep opsyon.</li>
-            <li><strong>Orange o asul na linya</strong> sa daan — tinatayong ruta ng kada unit mula sa <code>data.xml</code>.</li>
-            <li><strong>Cyan na linya</strong> may mga punto — pangunahing loop terminals (sandigan sa pag-abang).</li>
-            <li><strong>Maliit na asul na tuldok/pakete</strong> — ikaw (pagkatapos ng Locate me).</li>
+            <li data-i18n="guide.map_li1">Orange pin — jeepney; blue — Batrasco-style unit.</li>
+            <li data-i18n="guide.map_li2">Orange / blue route lines — estimated path per unit from data.xml.</li>
+            <li data-i18n="guide.map_li3">Cyan line with dots — core terminal loop reference.</li>
+            <li data-i18n="guide.map_li4">Small blue dot — you after Locate me.</li>
           </ul>
         </div>
         <div class="dispatch-card">
-          <h3>Mga bitbit sa commuter</h3>
+          <h3 data-i18n="guide.bring_title">Commuter carry list</h3>
           <ul class="guide-ul">
-            <li>Paypay o payong sa init/ulan — ang Lipa corridor ay mabilis lumipat ng panahon.</li>
-            <li>Barya naka-hand para sa sakay — mas mabilis kaysa maghanap kapag nakapila.</li>
-            <li>I-check ang <strong>Priority unit</strong> (★ sa card ng sasakyan) kung lagi mong sinasakyang ruta.</li>
-            <li>Kung hindi ka sigurado sa ETA, tingnan din ang kulay ng kabanata sa demand at ang “Confidence” chip.</li>
+            <li data-i18n="guide.bring_li1">Fan or umbrella — Lipa weather shifts quickly.</li>
+            <li data-i18n="guide.bring_li2">Fare coins ready — faster than digging while queued.</li>
+            <li data-i18n="guide.bring_li3">Use Priority unit (★ on the card) if you ride the same route often.</li>
+            <li data-i18n="guide.bring_li4">If unsure about ETA, check crowd bars and the Confidence chip.</li>
           </ul>
         </div>
         <div class="dispatch-card">
-          <h3>Emergency at serbisyo</h3>
+          <h3 data-i18n="guide.emergency_title">Emergency &amp; services</h3>
           <ul class="guide-ul">
-            <li>National Emergency Hotline Philippines: <strong>911</strong> (kung gumagana sa iyong lugar/network).</li>
-            <li>Para medical/pulis/suno: humingi din ng lugar sa mga guwardiya sa terminal kapag urgent.</li>
-            <li>Ang LipaMove ay para sa ETA/tracking lamang — hindi official dispatch ng operator.</li>
+            <li data-i18n="guide.emergency_li1">Philippines emergency hotline: 911 (where supported).</li>
+            <li data-i18n="guide.emergency_li2">For urgent help at terminals, ask terminal guards / staff.</li>
+            <li data-i18n="guide.emergency_li3">LipaMove is for ETA / tracking — not official operator dispatch.</li>
           </ul>
         </div>
         <div class="dispatch-card">
-          <h3>Accessibility — mas malaking texto</h3>
+          <h3 data-i18n="guide.access_title">Accessibility — larger text</h3>
           <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:#334155;cursor:pointer;">
             <input type="checkbox" id="access-zoom-toggle" />
-            Dagdagan laki ng font ng buong app (sa device mo lang)
+            <span data-i18n="guide.access_zoom">Increase app font size (this device only)</span>
           </label>
         </div>
         <div class="dispatch-card">
-          <h3>Data saver (live feed)</h3>
-          <p class="muted" style="margin-bottom:8px;">Mas mabagal ang auto-refresh ng <code>data.xml</code> para tipid sa mobile data. Hindi naaapektuhan ang simulation.</p>
+          <h3 data-i18n="guide.datasaver_title">Data saver (live feed)</h3>
+          <p class="muted" style="margin-bottom:8px;" data-i18n="guide.datasaver_note">Slower auto-refresh of data.xml to save mobile data. Simulation is unaffected.</p>
           <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:#334155;cursor:pointer;">
             <input type="checkbox" id="data-saver-toggle" />
-            Mas kaunting pull (≈22s) kaysa default (≈7s)
+            <span data-i18n="guide.datasaver-checkbox">Fewer pulls (~22s) vs default (~7s)</span>
           </label>
         </div>
         <div class="dispatch-card">
-          <h3>Tipikal na siksikan (gabay lamang)</h3>
-          <p class="muted" style="margin-bottom:6px;">Hindi opisyal na oras ng operator — kombinasyon ng karaniwang Lipa corridor at trapik model ng app.</p>
+          <h3 data-i18n="guide.peak_title">Typical crowding (guide)</h3>
+          <p class="muted" style="margin-bottom:6px;" data-i18n="guide.peak_note">Not official operator schedules — Lipa corridor habits plus the app's traffic model.</p>
           <table class="peak-table">
-            <thead><tr><th>Window</th><th>Inaasahan</th></tr></thead>
+            <thead><tr><th data-i18n="guide.peak_th_window">Window</th><th data-i18n="guide.peak_th_expect">What to expect</th></tr></thead>
             <tbody>
-              <tr><td>6:00–9:00</td><td>Mataas ang demand (pasok / pa-eskwela)</td></tr>
-              <tr><td>11:00–14:00</td><td>Banayad na siksikan (tanghalian)</td></tr>
-              <tr><td>17:00–20:00</td><td>Peak uwian — mas malawak ang ETA</td></tr>
-              <tr><td>Linggo / holiday</td><td>Mag-iba — tingnan ang live demand sa card</td></tr>
+              <tr><td data-i18n="guide.peak_r1">6:00–9:00</td><td data-i18n="guide.peak_r1t">Higher demand (morning commute / school)</td></tr>
+              <tr><td data-i18n="guide.peak_r2">11:00–14:00</td><td data-i18n="guide.peak_r2t">Moderate crowding (lunch)</td></tr>
+              <tr><td data-i18n="guide.peak_r3">17:00–20:00</td><td data-i18n="guide.peak_r3t">Peak evening — wider ETA bands</td></tr>
+              <tr><td data-i18n="guide.peak_r4">Sun / holiday</td><td data-i18n="guide.peak_r4t">Varies — watch live demand on cards</td></tr>
             </tbody>
           </table>
         </div>
         <div class="dispatch-card">
-          <h3>Mabilis na sasakyan phrases</h3>
-          <p class="muted" style="margin-bottom:4px;">Tap para kopyahin (pakiusap / bayad).</p>
+          <h3 data-i18n="guide.phrases_title">Quick Filipino phrases</h3>
+          <p class="muted" style="margin-bottom:4px;" data-i18n="guide.phrases_hint">Tap to copy (fare / courtesy).</p>
           <div class="phrase-grid">
             <button type="button" class="action-btn phrase-copy" data-phrase="Para po, sa tabi lang.">Para po</button>
             <button type="button" class="action-btn phrase-copy" data-phrase="Bayad po.">Bayad po</button>
@@ -530,95 +543,110 @@
 
       <section id="screen-share" class="screen" aria-label="Share ETA">
         <div class="screen-head">
-          <button type="button" class="back-mob" data-goto="home">Back</button>
-          <h2>Share ETA</h2>
+          <button type="button" class="back-mob" data-goto="home" data-i18n="nav.back">Back</button>
+          <h2 data-i18n="share.title">Share ETA</h2>
         </div>
-        <p class="screen-intro">Piliin ang sasakyan at i-share ang estimated dating sa pamilya o kaibigan.</p>
+        <p class="screen-intro" data-i18n="share.intro">Pick a vehicle and share an ETA band with family or friends.</p>
         <div class="form-group">
-          <label for="share-ride-select">Unit</label>
-          <select id="share-ride-select" class="select"><option value="">Loading…</option></select>
+          <label for="share-ride-select" data-i18n="share.unit">Unit</label>
+          <select id="share-ride-select" class="select"><option value="" data-i18n="plan.loading">Loading…</option></select>
         </div>
         <div class="preview-box" id="share-preview">—</div>
         <div class="sheet-row">
-          <button id="share-copy-btn" type="button" class="action-btn">Copy message</button>
-          <button id="share-native-btn" type="button" class="action-btn primary">Share…</button>
+          <button id="share-copy-btn" type="button" class="action-btn" data-i18n="share.copy">Copy message</button>
+          <button id="share-native-btn" type="button" class="action-btn primary" data-i18n="share.native">Share…</button>
         </div>
         <div class="sheet-row" style="margin-top:8px;">
-          <button id="share-sms-btn" type="button" class="action-btn block">Buksan sa SMS (text)</button>
+          <button id="share-sms-btn" type="button" class="action-btn block" data-i18n="share.sms">Open in SMS</button>
         </div>
         <p class="muted" id="share-status"></p>
       </section>
 
       <section id="screen-auth" class="screen" aria-label="Account">
         <div class="screen-head">
-          <button type="button" class="back-mob" data-goto="home">Back</button>
-          <h2>Account</h2>
+          <button type="button" class="back-mob" data-goto="home" data-i18n="nav.back">Back</button>
+          <h2 data-i18n="auth.title">Account</h2>
         </div>
-        <p class="screen-intro">Mag-sign up o mag-log in para sa personalized na experience.</p>
+        <p class="screen-intro" data-i18n="auth.intro">Sign up or log in for a personalized experience.</p>
         <div class="auth-tabs" role="tablist">
-          <button type="button" id="auth-tab-login" class="active" data-auth-tab="login">Log in</button>
-          <button type="button" id="auth-tab-signup" data-auth-tab="signup">Sign up</button>
+          <button type="button" id="auth-tab-login" class="active" data-auth-tab="login" data-i18n="auth.login_tab">Log in</button>
+          <button type="button" id="auth-tab-signup" data-auth-tab="signup" data-i18n="auth.signup_tab">Sign up</button>
         </div>
         <div id="auth-step-login" class="auth-step visible">
           <div class="form-group">
-            <label for="login-username">Username</label>
+            <label for="login-username" data-i18n="auth.username">Username</label>
             <input id="login-username" class="input" type="text" autocomplete="username" />
           </div>
           <div class="form-group">
-            <label for="login-password">Password</label>
+            <label for="login-password" data-i18n="auth.password">Password</label>
             <input id="login-password" class="input" type="password" autocomplete="current-password" />
           </div>
-          <button type="button" id="login-submit" class="action-btn primary block">Log in</button>
+          <button type="button" id="login-submit" class="action-btn primary block" data-i18n="auth.login_submit">Log in</button>
         </div>
         <div id="auth-step-signup" class="auth-step">
           <div class="form-group">
-            <label for="signup-username">Username</label>
+            <label for="signup-username" data-i18n="auth.username">Username</label>
             <input id="signup-username" class="input" type="text" autocomplete="username" />
           </div>
           <div class="form-group">
-            <label for="signup-email">Email</label>
+            <label for="signup-email" data-i18n="auth.email">Email</label>
             <input id="signup-email" class="input" type="email" autocomplete="email" />
           </div>
           <div class="form-group">
-            <label for="signup-phone">Mobile number</label>
+            <label for="signup-phone" data-i18n="auth.mobile">Mobile number</label>
             <input id="signup-phone" class="input" type="tel" placeholder="+639194748917" autocomplete="tel" />
           </div>
           <div class="form-group">
-            <label for="signup-password">Password</label>
+            <label for="signup-password" data-i18n="auth.password">Password</label>
             <input id="signup-password" class="input" type="password" autocomplete="new-password" />
           </div>
-          <button type="button" id="signup-submit" class="action-btn primary block">Create account</button>
+          <button type="button" id="signup-submit" class="action-btn primary block" data-i18n="auth.signup_submit">Create account</button>
         </div>
         <p class="muted" id="auth-status"></p>
       </section>
 
       <section id="screen-profile" class="screen" aria-label="Profile">
         <div class="screen-head">
-          <button type="button" class="back-mob" data-goto="home">Back</button>
-          <h2>Your profile</h2>
+          <button type="button" class="back-mob" data-goto="home" data-i18n="nav.back">Back</button>
+          <h2 data-i18n="profile.title">Your profile</h2>
         </div>
         <div class="dispatch-card" id="profile-card">
-          <p class="muted">Not signed in. Open Account to log in.</p>
+          <p class="muted" data-i18n="profile.not_signed">Not signed in. Open Account to log in.</p>
         </div>
-        <button type="button" id="logout-btn" class="action-btn" style="display:none;">Log out</button>
+        <button type="button" id="logout-btn" class="action-btn" style="display:none;" data-i18n="profile.logout">Log out</button>
       </section>
     </div>
   </div>
 
   <nav class="bottom-nav" aria-label="Main navigation">
-    <button type="button" data-goto="home" class="active"><span class="ico" aria-hidden="true">◎</span>Map</button>
-    <button type="button" data-goto="plan"><span class="ico" aria-hidden="true">⎘</span>Plan</button>
-    <button type="button" data-goto="guide"><span class="ico" aria-hidden="true">📋</span>Guide</button>
-    <button type="button" data-goto="share"><span class="ico" aria-hidden="true">↗</span>Share</button>
-    <button type="button" id="bottom-nav-auth"><span class="ico" aria-hidden="true">👤</span>Acct</button>
+    <button type="button" data-goto="home" class="active"><span class="ico" aria-hidden="true">◎</span><span data-i18n="nav.map">Map</span></button>
+    <button type="button" data-goto="plan"><span class="ico" aria-hidden="true">⎘</span><span data-i18n="nav.plan">Plan</span></button>
+    <button type="button" data-goto="guide"><span class="ico" aria-hidden="true">📋</span><span data-i18n="nav.guide">Guide</span></button>
+    <button type="button" data-goto="share"><span class="ico" aria-hidden="true">↗</span><span data-i18n="nav.share">Share</span></button>
+    <button type="button" id="bottom-nav-auth"><span class="ico" aria-hidden="true">👤</span><span data-i18n="nav.acct_short">Acct</span></button>
   </nav>
   <div id="app-toast" class="toast" role="status" aria-live="polite"></div>
 
   <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="lipamove-i18n.js"></script>
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
   <script type="text/javascript">
     //<![CDATA[
     (function () {
+      function tr(key, vars) {
+        return window.LipaMoveI18n && typeof LipaMoveI18n.t === "function"
+          ? LipaMoveI18n.t(key, vars)
+          : key;
+      }
+      function syncLangButtons() {
+        if (!window.LipaMoveI18n) {
+          return;
+        }
+        var loc = LipaMoveI18n.getLocale();
+        document.querySelectorAll(".lang-seg button[data-lang]").forEach(function (b) {
+          b.classList.toggle("active", b.getAttribute("data-lang") === loc);
+        });
+      }
       var map = null;
       var markers = {};
       var markerGroup = null;
@@ -659,6 +687,8 @@
       var weatherLastOkMs = 0;
       var manualBasisPoint = null;
       var manualBasisMarker = null;
+      /** True if GET /api/fleet returned any row (MySQL live overlay). */
+      var fleetLiveApiHadPositions = false;
 
       function getListSortMode() {
         var sel = document.getElementById("list-sort-select");
@@ -731,7 +761,7 @@
           btn.textContent = on ? "\u2605" : "\u2606";
           btn.classList.toggle("starred", on);
           btn.setAttribute("aria-pressed", on ? "true" : "false");
-          btn.title = on ? "Tanggalin sa priority unit" : "Priority unit ★";
+          btn.title = on ? tr("star.title_on") : tr("star.title_off");
         });
       }
 
@@ -747,7 +777,7 @@
           }
         });
         el.textContent = best
-          ? "Malapit kang ~" + best.km.toFixed(2) + " km mula sa " + best.name + " (sanggunian sa punto ng ETA)."
+          ? tr("nearest.landmark", { km: best.km.toFixed(2), name: best.name })
           : "";
       }
 
@@ -759,18 +789,15 @@
           return;
         }
         if (puvSocketHadData) {
-          el.textContent =
-            "PUV positions: real-time mula sa LipaMove server (Socket.io). I-tap ang Live tracking para bumalik sa local simulation.";
+          el.textContent = tr("feed.puv_socket");
           return;
         }
         if (puvSocket && !puvSocketConnected) {
-          el.textContent =
-            "Kumokonekta sa live PUV server… (kung walang telemetry, mananatili ang simulation / data.xml.)";
+          el.textContent = tr("feed.socket_connecting");
           return;
         }
         if (simEnabled) {
-          el.textContent =
-            'Simulation — ETA ay gabay lamang (★ priority unit mo). Gamitin ang Ayusin listahan kapag gustong unloaded muna.';
+          el.textContent = tr("feed.sim_guide");
           return;
         }
         if (lastLiveFetchMs) {
@@ -778,29 +805,26 @@
           var minAgo = Math.floor(ago / 60);
           var txtAgo = minAgo > 0 ? "~" + minAgo + " min (" + ago + "s)" : ago + "s";
           var pollSec = Math.round(getLivePollIntervalMs() / 1000);
-          el.textContent =
-            "Huling pull ng live feed: " +
-            txtAgo +
-            " — auto kada ~" +
-            pollSec +
-            "s (data saver: " +
-            (localStorage.getItem("lipamove_data_saver") === "1" ? "on" : "off") +
-            ").";
+          var dsShort =
+            localStorage.getItem("lipamove_data_saver") === "1"
+              ? tr("datasaver.short_on")
+              : tr("datasaver.short_off");
+          el.textContent = tr("feed.last_pull", { ago: txtAgo, poll: String(pollSec), ds: dsShort });
           return;
         }
-        el.textContent = 'Live pull — tap "Refresh" o i-check ang connection / data.xml.';
+        el.textContent = tr("feed.pull_hint");
       }
 
       function wmoWeatherPhrase(code) {
         var c = Number(code);
-        if (c === 0) { return "Malinaw ang langit"; }
-        if (c <= 3) { return "Bahagyang makulimlim"; }
-        if (c <= 49) { return "Fog/mist"; }
-        if (c <= 69) { return "Posibleng ulan"; }
-        if (c <= 82) { return "Biglaang showers"; }
-        if (c <= 94) { return "Malakas na ulan"; }
-        if (c >= 95) { return "Kulog at ulan"; }
-        return "Gabay lamang na lagay ng panahon";
+        if (c === 0) { return tr("weather.malinaw"); }
+        if (c <= 3) { return tr("weather.makulimlim"); }
+        if (c <= 49) { return tr("weather.fog"); }
+        if (c <= 69) { return tr("weather.ulan_posible"); }
+        if (c <= 82) { return tr("weather.showers"); }
+        if (c <= 94) { return tr("weather.ulan_malakas"); }
+        if (c >= 95) { return tr("weather.kulog"); }
+        return tr("weather.default");
       }
 
       function fetchLipaWeather(showToastHint) {
@@ -808,7 +832,7 @@
         var hxInit = document.getElementById("weather-chip-home");
         var guideOpen = typeof document !== "undefined" && document.body && document.body.getAttribute("data-screen") === "guide";
         if (typeof navigator !== "undefined" && !navigator.onLine) {
-          if (gxInit && guideOpen) { gxInit.textContent = "Offline — hindi makukuha ang weather."; }
+          if (gxInit && guideOpen) { gxInit.textContent = tr("weather.offline"); }
           return;
         }
         var lat = 13.941;
@@ -835,7 +859,7 @@
                   ", " +
                   wmoWeatherPhrase(code) +
                   ". (Open-Meteo, Lipa area)"
-                : "Walang datos ng weather.";
+                : tr("weather.none");
             weatherLastOkMs = Date.now();
             var gx = document.getElementById("guide-weather-line");
             var hx = document.getElementById("weather-chip-home");
@@ -845,14 +869,14 @@
             }
             if (hx) {
               hx.style.display = "block";
-              hx.textContent = "\u2638 Weather: " + txt;
+              hx.textContent = tr("weather.home_prefix") + txt;
             }
-            if (showToastHint) { showToast("Weather na-update."); }
+            if (showToastHint) { showToast(tr("weather.updated_toast")); }
           })
           .catch(function () {
             var gx = document.getElementById("guide-weather-line");
             if (gx && !gx.dataset.seenWeather && guideOpen) {
-              gx.textContent = "Hindi makuha ang weather.";
+              gx.textContent = tr("weather.fetch_fail");
             }
           });
       }
@@ -880,11 +904,11 @@
           if (!manualBasisMarker) {
             var pinIcon = L.divIcon({
               className: "vehicle-marker-wrap",
-              html: '<div class="wait-pin-icon" title="Pinned waiting spot"></div>',
+              html: '<div class="wait-pin-icon" title="' + escAttr(tr("map.wait_pin_title")) + '"></div>',
               iconSize: [18, 18],
               iconAnchor: [9, 9]
             });
-            manualBasisMarker = L.marker(manualBasisPoint, { icon: pinIcon }).addTo(map).bindTooltip("Pinned waiting spot", {
+            manualBasisMarker = L.marker(manualBasisPoint, { icon: pinIcon }).addTo(map).bindTooltip(tr("map.wait_pin_title"), {
               permanent: false,
               direction: "top",
               offset: [0, -10]
@@ -920,8 +944,19 @@
         var etaData = getEtaRangeData(ride);
         var basis = getEtaBasis();
         var km = distanceKm(basis, [ride.lat, ride.lng]);
-        var vtype = ride.vtype === "jeepney" ? "Jeepney" : "Batra jeepney";
-        body.textContent = ride.id + " • " + vtype + " • " + etaData.lower + "-" + etaData.upper + " min • " + km.toFixed(2) + " km";
+        var vtype = ride.vtype === "jeepney" ? tr("jeepney") : tr("batra");
+        body.textContent =
+          ride.id +
+          " • " +
+          vtype +
+          " • " +
+          etaData.lower +
+          "-" +
+          etaData.upper +
+          tr("eta_suffix") +
+          " • " +
+          km.toFixed(2) +
+          " km";
         box.style.display = "block";
       }
 
@@ -980,20 +1015,16 @@
         if (!el || !sel) { return; }
         var v = sel.value;
         if (v === "gps") {
-          el.textContent = userLocation
-            ? "Ginagamit ang GPS mo para sa layo at ETA."
-            : "Walang GPS — pansamantalang gumagamit ng gitna ng mapa. Pindutin ang Locate me o pumili ng terminal.";
+          el.textContent = userLocation ? tr("basis.gps_ok") : tr("basis.gps_missing");
         } else if (v === "map") {
-          el.textContent = "Ginagamit ang gitna ng mapa: i-drag ang mapa kung saan ka nag-aabang.";
+          el.textContent = tr("basis.map_center");
         } else if (v.indexOf("stop-") === 0) {
           var si = parseInt(v.slice(5), 10);
           el.textContent = coreLoopStops[si]
-            ? "Parang nag-aantay ka sa " + coreLoopStops[si].name + "."
+            ? tr("basis.waiting_stop", { name: coreLoopStops[si].name })
             : "";
         } else if (v === "pin") {
-          el.textContent = manualBasisPoint
-            ? "Pinned waiting spot ang gamit sa ETA. Long-press ulit sa map para ilipat."
-            : "Wala pang pinned waiting spot. Long-press sa map para maglagay.";
+          el.textContent = manualBasisPoint ? tr("basis.pin_ok") : tr("basis.pin_missing");
         } else {
           el.textContent = "";
         }
@@ -1006,23 +1037,21 @@
         var mult = getTrafficMultiplier();
         var period =
           hour >= 6 && hour < 9
-            ? "rush hour umaga"
+            ? tr("rush.period_am")
             : hour >= 17 && hour < 20
-              ? "rush hour hapon/gabi"
+              ? tr("rush.period_pm")
               : hour >= 11 && hour < 14
-                ? "tanghalian"
-                : "karaniwang oras";
+                ? tr("rush.period_lunch")
+                : tr("rush.period_normal");
         var etaNote =
           mult >= 1.4
-            ? "Mas malawak dapat ang ETA range; maglaan ng ekstra panahon."
+            ? tr("rush.note_wide")
             : mult >= 1.35
-              ? "Bahagyang mas mabagal ang average; subukan ang hanay ng ETA sa listahan."
-              : "Mas magagaan ang modelo ng trapik; mas maaasahan ang midpoint ng ETA.";
+              ? tr("rush.note_slight")
+              : tr("rush.note_light");
         var dow = new Date().getDay();
         var weekendLead =
-          dow === 0 || dow === 6
-            ? "Linggo o Sabado: kadalasang iba ang ulan at daloy ng tao — basahin ang demand sa mga card at ang ulat ng panahon. "
-            : "";
+          dow === 0 || dow === 6 ? tr("rush.weekend") : "";
         el.textContent =
           weekendLead +
           period.charAt(0).toUpperCase() +
@@ -1045,19 +1074,19 @@
         var thr = getNotifyThresholdMin();
         if (!el) { return; }
         if (!thr) {
-          el.textContent = "Naka-off ang paalala.";
+          el.textContent = tr("notify.off");
           return;
         }
         if (typeof Notification === "undefined") {
-          el.textContent = "Hindi suportado ang notifications sa browser na ito.";
+          el.textContent = tr("notify.no_browser");
           return;
         }
         el.textContent =
           Notification.permission === "granted"
-            ? "Active: isa-isang alert kapag pinaka-malapit na ETA ay ≤ " + thr + " min."
+            ? tr("notify.granted", { thr: String(thr) })
             : Notification.permission === "denied"
-              ? "Blocked ang notifications — baguhin sa browser settings."
-              : "Pindutin ang button sa itaas para payagan.";
+              ? tr("notify.denied")
+              : tr("notify.need_perm");
       }
 
       function maybeNearestEtaNotification() {
@@ -1077,8 +1106,8 @@
         if (lastNotifyKey === key) { return; }
         lastNotifyKey = key;
         try {
-          new Notification("LipaMove — malapit na", {
-            body: nearest.ride.id + ": humigit-kumulang " + upper + " min (pinakamataas sa hanay).",
+          new Notification(tr("notify.popup_title"), {
+            body: tr("notify.popup_body", { id: nearest.ride.id, upper: String(upper) }),
             tag: "lipamove-eta"
           });
         } catch (e) { /* ignore */ }
@@ -1105,7 +1134,7 @@
             updateBasisHint();
             refreshEtas();
             navigateTo("home");
-            showToast("Mapa + ETA: " + stop.name);
+            showToast(tr("toast.map_eta", { name: stop.name }));
           });
           row.appendChild(b);
         });
@@ -1265,6 +1294,41 @@
         }
       }
 
+      /** Project jittery GPS onto the assigned route when within ~90 m of the polyline (keeps marker on the road corridor). */
+      var TELEMETRY_SNAP_MAX_KM = 0.09;
+
+      function snapTelemetryOntoRouteIfClose(ride, lat, lng) {
+        var path = ride.path;
+        if (!path || path.length < 2 || !isFinite(lat) || !isFinite(lng)) {
+          return {
+            lat: lat,
+            lng: lng,
+            snapped: false,
+            pathIndex: ride.pathIndex,
+            segmentT: ride.segmentT
+          };
+        }
+        var closed = ride.pathClosed !== false;
+        var snap = nearestPointOnPolyline(path, [lat, lng], closed);
+        var off = distanceKm([lat, lng], [snap.lat, snap.lng]);
+        if (off <= TELEMETRY_SNAP_MAX_KM) {
+          return {
+            lat: snap.lat,
+            lng: snap.lng,
+            snapped: true,
+            pathIndex: snap.pathIndex,
+            segmentT: snap.segmentT
+          };
+        }
+        return {
+          lat: lat,
+          lng: lng,
+          snapped: false,
+          pathIndex: ride.pathIndex,
+          segmentT: ride.segmentT
+        };
+      }
+
       function applyPuvSocketUpdatePayload(p) {
         var ride = findRideForPuvSocket(p);
         if (!ride || !ride.marker) {
@@ -1277,6 +1341,13 @@
         if (!isFinite(lat) || !isFinite(lng)) {
           return;
         }
+        var proj = snapTelemetryOntoRouteIfClose(ride, lat, lng);
+        lat = proj.lat;
+        lng = proj.lng;
+        if (proj.snapped) {
+          ride.pathIndex = proj.pathIndex;
+          ride.segmentT = proj.segmentT;
+        }
         ride.lat = lat;
         ride.lng = lng;
         ride.telemetryFromSocket = true;
@@ -1287,7 +1358,13 @@
           ride.bearing = Number(p.bearing);
         } else if (ride.path && ride.path.length >= 2) {
           var snapB = nearestPointOnPolyline(ride.path, [lat, lng], ride.pathClosed !== false);
-          ride.bearing = bearingTangentAlongPolyline(ride.path, snapB.pathIndex, snapB.segmentT, 0.024, ride.pathClosed !== false);
+          ride.bearing = bearingTangentAlongPolyline(
+            ride.path,
+            snapB.pathIndex,
+            snapB.segmentT,
+            0.024,
+            ride.pathClosed !== false
+          );
         }
         if (p.speedKph != null && isFinite(Number(p.speedKph))) {
           ride.effectiveSpeedKmh = Number(p.speedKph);
@@ -1423,7 +1500,7 @@
           var ptxt = phraseBtn.getAttribute("data-phrase") || "";
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(ptxt).then(function () {
-              showToast("Nakopya ang phrase.");
+              showToast(tr("phrase.copied"));
             }).catch(function () {
               showToast(ptxt);
             });
@@ -1657,11 +1734,11 @@
 
       function fareBandHint(km) {
         if (!isFinite(km) || km < 0) { return ""; }
-        if (km < 0.25) { return "Sobrang lapit na — handang barya."; }
-        if (km < 1.2) { return "Tantiyang pamasada (hindi opisyal na LTFRB matrix): ~₱12–₱16."; }
-        if (km < 3) { return "Tantiya lang: ~₱15–₱22 — magtanong sa kundoktor."; }
-        if (km < 6) { return "Tantiya lang: ~₱20–₱28+."; }
-        return "Mahaba ang tuwid na layo — kumunsulta sa taripa sa terminal.";
+        if (km < 0.25) { return tr("fare.lt025"); }
+        if (km < 1.2) { return tr("fare.lt12"); }
+        if (km < 3) { return tr("fare.lt3"); }
+        if (km < 6) { return tr("fare.lt6"); }
+        return tr("fare.long");
       }
 
       function nearestTerminalWalkSentence(basis) {
@@ -1677,7 +1754,7 @@
         }
         var mins = crowWalkMinutesFromKm(best.km);
         var shortName = (best.name || "").split("(")[0].trim();
-        return "Kung lakad papunta sa " + shortName + ": ~" + mins + " min (\u2248" + best.km.toFixed(2) + " km tuwid — maaaring mas mahaba sa aktwal na daan).";
+        return tr("walk.terminal", { name: shortName, mins: String(mins), km: best.km.toFixed(2) });
       }
 
       function updateWalkHintLine() {
@@ -1698,11 +1775,7 @@
           var km = distanceKm(basis, [ride.lat, ride.lng]);
           var wmin = crowWalkMinutesFromKm(km);
           box.textContent =
-            "Mula sa punto mo: ~" +
-            wmin +
-            " min lakad (\u2248" +
-            km.toFixed(2) +
-            " km tuwid) bago sumampa. " +
+            tr("extras.walk_line", { wmins: String(wmin), km: km.toFixed(2) }) +
             fareBandHint(km);
         });
       }
@@ -1720,21 +1793,26 @@
         var memoRaw = memoEl ? String(memoEl.value || "").trim() : "";
         var memoChunk =
           memoRaw
-            ? "\nAlalahanin: " +
+            ? tr("spot.memo_prefix") +
               memoRaw.substring(0, 220) +
               (memoRaw.length > 220 ? "…" : "")
             : "";
         return (
-          "[LipaMove • Lipa City]\n" +
-          "Spot (gabay): " +
+          tr("spot.header") +
+          "\n" +
+          tr("spot.line_mode") +
           modeLabel +
-          "\nCoords: " +
+          "\n" +
+          tr("spot.line_coords") +
           lat.toFixed(5) +
           ", " +
           lng.toFixed(5) +
-          "\nMap: https://maps.google.com/?q=" +
+          "\n" +
+          tr("spot.line_map") +
+          "https://maps.google.com/?q=" +
           encodeURIComponent(lat + "," + lng) +
-          "\n(Hindi ito EMS — meetup/reference lamang; i-verify pa.)" +
+          "\n" +
+          tr("spot.footer") +
           memoChunk
         );
       }
@@ -1743,7 +1821,7 @@
         var text = buildSpotShareText();
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(text).then(function () {
-            showToast("Na-copy ang spotting point.");
+            showToast(tr("toast.copy_spot"));
           }).catch(function () {
             showToast(text.substring(0, 100) + "…");
           });
@@ -2177,21 +2255,21 @@
       }
 
       function getRideConfidence(ride) {
-        if (simEnabled) { return { level: "high", label: "Confidence: High (sim)" }; }
+        if (simEnabled) { return { level: "high", label: tr("confidence.sim_high") }; }
         if (ride && ride.telemetryFromSocket) {
           var fs = getRideFreshnessSec(ride);
           if (fs <= 90) {
-            return { level: "high", label: "Confidence: High (server)" };
+            return { level: "high", label: tr("confidence.server_high") };
           }
           if (fs <= 180) {
-            return { level: "medium", label: "Confidence: Medium (server)" };
+            return { level: "medium", label: tr("confidence.server_med") };
           }
-          return { level: "low", label: "Confidence: Low (server stale)" };
+          return { level: "low", label: tr("confidence.server_low") };
         }
         var freshness = getRideFreshnessSec(ride);
-        if (freshness > 120) { return { level: "low", label: "Confidence: Low" }; }
-        if (freshness > 45) { return { level: "medium", label: "Confidence: Medium" }; }
-        return { level: "high", label: "Confidence: High" };
+        if (freshness > 120) { return { level: "low", label: tr("confidence.low") }; }
+        if (freshness > 45) { return { level: "medium", label: tr("confidence.medium") }; }
+        return { level: "high", label: tr("confidence.high") };
       }
 
       function updateNearestAndOrder() {
@@ -2210,7 +2288,7 @@
         panel.style.display = "block";
         if (nearest) {
           var etaData = getEtaRangeData(nearest.ride);
-          var typeLabel = nearest.ride.vtype === "jeepney" ? "Jeepney" : "Batra jeepney";
+          var typeLabel = nearest.ride.vtype === "jeepney" ? tr("jeepney") : tr("batra");
           var mainHtml =
             "<strong>" +
             nearest.ride.id +
@@ -2220,13 +2298,17 @@
             etaData.lower +
             "-" +
             etaData.upper +
-            "</strong> min · <span class=\"km\">" +
+            "</strong>" +
+            tr("eta_suffix") +
+            " · <span class=\"km\">" +
             nearest.km.toFixed(2) +
-            " km</span> <span class=\"muted\">(tuwid na linya)</span>";
+            " km</span> <span class=\"muted\">" +
+            escHtml(tr("nearest.straight_line")) +
+            "</span>";
           var fareN = fareBandHint(nearest.km);
-          body.innerHTML = mainHtml + '<p class="ns-extra muted">' + fareN + "</p>";
+          body.innerHTML = mainHtml + '<p class="ns-extra muted">' + escHtml(fareN) + "</p>";
         } else {
-          body.innerHTML = '<span class="muted">Walang sasakyang tumutugma sa filter mo. Piliin ang Lahat.</span>';
+          body.innerHTML = '<span class="muted">' + escHtml(tr("nearest.none_filtered")) + "</span>";
         }
         rides.forEach(function (r) {
           var card = document.querySelector(".card[data-ride-id=\"" + r.id + "\"]");
@@ -2240,18 +2322,18 @@
         rides.forEach(function (ride) {
           if (etaByRide[ride.id]) {
             var etaData = getEtaRangeData(ride);
-            etaByRide[ride.id].textContent = etaData.lower + "-" + etaData.upper + " min ETA";
+            etaByRide[ride.id].textContent = etaData.lower + "-" + etaData.upper + tr("eta_suffix");
           }
           if (etaMetaByRide[ride.id]) {
             var conf = getRideConfidence(ride);
             var freshness = getRideFreshnessSec(ride);
             var freshTxt = simEnabled
-              ? "Updated: live sim"
+              ? tr("fresh.live_sim")
               : ride.telemetryFromSocket
-                ? "Updated: server " + freshness + "s ago"
+                ? tr("fresh.server", { s: String(freshness) })
                 : freshness > 120
-                  ? "Updated: stale " + freshness + "s"
-                  : "Updated: " + freshness + "s ago";
+                  ? tr("fresh.stale", { s: String(freshness) })
+                  : tr("fresh.seconds", { s: String(freshness) });
             etaMetaByRide[ride.id].freshnessEl.textContent = freshTxt;
             etaMetaByRide[ride.id].confidenceEl.textContent = conf.label;
             etaMetaByRide[ride.id].confidenceEl.className = "eta-chip conf-" + conf.level;
@@ -2272,27 +2354,55 @@
         }
       }
 
+      /** Explains whether markers come from server/live DB, client simulation, or XML-only. */
+      function updateFleetTruthChip() {
+        var el = document.getElementById("fleet-truth-chip");
+        if (!el) {
+          return;
+        }
+        var hasLiveLayer =
+          fleetLiveApiHadPositions ||
+          puvSocketHadData ||
+          rides.some(function (r) {
+            return r && (r.liveSeedFromApi || r.positionSource === "live_server");
+          });
+        if (hasLiveLayer && !simEnabled) {
+          el.textContent = tr("fleet.truth_live");
+          el.className = "chip fleet-truth-live";
+          el.title = tr("fleet.truth_live_title");
+        } else if (simEnabled) {
+          el.textContent = tr("fleet.truth_sim");
+          el.className = "chip fleet-truth-sim";
+          el.title = tr("fleet.truth_sim_title");
+        } else {
+          el.textContent = tr("fleet.truth_xml");
+          el.className = "chip";
+          el.title = tr("fleet.truth_xml_title");
+        }
+      }
+
       function updateGpsFreshness() {
         var gpsChip = document.getElementById("gps-toggle");
         if (!gpsChip) { return; }
+        gpsChip.setAttribute("title", tr("gps.toggle_title"));
         gpsChip.classList.toggle("warn", !simEnabled && !puvSocketHadData);
         if (!rides.length) {
-          gpsChip.textContent = "Live tracking: No units loaded";
+          gpsChip.textContent = tr("gps.no_units");
           gpsChip.classList.add("warn");
         } else if (puvSocketHadData && !simEnabled) {
-          gpsChip.textContent = "Live tracking: Server";
+          gpsChip.textContent = tr("gps.server");
           gpsChip.classList.remove("warn");
         } else {
-          gpsChip.textContent = simEnabled ? "Live tracking: On" : "Live tracking: Paused";
+          gpsChip.textContent = simEnabled ? tr("gps.on") : tr("gps.paused");
         }
         var pill = document.getElementById("live-sim-pill");
         if (pill) {
           if (!rides.length) {
-            pill.textContent = "Preparing live route data...";
+            pill.textContent = tr("pill.preparing");
           } else if (puvSocketHadData && !simEnabled) {
-            pill.textContent = "Server live PUV feed";
+            pill.textContent = tr("pill.server_feed");
           } else {
-            pill.textContent = simEnabled ? "Live vehicle tracking" : "Live tracking paused";
+            pill.textContent = simEnabled ? tr("pill.live_tracking") : tr("pill.sim_paused");
           }
         }
         rides.forEach(function (r) {
@@ -2307,12 +2417,17 @@
           if (tip) {
             if (r.telemetryFromSocket && !simEnabled) {
               var spS = Math.round(r.effectiveSpeedKmh != null ? r.effectiveSpeedKmh : r.speedKmh);
-              tip.setContent(r.id + " · " + spS + " km/h (server)");
+              tip.setContent(tr("tooltip.server_speed", { id: r.id, sp: String(spS) }));
             } else {
               tip.setContent(
                 simEnabled
-                  ? r.id + " · " + (r.dwellUntilMs && r.dwellUntilMs > performance.now() ? "Boarding stop" : Math.round(r.effectiveSpeedKmh != null ? r.effectiveSpeedKmh : r.speedKmh) + " km/h")
-                  : r.id + " · Live feed paused"
+                  ? r.dwellUntilMs && r.dwellUntilMs > performance.now()
+                    ? r.id + " · " + tr("tooltip.boarding")
+                    : tr("tooltip.sim_speed", {
+                        id: r.id,
+                        sp: String(Math.round(r.effectiveSpeedKmh != null ? r.effectiveSpeedKmh : r.speedKmh))
+                      })
+                  : tr("tooltip.paused", { id: r.id })
               );
             }
           }
@@ -2321,6 +2436,7 @@
           }
         });
         updateFeedSyncLine();
+        updateFleetTruthChip();
       }
 
       function startUserWatch() {
@@ -2347,6 +2463,55 @@
         }
       }
 
+      /**
+       * Apply MySQL live positions (GET /api/fleet) to markers when not driven by Socket.io.
+       */
+      function applyLiveFleetOverlay(liveByPuvId) {
+        if (!liveByPuvId || !rides.length) {
+          return;
+        }
+        rides.forEach(function (ride) {
+          var L = liveByPuvId[ride.id];
+          if (!L || !isFinite(Number(L.lat)) || !isFinite(Number(L.lng))) {
+            return;
+          }
+          if (ride.telemetryFromSocket) {
+            return;
+          }
+          ride.lat = Number(L.lat);
+          ride.lng = Number(L.lng);
+          if (L.bearing != null && isFinite(Number(L.bearing))) {
+            ride.bearing = Number(L.bearing);
+          }
+          if (L.speedKph != null && isFinite(Number(L.speedKph))) {
+            ride.effectiveSpeedKmh = Number(L.speedKph);
+          }
+          if (L.timestamp) {
+            var t = Date.parse(L.timestamp);
+            if (!isNaN(t)) {
+              ride.serverTelemetryMs = t;
+            }
+          }
+          if (L.status) {
+            ride.socketStatus = String(L.status);
+            applyPuvSocketMarkerStyle(ride, ride.socketStatus);
+          }
+          if (ride.path && ride.path.length >= 2) {
+            var proj = snapTelemetryOntoRouteIfClose(ride, ride.lat, ride.lng);
+            ride.lat = proj.lat;
+            ride.lng = proj.lng;
+            if (proj.snapped) {
+              ride.pathIndex = proj.pathIndex;
+              ride.segmentT = proj.segmentT;
+            }
+          }
+          ride.marker.setLatLng([ride.lat, ride.lng]);
+          updateMarkerRotation(ride);
+          updateLiveSimVisuals(ride);
+        });
+        refreshEtas();
+      }
+
       function applyLiveGpsSnapshot(xmlDoc) {
         if (simEnabled) { return; }
         lastLiveFetchMs = Date.now();
@@ -2355,7 +2520,7 @@
           var id = u.getAttribute("id");
           var ride = rides.find(function (r) { return r.id === id; });
           if (!ride) { return; }
-          if (ride.telemetryFromSocket) {
+          if (ride.telemetryFromSocket || ride.liveSeedFromApi) {
             return;
           }
           var locEl = u.querySelector("location");
@@ -2380,11 +2545,36 @@
       function startLiveGpsPolling() {
         if (gpsPollTimer) { return; }
         var tick = function () {
-          fetch("data.xml")
-            .then(function (r) { return r.text(); })
-            .then(function (xmlText) {
-              var xml = new DOMParser().parseFromString(xmlText, "application/xml");
-              applyLiveGpsSnapshot(xml);
+          Promise.all([
+            fetch("data.xml")
+              .then(function (r) {
+                return r.text();
+              })
+              .catch(function () {
+                return null;
+              }),
+            fetch(apiUrl("/api/fleet"))
+              .then(function (r) {
+                return r.json().then(function (j) {
+                  return { ok: r.ok, j: j };
+                });
+              })
+              .catch(function () {
+                return { ok: false, j: null };
+              })
+          ])
+            .then(function (pair) {
+              var xmlText = pair[0];
+              if (xmlText) {
+                var xml = new DOMParser().parseFromString(xmlText, "application/xml");
+                applyLiveGpsSnapshot(xml);
+              }
+              var fr = pair[1];
+              if (fr && fr.ok && fr.j && fr.j.ok && fr.j.liveByPuvId) {
+                fleetLiveApiHadPositions = !!fr.j.hasLivePositions;
+                applyLiveFleetOverlay(fr.j.liveByPuvId);
+                updateFleetTruthChip();
+              }
             })
             .catch(function () {});
         };
@@ -2409,12 +2599,36 @@
         });
       }
 
+      function updateRideSelectOptions() {
+        var opts = rides.map(function (r) {
+          var safe = (r.route + "").replace(/</g, "").replace(/"/g, "'");
+          return "<option value=\"" + r.id + "\">" + r.id + " — " + safe.substring(0, 48) + (safe.length > 48 ? "…" : "") + "</option>";
+        }).join("");
+        ["plan-ride-select", "share-ride-select"].forEach(function (selId) {
+          var el = document.getElementById(selId);
+          if (!el) {
+            return;
+          }
+          var prev = el.value;
+          el.innerHTML = "<option value=\"\">" + tr("plan.any_unit") + "</option>" + opts;
+          if (prev && el.querySelector("option[value=\"" + prev + "\"]")) {
+            el.value = prev;
+          }
+        });
+      }
+
       function buildShareMessage(ride) {
         if (!ride) { return ""; }
         var basis = getEtaBasis();
         var km = distanceKm(basis, [ride.lat, ride.lng]);
-        var typeLabel = ride.vtype === "jeepney" ? "Jeepney" : "Batra jeepney";
-        return "LipaMove: " + ride.id + " (" + typeLabel + ") — " + ride.route + ". ~" + computeEta(ride) + " min ETA, " + km.toFixed(2) + " km from my spot.";
+        var typeLabel = ride.vtype === "jeepney" ? tr("jeepney") : tr("batra");
+        return tr("share.build", {
+          id: ride.id,
+          type: typeLabel,
+          route: ride.route,
+          eta: String(computeEta(ride)),
+          km: km.toFixed(2)
+        });
       }
 
       function updateSharePreview() {
@@ -2424,7 +2638,7 @@
         if (!ride && rides.length) { ride = rides[0]; }
         var box = document.getElementById("share-preview");
         if (box) {
-          box.textContent = ride ? buildShareMessage(ride) : "Walang ride data.";
+          box.textContent = ride ? buildShareMessage(ride) : tr("share.msg.none");
         }
       }
       window._lipamoveUpdateSharePreview = updateSharePreview;
@@ -2436,9 +2650,12 @@
         var rid = (sel && sel.value) ? sel.value : selectedRideId;
         var r = rides.find(function (x) { return x.id === rid; });
         if (r) {
-          el.textContent = "Tracking " + r.id + " — ETA ~" + computeEta(r) + " min (from your spot).";
+          el.textContent = tr("plan.summary_tracking", {
+            id: r.id,
+            eta: String(computeEta(r))
+          });
         } else {
-          el.textContent = "Pumili ng unit sa listahan o sa map.";
+          el.textContent = tr("plan.summary_pick");
         }
       }
 
@@ -2448,6 +2665,61 @@
 
       function escAttr(s) {
         return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+      }
+
+      function syncNetStatusChip() {
+        var chip = document.getElementById("net-status-chip");
+        if (!chip || typeof navigator === "undefined") {
+          return;
+        }
+        var on = navigator.onLine;
+        chip.textContent = on ? tr("net.online") : tr("net.offline");
+        chip.classList.toggle("net-offline", !on);
+      }
+
+      function refreshVehicleLabelsAndPopups() {
+        rides.forEach(function (r) {
+          if (!r.marker) {
+            return;
+          }
+          var vtagLabel = r.vtype === "jeepney" ? tr("jeepney") : tr("batra");
+          r.marker.setPopupContent(
+            "<strong>" +
+              escHtml(r.id) +
+              "</strong><br/>" +
+              escHtml(vtagLabel) +
+              "<br/>" +
+              escHtml(r.route) +
+              "<br/>" +
+              escHtml(tr("popup.crowd")) +
+              " " +
+              escHtml(r.density || "")
+          );
+        });
+      }
+
+      function refreshLocaleUi() {
+        if (!window.LipaMoveI18n) {
+          return;
+        }
+        LipaMoveI18n.applyDom(document.body);
+        syncLangButtons();
+        updateBasisHint();
+        updateGuideRushBlurb();
+        updateNotifyStatusLine();
+        updateFleetTruthChip();
+        updateGpsFreshness();
+        updateNearestLandmarkLine();
+        updateWalkHintLine();
+        updateCommuterExtrasOnCards();
+        updateFeedSyncLine();
+        refreshVehicleLabelsAndPopups();
+        syncNetStatusChip();
+        updateRideSelectOptions();
+        refreshEtas();
+        updateSharePreview();
+        updatePlanSummary();
+        refreshAuthUi();
       }
 
       function updateLiveSimVisuals(ride) {
@@ -2460,7 +2732,12 @@
         }
         var tip = ride.marker.getTooltip && ride.marker.getTooltip();
         if (tip && simEnabled) {
-          tip.setContent(ride.id + " · " + Math.round(ride.effectiveSpeedKmh != null ? ride.effectiveSpeedKmh : ride.speedKmh) + " km/h");
+          tip.setContent(
+            tr("tooltip.live_speed", {
+              id: ride.id,
+              sp: String(Math.round(ride.effectiveSpeedKmh != null ? ride.effectiveSpeedKmh : ride.speedKmh))
+            })
+          );
         }
       }
 
@@ -2490,6 +2767,9 @@
           var dt = Math.min(Math.max(rawDt, 1 / 120), 0.28);
           if (dt > 0) {
             rides.forEach(function (ride) {
+              if (ride.skipClientSim) {
+                return;
+              }
               if (!ride.path || ride.path.length < 2) { return; }
               if (ride.dwellUntilMs && now < ride.dwellUntilMs) {
                 ride.effectiveSpeedKmh = 0;
@@ -2532,7 +2812,7 @@
       function refreshAuthUi() {
         var tok = localStorage.getItem("lipamove_token");
         var btn = document.getElementById("auth-entry-btn");
-        if (btn) { btn.textContent = tok ? "Profile" : "Account"; }
+        if (btn) { btn.textContent = tok ? tr("nav.profile") : tr("nav.account"); }
         var pTab = document.getElementById("panel-tab-profile");
         if (pTab) { pTab.style.display = tok ? "inline-block" : "none"; }
         if (tok) {
@@ -2542,18 +2822,33 @@
               var card = document.getElementById("profile-card");
               var lo = document.getElementById("logout-btn");
               if (data.user && card) {
-                card.innerHTML = "<h3>" + escHtml(data.user.username) + "</h3><p>Email: " + escHtml(data.user.email) + "</p><p>Phone: " + escHtml(data.user.phone || "—") + "</p><p class=\"muted\">User ID: " + data.user.id + "</p>";
+                card.innerHTML =
+                  "<h3>" +
+                  escHtml(data.user.username) +
+                  "</h3><p>" +
+                  escHtml(tr("profile.label_email")) +
+                  ": " +
+                  escHtml(data.user.email) +
+                  "</p><p>" +
+                  escHtml(tr("profile.label_phone")) +
+                  ": " +
+                  escHtml(data.user.phone || "—") +
+                  "</p><p class=\"muted\">" +
+                  escHtml(tr("profile.label_id")) +
+                  ": " +
+                  data.user.id +
+                  "</p>";
               }
               if (lo) { lo.style.display = "block"; }
             })
             .catch(function () {
               var card = document.getElementById("profile-card");
-              if (card) { card.innerHTML = "<p class=\"muted\">Could not load profile. Is the API running?</p>"; }
+              if (card) { card.innerHTML = "<p class=\"muted\">" + escHtml(tr("profile.load_fail")) + "</p>"; }
             });
         } else {
           var card = document.getElementById("profile-card");
           var lo = document.getElementById("logout-btn");
-          if (card) { card.innerHTML = "<p class=\"muted\">Not signed in.</p>"; }
+          if (card) { card.innerHTML = "<p class=\"muted\">" + escHtml(tr("profile.not_signed")) + "</p>"; }
           if (lo) { lo.style.display = "none"; }
         }
       }
@@ -2589,7 +2884,7 @@
             map.on("contextmenu", function (ev) {
               if (!ev || !ev.latlng) { return; }
               setManualWaitSpot([ev.latlng.lat, ev.latlng.lng], false);
-              showToast("Pinned waiting spot set.");
+              showToast(tr("toast.spot_set"));
             });
           }
           if (!markerGroup) { markerGroup = L.featureGroup().addTo(map); }
@@ -2674,15 +2969,15 @@
             var pw = document.getElementById("signup-password").value;
             var st = document.getElementById("auth-status");
             if (!u || !em || !ph || !pw) {
-              if (st) { st.textContent = "Fill in all fields."; }
+              if (st) { st.textContent = tr("auth.fill_all"); }
               return;
             }
             if (em.indexOf("@") === -1 || em.indexOf(".", em.indexOf("@")) === -1) {
-              if (st) { st.textContent = "Email must include @ and a domain (e.g. name@gmail.com)."; }
+              if (st) { st.textContent = tr("auth.email_invalid"); }
               return;
             }
             if (u.length < 3) {
-              if (st) { st.textContent = "Username must be at least 3 characters."; }
+              if (st) { st.textContent = tr("auth.user_short"); }
               return;
             }
             fetch(apiUrl("/api/auth/register"), {
@@ -2693,17 +2988,17 @@
               .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
               .then(function (x) {
                 if (!x.ok || !x.j.token) {
-                  if (st) { st.textContent = (x.j && x.j.error) || "Register failed"; }
+                  if (st) { st.textContent = (x.j && x.j.error) || tr("auth.register_fail"); }
                   return;
                 }
                 localStorage.setItem("lipamove_token", x.j.token);
-                if (st) { st.textContent = "Signed up successfully."; }
+                if (st) { st.textContent = tr("auth.signup_ok"); }
                 refreshAuthUi();
                 reconnectPuvSocketWithAuth();
                 navigateTo("profile");
               })
               .catch(function () {
-                if (st) { st.textContent = "API unreachable. Run: cd server && npm install && npm start"; }
+                if (st) { st.textContent = tr("auth.api_unreachable_register"); }
               });
           });
         }
@@ -2714,7 +3009,7 @@
             var pw = document.getElementById("login-password").value;
             var st = document.getElementById("auth-status");
             if (!u || !pw) {
-              if (st) { st.textContent = "Enter username and password."; }
+              if (st) { st.textContent = tr("auth.need_credentials"); }
               return;
             }
             fetch(apiUrl("/api/auth/login"), {
@@ -2725,17 +3020,17 @@
               .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
               .then(function (x) {
                 if (!x.ok || !x.j.token) {
-                  if (st) { st.textContent = (x.j && x.j.error) || "Login failed"; }
+                  if (st) { st.textContent = (x.j && x.j.error) || tr("auth.login_fail"); }
                   return;
                 }
                 localStorage.setItem("lipamove_token", x.j.token);
-                if (st) { st.textContent = "Logged in."; }
+                if (st) { st.textContent = tr("auth.logged_in"); }
                 refreshAuthUi();
                 reconnectPuvSocketWithAuth();
                 navigateTo("profile");
               })
               .catch(function () {
-                if (st) { st.textContent = "API unreachable. Start the Node server from the server folder."; }
+                if (st) { st.textContent = tr("auth.api_unreachable_login"); }
               });
           });
         }
@@ -2760,6 +3055,19 @@
       }
 
       function initUiWiring() {
+        if (!document.body.dataset.langDelegate) {
+          document.body.dataset.langDelegate = "1";
+          document.body.addEventListener("click", function (ev) {
+            var lb = ev.target && ev.target.closest && ev.target.closest(".lang-seg button[data-lang]");
+            if (!lb || !window.LipaMoveI18n) {
+              return;
+            }
+            ev.preventDefault();
+            LipaMoveI18n.setLocale(lb.getAttribute("data-lang"));
+            refreshLocaleUi();
+          });
+        }
+
         var fitBtn = document.getElementById("fit-rides");
         if (fitBtn) {
           fitBtn.addEventListener("click", function () {
@@ -2774,13 +3082,13 @@
         if (locateBtn) {
           locateBtn.addEventListener("click", function () {
             if (!navigator.geolocation) {
-              locateBtn.textContent = "No GPS support";
+              locateBtn.textContent = tr("locate.no_gps");
               return;
             }
-            locateBtn.textContent = "Locating...";
+            locateBtn.textContent = tr("locate.loading");
             navigator.geolocation.getCurrentPosition(function (pos) {
               if (!map) {
-                locateBtn.textContent = "No map";
+                locateBtn.textContent = tr("locate.no_map");
                 return;
               }
               var user = [pos.coords.latitude, pos.coords.longitude];
@@ -2823,11 +3131,11 @@
                 updatePlanSummary();
               }
               refreshEtas();
-              locateBtn.textContent = "Nearest ride found";
-              setTimeout(function () { locateBtn.textContent = "Locate me"; }, 2500);
+              locateBtn.textContent = tr("locate.done");
+              setTimeout(function () { locateBtn.textContent = tr("locate.me"); }, 2500);
             }, function () {
-              locateBtn.textContent = "Location blocked";
-              setTimeout(function () { locateBtn.textContent = "Locate me"; }, 2500);
+              locateBtn.textContent = tr("locate.blocked");
+              setTimeout(function () { locateBtn.textContent = tr("locate.me"); }, 2500);
             }, { enableHighAccuracy: true, timeout: 12000 });
           });
         }
@@ -2837,12 +3145,12 @@
           planOpen.addEventListener("click", function () {
             if (!rides.length) {
               var ps = document.getElementById("plan-summary");
-              if (ps) { ps.textContent = "Naglo-load pa ang fleet o walang data.xml."; }
+              if (ps) { ps.textContent = tr("plan.fleet_loading"); }
               return;
             }
             if (!map) {
               var ps2 = document.getElementById("plan-summary");
-              if (ps2) { ps2.textContent = "Map not ready."; }
+              if (ps2) { ps2.textContent = tr("plan.map_not_ready"); }
               return;
             }
             var originSel = document.getElementById("plan-origin-preset").value;
@@ -2858,7 +3166,7 @@
               var pr = document.getElementById("plan-ride-select").value || selectedRideId;
               var ride = rides.find(function (r) { return r.id === pr; }) || rides[0];
               if (!ride) {
-                document.getElementById("plan-summary").textContent = "Walang ride data.";
+                document.getElementById("plan-summary").textContent = tr("plan.no_data");
                 return;
               }
               to = ride.lat + "," + ride.lng;
@@ -2888,13 +3196,13 @@
             var rid = (sel && sel.value) ? sel.value : selectedRideId;
             var ride = rides.find(function (r) { return r.id === rid; }) || rides[0];
             if (!ride) {
-              document.getElementById("share-status").textContent = "Walang napiling unit.";
+              document.getElementById("share-status").textContent = tr("share.pick_unit");
               return;
             }
             var msg = buildShareMessage(ride);
             if (navigator.clipboard && navigator.clipboard.writeText) {
               navigator.clipboard.writeText(msg).then(function () {
-                document.getElementById("share-status").textContent = "Nakopya na ang mensahe.";
+                document.getElementById("share-status").textContent = tr("share.copied");
                 setTimeout(function () { document.getElementById("share-status").textContent = ""; }, 2200);
               });
             } else {
@@ -2915,7 +3223,7 @@
               navigator.share({ title: "LipaMove ETA", text: msg }).catch(function () {});
             } else if (navigator.clipboard) {
               navigator.clipboard.writeText(msg);
-              document.getElementById("share-status").textContent = "Walang native share — nakopya sa clipboard.";
+              document.getElementById("share-status").textContent = tr("share.no_native");
             }
           });
         }
@@ -2931,6 +3239,9 @@
             } else {
               disconnectPuvSocketForUserSim();
               stopLiveGpsPolling();
+              rides.forEach(function (r) {
+                r.skipClientSim = false;
+              });
               if (!simRafId) {
                 startSimulation();
               }
@@ -2971,7 +3282,7 @@
             localStorage.setItem("lipamove_eta_basis", etaBasisEl.value);
             if (etaBasisEl.value === "pin" && !manualBasisPoint && map) {
               setManualWaitSpot([map.getCenter().lat, map.getCenter().lng], false);
-              showToast("Pinned waiting spot set at map center.");
+              showToast(tr("toast.spot_center"));
               return;
             }
             if (etaBasisEl.value.indexOf("stop-") === 0 && map) {
@@ -2994,7 +3305,7 @@
             var ride = getSelectedRide();
             if (!ride || !map) { return; }
             map.flyTo([ride.lat, ride.lng], 16, { duration: 0.7 });
-            showToast("Centered on tracked unit.");
+            showToast(tr("toast.centered"));
           });
         }
         var tShare = document.getElementById("tracking-share-btn");
@@ -3015,7 +3326,7 @@
             selectedRideId = null;
             Array.prototype.forEach.call(document.querySelectorAll(".card[data-ride-id]"), function (el) { el.classList.remove("active"); });
             refreshEtas();
-            showToast("Tracking cleared.");
+            showToast(tr("toast.tracking_cleared"));
           });
         }
 
@@ -3024,39 +3335,49 @@
           refreshFeed.addEventListener("click", function () {
             if (simEnabled) {
               refreshEtas();
-              showToast("Na-refresh ang mga ETA.");
+              showToast(tr("toast.refresh_eta"));
               return;
             }
-            fetch("data.xml")
-              .then(function (r) {
+            Promise.all([
+              fetch("data.xml").then(function (r) {
                 return r.text();
-              })
-              .then(function (xmlText) {
+              }),
+              fetch(apiUrl("/api/fleet"))
+                .then(function (r) {
+                  return r.json().then(function (j) {
+                    return { ok: r.ok, j: j };
+                  });
+                })
+                .catch(function () {
+                  return { ok: false, j: null };
+                })
+            ])
+              .then(function (pair) {
+                var xmlText = pair[0];
+                var fr = pair[1];
                 var xml = new DOMParser().parseFromString(xmlText, "application/xml");
                 applyLiveGpsSnapshot(xml);
-                showToast("Na-update mula sa data.xml.");
+                if (fr && fr.ok && fr.j && fr.j.ok && fr.j.liveByPuvId) {
+                  fleetLiveApiHadPositions = !!fr.j.hasLivePositions;
+                  applyLiveFleetOverlay(fr.j.liveByPuvId);
+                }
+                updateFleetTruthChip();
+                showToast(tr("toast.feed_updated"));
               })
               .catch(function () {
-                showToast("Hindi makuhang muli ang data.xml.");
+                showToast(tr("toast.feed_xml_fail"));
               });
           });
         }
 
-        function syncNetStatusChip() {
-          var chip = document.getElementById("net-status-chip");
-          if (!chip || typeof navigator === "undefined") { return; }
-          var on = navigator.onLine;
-          chip.textContent = on ? "Online" : "Offline";
-          chip.classList.toggle("net-offline", !on);
-        }
         syncNetStatusChip();
         window.addEventListener("online", function () {
           syncNetStatusChip();
-          showToast("Online na muli.");
+          showToast(tr("toast.online"));
         });
         window.addEventListener("offline", function () {
           syncNetStatusChip();
-          showToast("Offline — limitado ang live update.");
+          showToast(tr("toast.offline"));
         });
 
         var notifyThr = document.getElementById("notify-threshold-select");
@@ -3076,13 +3397,13 @@
         if (notifyPerm) {
           notifyPerm.addEventListener("click", function () {
             if (typeof Notification === "undefined") {
-              showToast("Hindi suportado ang notifications dito.");
+              showToast(tr("notify.unsupported_toast"));
               return;
             }
             Notification.requestPermission().then(function (perm) {
               updateNotifyStatusLine();
               if (perm === "granted") {
-                showToast("Sige — mag-aalerto kapag malapit na ang pinakamalapit na sasakyan.");
+                showToast(tr("notify.perm_granted_toast"));
               }
             });
           });
@@ -3104,7 +3425,7 @@
             }
             restartLiveGpsPollingIfNeeded();
             updateFeedSyncLine();
-            showToast(dataSaver.checked ? "Data saver: mas kaunting data sa live pull." : "Balik sa mas madalas na live pull.");
+            showToast(dataSaver.checked ? tr("datasaver.on_toast") : tr("datasaver.off_toast"));
           });
         }
 
@@ -3114,7 +3435,7 @@
           shareSms.addEventListener("click", function () {
             if (!rides.length) {
               var st0 = document.getElementById("share-status");
-              if (st0) { st0.textContent = "Walang ride data."; }
+              if (st0) { st0.textContent = tr("share.msg.none"); }
               return;
             }
             var sel = document.getElementById("share-ride-select");
@@ -3125,7 +3446,7 @@
             window.location.href = "sms:?body=" + encodeURIComponent(msg);
             var st = document.getElementById("share-status");
             if (st) {
-              st.textContent = "Kung hindi bumukas ang SMS app, gamitin ang Copy message.";
+              st.textContent = tr("share.sms_fallback");
             }
           });
         }
@@ -3187,6 +3508,7 @@
       initWireNavigationOnly();
       initUiWiring();
       refreshAuthUi();
+      refreshLocaleUi();
 
       ensureMapReady(6).then(function () {
         try {
@@ -3195,10 +3517,30 @@
             setManualWaitSpot([Number(rawPin[0]), Number(rawPin[1])], false);
           }
         } catch (eSavedPin) {}
-        return fetch("data.xml");
+        return Promise.all([
+          fetch("data.xml").then(function (r) {
+            if (!r.ok) {
+              throw new Error("bad_xml");
+            }
+            return r.text();
+          }),
+          fetch(apiUrl("/api/fleet"))
+            .then(function (r) {
+              return r.json().then(function (j) {
+                return { ok: r.ok, j: j };
+              });
+            })
+            .catch(function () {
+              return { ok: false, j: null };
+            })
+        ]);
       })
-        .then(function (r) { return r.text(); })
-        .then(function (xmlText) {
+        .then(function (pair) {
+          var xmlText = pair[0];
+          var fr = pair[1];
+          var fleetMeta = fr && fr.ok && fr.j && fr.j.ok ? fr.j : null;
+          fleetLiveApiHadPositions = !!(fleetMeta && fleetMeta.hasLivePositions);
+          var liveByPuvId = (fleetMeta && fleetMeta.liveByPuvId) || {};
           var xml = new DOMParser().parseFromString(xmlText, "application/xml");
           var units = Array.prototype.slice.call(xml.querySelectorAll("fleet_management unit"));
           var nodes = Array.prototype.slice.call(xml.querySelectorAll("terminal_analytics node"));
@@ -3209,7 +3551,7 @@
           }
           if (!map || !markerGroup) {
             if (etaList) {
-              etaList.innerHTML = "<div class=\"card\">Map did not start (Leaflet failed to load). Serve this app over HTTP (e.g. run <code>start-server.bat</code> or <code>npm start</code> in the <code>server</code> folder) so <code>vendor/leaflet/leaflet.js</code> loads. Navigation and Account still work.</div>";
+              etaList.innerHTML = "<div class=\"card\">" + tr("map.no_leaflet") + "</div>";
             }
             return;
           }
@@ -3221,7 +3563,7 @@
             var vtype = rawType === "jeepney" ? "jeepney" : "batrasco";
             var speedKmh = Number(u.getAttribute("speed_kph") || (vtype === "jeepney" ? 22 : 26));
             if (!isFinite(speedKmh) || speedKmh < 8) { speedKmh = vtype === "jeepney" ? 22 : 26; }
-            var route = (u.querySelector("route_assignment") || {}).textContent || "Route unavailable";
+            var route = (u.querySelector("route_assignment") || {}).textContent || tr("route.unavailable");
             var plateAttr = (u.getAttribute("plate_number") || u.getAttribute("plate") || "").trim();
             var occEl = u.querySelector("current_occupancy");
             var occTxt = occEl ? occEl.textContent : "Low Density";
@@ -3236,6 +3578,13 @@
               lat = fallback[0];
               lng = fallback[1];
             }
+
+            var liveFix = liveByPuvId[id];
+            if (liveFix && isFinite(Number(liveFix.lat)) && isFinite(Number(liveFix.lng))) {
+              lat = Number(liveFix.lat);
+              lng = Number(liveFix.lng);
+            }
+            var hasLiveSeed = !!(liveFix && isFinite(Number(liveFix.lat)) && isFinite(Number(liveFix.lng)));
 
             var routePointsRaw = Array.prototype.slice.call(u.querySelectorAll("route_path point")).map(function (pt) {
               return [Number(pt.getAttribute("lat")), Number(pt.getAttribute("lng"))];
@@ -3282,7 +3631,10 @@
               routePoints.length >= 2
                 ? bearingTangentAlongPolyline(routePoints, startIndex, startSegT, 0.024, routeClosed)
                 : 0;
-            var vtagLabel = vtype === "jeepney" ? "Jeepney" : "Batra jeepney";
+            if (hasLiveSeed && liveFix.bearing != null && isFinite(Number(liveFix.bearing))) {
+              brStart = Number(liveFix.bearing);
+            }
+            var vtagLabel = vtype === "jeepney" ? tr("jeepney") : tr("batra");
             var icon = L.divIcon({
               className: "vehicle-marker-wrap",
               html: '<div class="vehicle-pin ' + vtype + " " + (high ? "high" : "low") + ' live-sim" style="transform:rotate(' + brStart + 'deg)"><div class="vehicle-body"></div></div>',
@@ -3290,9 +3642,25 @@
               iconAnchor: [13, 13]
             });
             var marker = L.marker([lat, lng], { icon: icon }).addTo(markerGroup).bindPopup(
-              "<strong>" + id + "</strong><br/>" + vtagLabel + "<br/>" + route + "<br/>Crowd: " + occTxt
+              "<strong>" +
+                escHtml(id) +
+                "</strong><br/>" +
+                escHtml(vtagLabel) +
+                "<br/>" +
+                escHtml(route) +
+                "<br/>" +
+                escHtml(tr("popup.crowd")) +
+                " " +
+                escHtml(occTxt)
             );
-            marker.bindTooltip(id + " · " + Math.round(speedKmh) + " km/h", {
+            var tipKmh = hasLiveSeed && liveFix.speedKph != null && isFinite(Number(liveFix.speedKph))
+              ? Math.round(Number(liveFix.speedKph))
+              : Math.round(speedKmh);
+            marker.bindTooltip(
+              hasLiveSeed
+                ? tr("tooltip.live_speed", { id: id, sp: String(tipKmh) })
+                : tr("tooltip.sim_speed", { id: id, sp: String(tipKmh) }),
+              {
               permanent: true,
               direction: "top",
               offset: [0, -16],
@@ -3336,14 +3704,17 @@
 
             var rideRef = {
               id: id,
-              plateNumber: plateAttr || null,
+              plateNumber: plateAttr || (liveFix && liveFix.plateNumber) || null,
               route: route,
               density: occTxt,
               occVal: occVal,
               high: high,
               vtype: vtype,
               speedKmh: speedKmh,
-              effectiveSpeedKmh: speedKmh,
+              effectiveSpeedKmh:
+                hasLiveSeed && liveFix.speedKph != null && isFinite(Number(liveFix.speedKph))
+                  ? Number(liveFix.speedKph)
+                  : speedKmh,
               simPhase: Math.random() * Math.PI * 2,
               lat: lat,
               lng: lng,
@@ -3356,22 +3727,42 @@
               dwellUntilMs: 0,
               trailHistory: [[lat, lng]],
               trailLine: trailLine,
+              skipClientSim: hasLiveSeed,
+              liveSeedFromApi: hasLiveSeed,
+              positionSource: hasLiveSeed ? "live_server" : "xml",
+              telemetryFromSocket: hasLiveSeed,
+              serverTelemetryMs:
+                hasLiveSeed && liveFix.timestamp ? Date.parse(liveFix.timestamp) : null,
+              socketStatus: hasLiveSeed && liveFix.status ? String(liveFix.status) : "",
               lastUpdatedMs: (function () {
+                if (hasLiveSeed && liveFix.timestamp) {
+                  var ts = Date.parse(liveFix.timestamp);
+                  if (!isNaN(ts)) {
+                    return ts;
+                  }
+                }
                 var lu = (u.querySelector("last_updated") || {}).textContent || "";
                 var parsed = Date.parse(lu);
                 return isNaN(parsed) ? null : parsed;
               })()
             };
             rides.push(rideRef);
+            if (hasLiveSeed && liveFix.status) {
+              applyPuvSocketMarkerStyle(rideRef, String(liveFix.status));
+            }
 
             var card = document.createElement("article");
             card.className = "card";
             card.setAttribute("data-ride-id", id);
             card.innerHTML =
               '<div class="row card-head-row">' +
-              '<button type="button" class="card-star-btn chip button" aria-pressed="false" aria-label="Priority star" data-ride-id="' +
+              '<button type="button" class="card-star-btn chip button" aria-pressed="false" aria-label="' +
+              escAttr(tr("star.title_off")) +
+              '" data-ride-id="' +
               escAttr(id) +
-              '" title="Priority unit \u2605">\u2606</button>' +
+              '" title="' +
+              escAttr(tr("star.title_off")) +
+              '">\u2606</button>' +
               '<div class="card-grow"><div class="vtype"><span class="vtag ' +
               vtype +
               '">' +
@@ -3385,8 +3776,10 @@
               '</span><span style="color:' +
               (high ? "#f59e0b" : "#5eead4") +
               ';">' +
-              (high ? "Mataas ang sakay" : "Magaan ang sakay") +
-              '</span></div><div class="commuter-extras" aria-label="Gabay sa lakad at pamasada"></div>';
+              escHtml(high ? tr("card.density_high") : tr("card.density_low")) +
+              '</span></div><div class="commuter-extras" aria-label="' +
+              escAttr(tr("extras.aria")) +
+              '"></div>';
             etaList.appendChild(card);
             etaByRide[id] = card.querySelector(".eta");
             etaMetaByRide[id] = {
@@ -3403,10 +3796,10 @@
                 var nextStar = curStar === id ? "" : id;
                 if (nextStar) {
                   localStorage.setItem("lipamove_star_rid", nextStar);
-                  showToast("Priority: " + nextStar + " ★");
+                  showToast(tr("card.priority_on", { id: nextStar }));
                 } else {
                   localStorage.removeItem("lipamove_star_rid");
-                  showToast("Tinanggal ang priority unit.");
+                  showToast(tr("card.priority_off"));
                 }
                 updateStarButtonStates();
                 applyListSortOrder();
@@ -3437,7 +3830,7 @@
           }, Promise.resolve()).then(function () {
 
           if (!rides.length && etaList) {
-            etaList.innerHTML = "<div class=\"card\">No units found in <code>data.xml</code>. Add <code>fleet_management &gt; unit</code> entries with route points.</div>";
+            etaList.innerHTML = "<div class=\"card\">" + tr("map.no_units_xml") + "</div>";
           }
 
           if (routeGroup && coreLoopStops.length > 1) {
@@ -3475,23 +3868,11 @@
             });
           }
 
-          function fillRideSelects() {
-            var opts = rides.map(function (r) {
-              var safe = (r.route + "").replace(/</g, "").replace(/"/g, "'");
-              return "<option value=\"" + r.id + "\">" + r.id + " — " + safe.substring(0, 48) + (safe.length > 48 ? "…" : "") + "</option>";
-            }).join("");
-            ["plan-ride-select", "share-ride-select"].forEach(function (selId) {
-              var el = document.getElementById(selId);
-              if (el) {
-                el.innerHTML = "<option value=\"\">Any unit / choose on map</option>" + opts;
-              }
-            });
-          }
-
-          fillRideSelects();
+          updateRideSelectOptions();
           if (selectedRideId) { syncRideSelects(selectedRideId); }
           updateSharePreview();
           updatePlanSummary();
+          refreshLocaleUi();
 
           if (markerGroup.getLayers().length || routeGroup.getLayers().length) {
             map.fitBounds(routeGroup.getBounds().isValid() ? routeGroup.getBounds().pad(0.2) : markerGroup.getBounds().pad(0.25));
@@ -3512,7 +3893,7 @@
             var nm = (critical.querySelector("name") || {}).textContent || "SM Lipa";
             var box = document.getElementById("surge-alert");
             box.style.display = "block";
-            box.textContent = "Uy, mataas ang demand sa " + nm + ". Expect longer waits and plan a little earlier.";
+            box.textContent = tr("surge.alert", { name: nm });
           }
 
           startSimulation();
@@ -3525,7 +3906,7 @@
           simEnabled = false;
           var etaList = document.getElementById("eta-list");
           if (etaList) {
-            etaList.innerHTML = "<div class=\"card\">Hindi ma-load ang live feed. I-serve ang project sa HTTP at tingnan ang <code>data.xml</code>.</div>";
+            etaList.innerHTML = "<div class=\"card\">" + tr("map.feed_fail") + "</div>";
           }
           updateGpsFreshness();
         });
