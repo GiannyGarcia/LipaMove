@@ -11,7 +11,7 @@
     html, body { margin: 0; padding: 0; background: #f4f7fb; font-family: "Segoe UI", Arial, sans-serif; color: #0f172a; }
     body { background: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%); }
     .app { max-width: 460px; margin: 0 auto; min-height: 100vh; border-left: 1px solid rgba(15,23,42,.08); border-right: 1px solid rgba(15,23,42,.08); box-shadow: 0 10px 28px rgba(15,23,42,.08); position: relative; }
-    .map-wrap { position: relative; z-index: 1; height: 58vh; min-height: 420px; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,.07); isolation: isolate; }
+    .map-wrap { position: relative; z-index: 1; height: 46vh; min-height: 300px; max-height: 500px; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,.07); isolation: isolate; }
     #map { position: absolute; inset: 0; z-index: 0; }
     .map-wrap::after {
       content: "";
@@ -21,7 +21,7 @@
       pointer-events: none;
       background: linear-gradient(180deg, rgba(15,23,42,.06) 0%, rgba(15,23,42,.16) 45%, rgba(15,23,42,.28) 100%);
     }
-    .overlay { position: relative; z-index: 500; padding: 12px; pointer-events: none; display: flex; flex-direction: column; gap: 8px; box-sizing: border-box; max-height: 100%; }
+    .overlay { position: relative; z-index: 500; padding: 10px; pointer-events: none; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box; max-height: 100%; }
     .glass { pointer-events: auto; border-radius: 20px; border: 1px solid rgba(148,163,184,.25); background: rgba(255,255,255,.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
     .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 12px 14px; }
     .top-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
@@ -36,7 +36,7 @@
     .chip.button { cursor: pointer; pointer-events: auto; touch-action: manipulation; -webkit-tap-highlight-color: rgba(14,165,233,.2); }
     .chip.button:hover { border-color: rgba(14,165,233,.45); color: #0f172a; }
     .chip.warn { border-color: rgba(217,119,6,.55); color: #92400e; background: rgba(251,191,36,.12); }
-    .cards { margin-top: -14px; border-radius: 24px 24px 0 0; border-top: 1px solid rgba(148,163,184,.25); background: rgba(255,255,255,.94); padding: 14px; position: relative; z-index: 600; }
+    .cards { margin-top: -8px; border-radius: 24px 24px 0 0; border-top: 1px solid rgba(148,163,184,.25); background: rgba(255,255,255,.94); padding: 14px; position: relative; z-index: 600; }
     .label { color: #475569; font-size: 12px; letter-spacing: .06em; text-transform: none; font-weight: 700; }
     .tagline { color: #475569; font-size: 13px; margin-top: 4px; margin-bottom: 12px; }
     .card { border-radius: 16px; border: 1px solid rgba(148,163,184,.28); background: #ffffff; padding: 14px; margin-bottom: 10px; box-shadow: 0 4px 16px rgba(15,23,42,.06); }
@@ -103,6 +103,8 @@
     }
     .panel-nav a:hover, .panel-nav button.panel-tab:hover { color: #0f172a; border-color: rgba(14,165,233,.4); }
     .panel-nav a.active, .panel-nav button.panel-tab.active { color: #075985; border-color: rgba(14,165,233,.55); background: rgba(14,165,233,.12); }
+    .panel-nav .lang-seg { margin-left: auto; min-width: 180px; max-width: 240px; }
+    .panel-nav .lang-seg button { font-size: 12px; padding: 6px 10px; }
     .screen { display: none; flex: 1; flex-direction: column; min-height: 0; padding: 14px; overflow-y: auto; }
     .screen.active { display: flex; }
     .screen-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
@@ -176,6 +178,7 @@
     #nearest-landmark-line { font-size: 11px; color: #64748b; line-height: 1.35; margin: 10px 0 0 0; }
     #guide-weather-line { margin-top: 6px; }
     .weather-line { padding: 8px 10px; border-radius: 10px; background: rgba(14,165,233,.09); border: 1px solid rgba(14,165,233,.28); font-size: 12px; color: #0f172a; margin-bottom: 10px; }
+    .weather-line.subtle { padding: 6px 8px; border-radius: 8px; background: rgba(148,163,184,.12); border: 1px solid rgba(148,163,184,.22); color: #475569; font-size: 11px; margin: 0 0 10px 0; }
     .card-head-row .card-grow { flex: 1; min-width: 0; }
     .card-head-row { align-items: flex-start !important; gap: 8px !important; }
     .card-star-btn {
@@ -220,7 +223,7 @@
     }
     @media (min-width: 900px) {
       .app { max-width: none; display: grid; grid-template-columns: minmax(0, 1fr) min(420px, 38vw); align-items: stretch; min-height: 100vh; }
-      .map-wrap { height: 100vh; min-height: 0; border-bottom: none; border-right: 1px solid rgba(255,255,255,.07); display: block !important; }
+      .map-wrap { height: 100vh; min-height: 0; max-height: none; border-bottom: none; border-right: 1px solid rgba(255,255,255,.07); display: block !important; }
       .app-panel { height: 100vh; max-height: 100vh; overflow: hidden; }
       .panel-nav { display: flex; padding-top: 10px; flex-shrink: 0; }
       .screen { flex: 1; min-height: 0; overflow-y: auto; }
@@ -238,14 +241,15 @@
       .panel-nav { display: none; }
       .bottom-nav { display: flex; }
       .cards { margin-top: 0; border-radius: 24px 24px 0 0; }
+      .map-wrap { min-height: 250px; height: 36vh; max-height: 340px; }
     }
     @media (max-width: 420px) {
       .headline { font-size: 24px; }
-      .map-wrap { min-height: 340px; height: 52vh; }
+      .map-wrap { min-height: 220px; height: 33vh; max-height: 300px; }
     }
     /* Mobile map chrome: avoid stacked chips overlapping and free map space */
     @media (max-width: 899px) {
-      .overlay { padding: 8px 8px 10px; gap: 6px; }
+      .overlay { padding: 7px 7px 9px; gap: 5px; }
       .top { flex-direction: column; align-items: stretch; padding: 10px 12px; gap: 8px; }
       .top-actions { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
       .top-actions .pill { font-size: 11px; padding: 5px 9px; }
@@ -268,11 +272,11 @@
       .chips::-webkit-scrollbar-thumb { background: rgba(100,116,139,.45); border-radius: 4px; }
       .chips .chip { flex: 0 0 auto; scroll-snap-align: start; max-width: min(260px, 82vw); }
       .chips .chip-route { max-width: min(200px, 55vw); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .map-wrap { min-height: 280px; height: 48vh; }
+      .map-wrap { min-height: 230px; height: 34vh; max-height: 320px; }
     }
     @media (max-width: 380px) {
       .headline { font-size: 20px; }
-      .map-wrap { min-height: 260px; height: 44vh; }
+      .map-wrap { min-height: 210px; height: 32vh; max-height: 290px; }
     }
   </style>
 </head>
@@ -293,16 +297,6 @@
           </div>
         </div>
         <div id="surge-alert" class="alert glass" style="display:none;"></div>
-        <div class="chips">
-          <span id="net-status-chip" class="chip" aria-live="polite" data-i18n="net.online">Online</span>
-          <span class="chip" data-i18n="chip.live_updates">Live updates</span><span class="chip chip-route" data-i18n="chip.route_label" data-i18n-title="chip.route_tooltip" title="">Ayala / J.P. Laurel (no bypass)</span>
-          <span id="fleet-truth-chip" class="chip fleet-truth-sim" title="">Positions: …</span>
-          <span id="refresh-feed" class="chip button" data-i18n-title="chip.refresh_title" title="">Refresh</span>
-          <span id="locate-me" class="chip button" data-i18n="locate.me">Locate me</span>
-          <span id="fit-rides" class="chip button" data-i18n="fit.all">Fit all rides</span>
-          <span id="gps-toggle" class="chip button" data-i18n-title="gps.toggle_title" data-i18n="gps.on" title="">Live tracking: On</span>
-          <span id="copy-spot-chip" class="chip button" data-i18n-title="chip.copy_spot_title" data-i18n="chip.copy_spot">Copy spot</span>
-        </div>
       </div>
     </section>
 
@@ -314,6 +308,10 @@
         <button type="button" class="panel-tab" data-goto="share" data-i18n="nav.share">Share</button>
         <button type="button" class="panel-tab" data-goto="auth" data-i18n="nav.account">Account</button>
         <button type="button" class="panel-tab" data-goto="profile" id="panel-tab-profile" style="display:none;" data-i18n="nav.profile">Profile</button>
+        <div class="seg lang-seg" role="group" data-i18n-aria="chip.lang_label" aria-label="">
+          <button type="button" data-lang="en" class="active" data-i18n="lang.en">English</button>
+          <button type="button" data-lang="tl" data-i18n="lang.tl">Tagalog</button>
+        </div>
       </nav>
       <div id="tracking-mini" class="tracking-mini glass" aria-live="polite" style="display:none;">
         <p class="tm-title" data-i18n="tracking.title">Now tracking</p>
@@ -330,27 +328,22 @@
           <div class="label" data-i18n="home.nearest_label">Closest rides</div>
           <div class="tagline" data-i18n="home.nearest_tagline">Nearest rides from your chosen spot, with simple ETA bands.</div>
           <div class="home-tools glass" style="padding:12px 14px;border-radius:16px;margin-bottom:12px;">
-            <span class="mini-label" data-i18n="chip.lang_label">Language</span>
-            <div class="seg lang-seg" role="group" data-i18n-aria="chip.lang_label" aria-label="">
-              <button type="button" data-lang="en" class="active" data-i18n="lang.en">English</button>
-              <button type="button" data-lang="tl" data-i18n="lang.tl">Tagalog</button>
-            </div>
+            <div id="weather-chip-home" class="weather-line subtle" style="display:none;" aria-live="polite"></div>
             <label class="mini-label" for="eta-basis-select" data-i18n="home.eta_basis">ETA from</label>
             <select id="eta-basis-select" class="select" style="margin-bottom:10px;font-size:12px;">
-              <option value="gps" data-i18n="home.opt_gps">📍 My location (GPS)</option>
-              <option value="map" data-i18n="home.opt_map">◎ Map center (drag map)</option>
-              <option value="pin" data-i18n="home.opt_pin">📌 Pinned waiting spot (long-press map)</option>
-              <option value="stop-2" data-i18n="home.opt_stop_sm">🏢 SM Lipa Grand Terminal</option>
-              <option value="stop-0" data-i18n="home.opt_stop_bayan">🏢 Bayan (T.M. Kalaw)</option>
-              <option value="stop-1" data-i18n="home.opt_stop_ub">🏢 Univ. of Batangas Lipa</option>
-              <option value="stop-3" data-i18n="home.opt_stop_outlets">🏢 The Outlets at Lipa</option>
+              <option value="pin">Pin waiting spot on map</option>
+              <option value="stop-2">SM Lipa Grand Terminal</option>
+              <option value="stop-0">TM Kalaw (Bayan)</option>
+              <option value="stop-1">University of Batangas Lipa</option>
+              <option value="stop-3">The Outlets at Lipa</option>
             </select>
-            <span class="mini-label" data-i18n="home.show_vehicle">Show vehicles</span>
-            <div class="seg" id="vehicle-filter-seg" role="group" data-i18n-aria="home.show_vehicle" aria-label="">
-              <button type="button" data-vfil="all" class="active" data-i18n="home.filter_all">All</button>
-              <button type="button" data-vfil="jeepney" data-i18n="jeepney">Jeepney</button>
-              <button type="button" data-vfil="batrasco" data-i18n="batra">Batra</button>
-            </div>
+            <label class="mini-label" for="eta-destination-select">Destination</label>
+            <select id="eta-destination-select" class="select" style="margin-bottom:8px;font-size:12px;">
+              <option value="stop-2">SM Lipa Grand Terminal</option>
+              <option value="stop-0">TM Kalaw (Bayan)</option>
+              <option value="stop-1">University of Batangas Lipa</option>
+              <option value="stop-3">The Outlets at Lipa</option>
+            </select>
             <label class="mini-label" for="list-sort-select" style="margin-top:12px;" data-i18n="home.sort_label">Sort list</label>
             <select id="list-sort-select" class="select" style="margin-bottom:8px;font-size:12px;">
               <option value="distance" data-i18n="home.sort_distance">Closest first (distance)</option>
@@ -358,18 +351,9 @@
               <option value="crowd" data-i18n="home.sort_crowd">Comfort first (lower crowd)</option>
             </select>
             <p id="basis-hint" class="muted" style="margin-top:8px;margin-bottom:0;font-size:11px;line-height:1.4;"></p>
+            <p id="destination-hint" class="muted" style="margin-top:6px;margin-bottom:0;font-size:11px;line-height:1.4;"></p>
             <p id="nearest-landmark-line" aria-live="polite"></p>
             <p id="walk-hint-line" class="muted" style="margin-top:6px;font-size:11px;line-height:1.4;" aria-live="polite"></p>
-            <div id="weather-chip-home" class="weather-line" style="display:none;" aria-live="polite"></div>
-            <span class="mini-label" style="margin-top:10px;" data-i18n="home.checklist_title">Trip checklist (saved on device)</span>
-            <div class="prep-wrap">
-              <label class="prep-item"><input type="checkbox" id="prep-payong" /><span data-i18n="home.prep_umbrella">Umbrella / fan</span></label>
-              <label class="prep-item"><input type="checkbox" id="prep-barya" /><span data-i18n="home.prep_fare">Fare coins ready</span></label>
-              <label class="prep-item"><input type="checkbox" id="prep-phone" /><span data-i18n="home.prep_phone">Phone load / charged</span></label>
-              <label class="prep-item"><input type="checkbox" id="prep-tubig" /><span data-i18n="home.prep_water">Water / small snack</span></label>
-            </div>
-            <label class="mini-label" for="trip-memo" style="margin-top:10px;" data-i18n="home.memo_label">Notes / memo for this trip</label>
-            <textarea id="trip-memo" class="area memo-area" maxlength="420" data-i18n-placeholder="home.memo_placeholder" placeholder=""></textarea>
           </div>
           <div id="nearest-summary" class="nearest-summary glass" style="display:none;">
             <div class="ns-title" data-i18n="home.nearest_summary_title">Closest</div>
@@ -430,11 +414,6 @@
           <h2 data-i18n="guide.title">Commuter guide</h2>
         </div>
         <p class="screen-intro" data-i18n="guide.intro">Tips and tools for daily LipaMove — prediction, not booking.</p>
-        <span class="mini-label" data-i18n="chip.lang_label">Language</span>
-        <div class="seg lang-seg" style="margin-bottom:12px;" role="group" data-i18n-aria="chip.lang_label" aria-label="">
-          <button type="button" data-lang="en" class="active" data-i18n="lang.en">English</button>
-          <button type="button" data-lang="tl" data-i18n="lang.tl">Tagalog</button>
-        </div>
         <div class="dispatch-card">
           <h3 data-i18n="guide.traffic_now">Traffic now</h3>
           <p id="guide-rush-blurb" data-i18n="guide.calculating">Calculating…</p>
@@ -680,13 +659,14 @@
       var gpsPollTimer = null;
       var userWatchId = null;
       var selectedRideId = null;
-      var vehicleFilter = localStorage.getItem("lipamove_vehicle_filter") || "all";
       var toastHideTimer = null;
       var lastNotifyKey = "";
       var lastLiveFetchMs = null;
       var weatherLastOkMs = 0;
+      var weatherCoreLine = "";
       var manualBasisPoint = null;
       var manualBasisMarker = null;
+      var waitingPinPickMode = false;
       /** True if GET /api/fleet returned any row (MySQL live overlay). */
       var fleetLiveApiHadPositions = false;
 
@@ -720,9 +700,10 @@
 
       function applyListSortOrder() {
         var basis = getEtaBasis();
+        var dest = getDestinationPoint();
         var mode = getListSortMode();
         var starId = localStorage.getItem("lipamove_star_rid") || "";
-        var list = rides.filter(rideMatchesFilter);
+        var list = rides.slice();
         list.sort(function (a, b) {
           var ap = starId && a.id === starId ? -1 : 0;
           var bp = starId && b.id === starId ? -1 : 0;
@@ -731,21 +712,26 @@
           }
           var kmA = distanceKm(basis, [a.lat, a.lng]);
           var kmB = distanceKm(basis, [b.lat, b.lng]);
-          var etaA = getEtaRangeData(a).mid;
-          var etaB = getEtaRangeData(b).mid;
+          var etaA = getEtaRangeData(a);
+          var etaB = getEtaRangeData(b);
           if (mode === "eta") {
-            if (etaA !== etaB) { return etaA - etaB; }
+            if (etaA.lower !== etaB.lower) { return etaA.lower - etaB.lower; }
+            if (etaA.mid !== etaB.mid) { return etaA.mid - etaB.mid; }
+            if (dest) {
+              var dA = distanceKm(dest, [a.lat, a.lng]);
+              var dB = distanceKm(dest, [b.lat, b.lng]);
+              if (dA !== dB) { return dA - dB; }
+            }
             return kmA - kmB;
           }
           if (mode === "crowd") {
-            if (!!a.high !== !!b.high) {
-              return a.high ? 1 : -1;
-            }
-            if (etaA !== etaB) { return etaA - etaB; }
+            if (a.occVal !== b.occVal) { return a.occVal - b.occVal; }
+            if (etaA.mid !== etaB.mid) { return etaA.mid - etaB.mid; }
             return kmA - kmB;
           }
           if (kmA !== kmB) { return kmA - kmB; }
-          return etaA - etaB;
+          if (etaA.mid !== etaB.mid) { return etaA.mid - etaB.mid; }
+          return a.id.localeCompare(b.id);
         });
         var idsOrdered = list.map(function (x) {
           return x.id;
@@ -815,6 +801,55 @@
         el.textContent = tr("feed.pull_hint");
       }
 
+      function getManilaDateInfo() {
+        var d = new Date();
+        try {
+          var timeFmt = new Intl.DateTimeFormat("en-PH", {
+            timeZone: "Asia/Manila",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+          });
+          var weekdayFmt = new Intl.DateTimeFormat("en-PH", {
+            timeZone: "Asia/Manila",
+            weekday: "short"
+          });
+          var partsFmt = new Intl.DateTimeFormat("en-US", {
+            timeZone: "Asia/Manila",
+            hour: "2-digit",
+            weekday: "short"
+          });
+          var parts = partsFmt.formatToParts(d);
+          var hourPart = parts.find(function (p) { return p.type === "hour"; });
+          var wdPart = parts.find(function (p) { return p.type === "weekday"; });
+          var hour = hourPart ? Number(hourPart.value) : d.getHours();
+          var weekdayText = wdPart ? wdPart.value : weekdayFmt.format(d);
+          var weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(weekdayText);
+          if (!isFinite(weekday) || weekday < 0) { weekday = d.getDay(); }
+          return { hour: hour, weekday: weekday, timeText: timeFmt.format(d) };
+        } catch (_e) {
+          return { hour: d.getHours(), weekday: d.getDay(), timeText: d.toLocaleTimeString() };
+        }
+      }
+
+      function renderWeatherSyncLine() {
+        if (!weatherCoreLine) {
+          return;
+        }
+        var timeTxt = getManilaDateInfo().timeText;
+        var gx = document.getElementById("guide-weather-line");
+        var hx = document.getElementById("weather-chip-home");
+        var timeLong = tr("weather.time_now", { time: timeTxt });
+        var timeShort = tr("weather.time_now_short", { time: timeTxt });
+        if (gx) {
+          gx.textContent = timeLong + " · " + weatherCoreLine;
+        }
+        if (hx) {
+          hx.style.display = "block";
+          hx.textContent = tr("weather.home_prefix") + timeShort + " · " + weatherCoreLine;
+        }
+      }
+
       function wmoWeatherPhrase(code) {
         var c = Number(code);
         if (c === 0) { return tr("weather.malinaw"); }
@@ -860,17 +895,13 @@
                   wmoWeatherPhrase(code) +
                   ". (Open-Meteo, Lipa area)"
                 : tr("weather.none");
+            weatherCoreLine = txt;
             weatherLastOkMs = Date.now();
             var gx = document.getElementById("guide-weather-line");
-            var hx = document.getElementById("weather-chip-home");
             if (gx) {
-              gx.textContent = txt;
               gx.dataset.seenWeather = "1";
             }
-            if (hx) {
-              hx.style.display = "block";
-              hx.textContent = tr("weather.home_prefix") + txt;
-            }
+            renderWeatherSyncLine();
             if (showToastHint) { showToast(tr("weather.updated_toast")); }
           })
           .catch(function () {
@@ -961,20 +992,17 @@
       }
 
       function rideMatchesFilter(r) {
-        if (!r) { return false; }
-        if (vehicleFilter === "all") { return true; }
-        return r.vtype === vehicleFilter;
+        return !!r;
       }
 
       function syncVehicleFilterVisuals() {
         rides.forEach(function (r) {
-          var match = rideMatchesFilter(r);
           var el = r.marker && r.marker.getElement && r.marker.getElement();
-          if (el) { el.style.opacity = match ? "" : "0.32"; }
+          if (el) { el.style.opacity = ""; }
           var card = document.querySelector(".card[data-ride-id=\"" + r.id + "\"]");
           if (card) {
-            card.style.display = match ? "" : "none";
-            card.setAttribute("aria-hidden", match ? "false" : "true");
+            card.style.display = "";
+            card.setAttribute("aria-hidden", "false");
           }
         });
       }
@@ -1033,7 +1061,8 @@
       function updateGuideRushBlurb() {
         var el = document.getElementById("guide-rush-blurb");
         if (!el) { return; }
-        var hour = new Date().getHours();
+        var manilaNow = getManilaDateInfo();
+        var hour = manilaNow.hour;
         var mult = getTrafficMultiplier();
         var period =
           hour >= 6 && hour < 9
@@ -1049,7 +1078,7 @@
             : mult >= 1.35
               ? tr("rush.note_slight")
               : tr("rush.note_light");
-        var dow = new Date().getDay();
+        var dow = manilaNow.weekday;
         var weekendLead =
           dow === 0 || dow === 6 ? tr("rush.weekend") : "";
         el.textContent =
@@ -1708,7 +1737,7 @@
       }
 
       function getTrafficMultiplier() {
-        var hour = new Date().getHours();
+        var hour = getManilaDateInfo().hour;
         if (hour >= 6 && hour < 9) { return 1.35; }
         if (hour >= 17 && hour < 20) { return 1.45; }
         if (hour >= 11 && hour < 14) { return 1.15; }
@@ -1765,6 +1794,33 @@
           return;
         }
         el.textContent = nearestTerminalWalkSentence(getEtaBasis());
+      }
+
+      function getDestinationPoint() {
+        var sel = document.getElementById("eta-destination-select");
+        var mode = (sel && sel.value) || localStorage.getItem("lipamove_eta_dest_mode") || "stop-2";
+        if (mode.indexOf("stop-") === 0) {
+          var si = parseInt(mode.slice(5), 10);
+          if (coreLoopStops[si]) {
+            return coreLoopStops[si].latlng;
+          }
+        }
+        return null;
+      }
+
+      function updateDestinationHint() {
+        var el = document.getElementById("destination-hint");
+        if (!el) { return; }
+        var sel = document.getElementById("eta-destination-select");
+        var mode = (sel && sel.value) || "stop-2";
+        if (mode.indexOf("stop-") === 0) {
+          var si = parseInt(mode.slice(5), 10);
+          el.textContent = coreLoopStops[si]
+            ? "Destination set to " + coreLoopStops[si].name + "."
+            : "";
+          return;
+        }
+        el.textContent = "";
       }
 
       function updateCommuterExtrasOnCards() {
@@ -2715,6 +2771,7 @@
         updateFeedSyncLine();
         refreshVehicleLabelsAndPopups();
         syncNetStatusChip();
+        renderWeatherSyncLine();
         updateRideSelectOptions();
         refreshEtas();
         updateSharePreview();
@@ -2885,6 +2942,14 @@
               if (!ev || !ev.latlng) { return; }
               setManualWaitSpot([ev.latlng.lat, ev.latlng.lng], false);
               showToast(tr("toast.spot_set"));
+            });
+            map.on("click", function (ev) {
+              if (!ev || !ev.latlng) { return; }
+              if (waitingPinPickMode) {
+                waitingPinPickMode = false;
+                setManualWaitSpot([ev.latlng.lat, ev.latlng.lng], false);
+                showToast("Waiting spot pinned.");
+              }
             });
           }
           if (!markerGroup) { markerGroup = L.featureGroup().addTo(map); }
@@ -3252,37 +3317,21 @@
           });
         }
 
-        function syncVehicleFilterButtons() {
-          var seg = document.getElementById("vehicle-filter-seg");
-          if (!seg) { return; }
-          Array.prototype.forEach.call(seg.querySelectorAll("button[data-vfil]"), function (b) {
-            b.classList.toggle("active", b.getAttribute("data-vfil") === vehicleFilter);
-          });
-        }
-        syncVehicleFilterButtons();
-
-        var vseg = document.getElementById("vehicle-filter-seg");
-        if (vseg && !vseg.dataset.wired) {
-          vseg.dataset.wired = "1";
-          vseg.addEventListener("click", function (ev) {
-            var b = ev.target && ev.target.closest && ev.target.closest("button[data-vfil]");
-            if (!b) { return; }
-            vehicleFilter = b.getAttribute("data-vfil") || "all";
-            localStorage.setItem("lipamove_vehicle_filter", vehicleFilter);
-            syncVehicleFilterButtons();
-            lastNotifyKey = "";
-            refreshEtas();
-          });
-        }
-
         var etaBasisEl = document.getElementById("eta-basis-select");
         if (etaBasisEl && !etaBasisEl.dataset.wired) {
           etaBasisEl.dataset.wired = "1";
           etaBasisEl.addEventListener("change", function () {
             localStorage.setItem("lipamove_eta_basis", etaBasisEl.value);
-            if (etaBasisEl.value === "pin" && !manualBasisPoint && map) {
-              setManualWaitSpot([map.getCenter().lat, map.getCenter().lng], false);
-              showToast(tr("toast.spot_center"));
+            if (etaBasisEl.value === "pin") {
+              if (!manualBasisPoint) {
+                waitingPinPickMode = true;
+                showToast("Tap on the map to pin your waiting location.");
+              } else {
+                waitingPinPickMode = false;
+              }
+              updateBasisHint();
+              lastNotifyKey = "";
+              refreshEtas();
               return;
             }
             if (etaBasisEl.value.indexOf("stop-") === 0 && map) {
@@ -3297,6 +3346,21 @@
           });
         }
         updateBasisHint();
+        updateDestinationHint();
+
+        var destSel = document.getElementById("eta-destination-select");
+        if (destSel && !destSel.dataset.wired) {
+          destSel.dataset.wired = "1";
+          var savedMode = localStorage.getItem("lipamove_eta_dest_mode");
+          if (savedMode && destSel.querySelector("option[value=\"" + savedMode + "\"]")) {
+            destSel.value = savedMode;
+          }
+          destSel.addEventListener("change", function () {
+            localStorage.setItem("lipamove_eta_dest_mode", destSel.value);
+            updateDestinationHint();
+            refreshEtas();
+          });
+        }
 
         var tCenter = document.getElementById("tracking-center-btn");
         if (tCenter && !tCenter.dataset.wired) {
@@ -3503,6 +3567,10 @@
         setInterval(function () {
           scheduleWeatherIfStale(false);
         }, 18 * 60 * 1000);
+        setInterval(function () {
+          renderWeatherSyncLine();
+          updateGuideRushBlurb();
+        }, 60 * 1000);
       }
 
       initWireNavigationOnly();
@@ -3682,24 +3750,22 @@
             var lineColor = vtype === "jeepney" ? "#fb923c" : "#38bdf8";
             if (vtype === "jeepney") {
               renderJeepneyRoadRoute(routeGroup, routePoints, routeClosed);
-            } else {
-              renderBatraRoadRoute(routeGroup, routePoints, routeClosed);
             }
 
             var trailLine = null;
             if (liveTrailGroup) {
-              var trailOpts = {
-                color: lineColor,
-                weight: 3,
-                opacity: 0.52,
-                lineCap: "round",
-                lineJoin: "round",
-                smoothFactor: 1.1
-              };
               if (vtype === "jeepney") {
-                trailOpts.dashArray = "2 5";
+                var trailOpts = {
+                  color: lineColor,
+                  weight: 3,
+                  opacity: 0.52,
+                  lineCap: "round",
+                  lineJoin: "round",
+                  smoothFactor: 1.1,
+                  dashArray: "2 5"
+                };
+                trailLine = L.polyline([[lat, lng]], trailOpts).addTo(liveTrailGroup);
               }
-              trailLine = L.polyline([[lat, lng]], trailOpts).addTo(liveTrailGroup);
             }
 
             var rideRef = {
