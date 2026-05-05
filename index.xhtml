@@ -64,7 +64,7 @@
     .vtag { display: inline-block; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; border-radius: 999px; padding: 3px 8px; font-weight: 600; }
     .vtag.jeepney { border: 1px solid rgba(251,146,60,.5); color: #fdba74; background: rgba(251,146,60,.12); }
     .vtag.batrasco { border: 1px solid rgba(56,189,248,.5); color: #7dd3fc; background: rgba(56,189,248,.12); }
-    .vehicle-pin { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; transform-origin: center center; transition: transform 0.35s ease; }
+    .vehicle-pin { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; transform-origin: center center; transition: transform 0.08s linear; }
     .vehicle-pin .vehicle-body { width: 20px; height: 9px; border-radius: 3px; position: relative; }
     .vehicle-pin.jeepney .vehicle-body { background: linear-gradient(180deg, #fb923c, #ea580c); box-shadow: 0 0 0 1px rgba(254,215,170,.35), 0 0 12px rgba(251,146,60,.45); }
     .vehicle-pin.batrasco .vehicle-body { width: 22px; height: 10px; background: linear-gradient(180deg, #38bdf8, #0284c7); box-shadow: 0 0 0 1px rgba(125,211,252,.4), 0 0 12px rgba(14,165,233,.4); }
@@ -87,6 +87,8 @@
       box-shadow: 0 4px 20px rgba(0,0,0,.35) !important;
     }
     .leaflet-tooltip.live-puv-tip.jeepney-tip { border-color: rgba(251,146,60,.5) !important; }
+    /* Direction glyphs on road-snapped routes (non-interactive) */
+    .route-dir-arrow { background: transparent !important; border: none !important; }
     .actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
     #copy-spot-btn { grid-column: 1 / -1; }
     .action-btn { border-radius: 12px; border: 1px solid rgba(148,163,184,.35); background: #ffffff; color: #0f172a; font-size: 12px; padding: 10px 8px; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: rgba(14,165,233,.2); }
@@ -613,6 +615,7 @@
   <div id="app-toast" class="toast" role="status" aria-live="polite"></div>
 
   <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
   <script type="text/javascript">
     //<![CDATA[
     (function () {
@@ -632,6 +635,10 @@
       var simEnabled = true;
       var simRafId = null;
       var simLastFrameTime = 0;
+      var puvSocket = null;
+      var puvSocketConnected = false;
+      /** True after at least one server-side PUV payload matched a unit on the map. */
+      var puvSocketHadData = false;
       var liveTrailGroup = null;
       var coreLoopStops = [
         { name: "Bayan (T.M. Kalaw Street)", latlng: [13.9425265, 121.1632107] },
@@ -639,8 +646,8 @@
         { name: "SM Lipa Grand Terminal", latlng: [13.9547813, 121.1630958] },
         { name: "The Outlets at Lipa", latlng: [14.0095011, 121.1697526] }
       ];
-      /** Scale sim step vs OSM path length (lower = closer to real road speed on map). */
-      var SIM_MOVEMENT_SCALE = 5;
+      /** 1 = true km/h along the polyline; higher values speed up the sim for demos only. */
+      var SIM_MOVEMENT_SCALE = 1;
       var STOP_DWELL_MS = 4500;
       var gpsPollTimer = null;
       var userWatchId = null;
@@ -749,6 +756,16 @@
         if (!el) { return; }
         if (!rides.length) {
           el.textContent = "";
+          return;
+        }
+        if (puvSocketHadData) {
+          el.textContent =
+            "PUV positions: real-time mula sa LipaMove server (Socket.io). I-tap ang Live tracking para bumalik sa local simulation.";
+          return;
+        }
+        if (puvSocket && !puvSocketConnected) {
+          el.textContent =
+            "Kumokonekta sa live PUV server… (kung walang telemetry, mananatili ang simulation / data.xml.)";
           return;
         }
         if (simEnabled) {
@@ -1165,6 +1182,235 @@
         return fetch(apiUrl(path), options);
       }
 
+      /**
+       * Snap route waypoints to drivable geometry (OSRM via LipaMove server).
+       * Returns { path, source } so callers can keep road polylines intact (no chord densify).
+       */
+      function fetchRoadSnappedPath(latLngPath) {
+        if (!latLngPath || latLngPath.length < 2) {
+          return Promise.resolve({ path: latLngPath || [], source: "empty" });
+        }
+        return fetch(apiUrl("/api/route/snap-roads"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ path: latLngPath })
+        })
+          .then(function (r) {
+            return r.json().then(function (j) {
+              return { ok: r.ok, j: j };
+            });
+          })
+          .then(function (x) {
+            if (!x.ok || !x.j || !Array.isArray(x.j.path) || x.j.path.length < 2) {
+              return { path: latLngPath, source: "client_fallback" };
+            }
+            return { path: x.j.path, source: String(x.j.source || "unknown") };
+          })
+          .catch(function () {
+            return { path: latLngPath, source: "client_error" };
+          });
+      }
+
+      /** Origin (no path) for Socket.io — same rules as API base for file:// and meta override. */
+      function socketIoServerUrl() {
+        var meta = document.querySelector("meta[name=\"lipamove-api-base\"]");
+        var base = meta ? (meta.getAttribute("content") || "").replace(/\/$/, "") : "";
+        if (!base && typeof location !== "undefined" && location.protocol === "file:") {
+          return "http://127.0.0.1:3000";
+        }
+        if (base) {
+          return base;
+        }
+        if (typeof location !== "undefined" && location.origin) {
+          return location.origin;
+        }
+        return "http://127.0.0.1:3000";
+      }
+
+      function findRideForPuvSocket(p) {
+        if (!p || p.puvId == null || p.puvId === "") {
+          return null;
+        }
+        var key = String(p.puvId);
+        var byId = rides.find(function (r) { return r.id === key; });
+        if (byId) {
+          return byId;
+        }
+        if (p.plateNumber) {
+          var plate = String(p.plateNumber);
+          return rides.find(function (r) { return r.plateNumber && String(r.plateNumber) === plate; }) || null;
+        }
+        return null;
+      }
+
+      function pauseClientSimForServerTelemetry() {
+        if (!simEnabled) {
+          return;
+        }
+        simEnabled = false;
+        stopSimulation();
+        stopLiveGpsPolling();
+        updateGpsFreshness();
+      }
+
+      function applyPuvSocketMarkerStyle(ride, status) {
+        if (!ride || !ride.marker || typeof ride.marker.setOpacity !== "function") {
+          return;
+        }
+        var s = String(status || "active").toLowerCase();
+        if (s === "offline" || s === "inactive" || s === "stopped") {
+          ride.marker.setOpacity(0.42);
+        } else {
+          ride.marker.setOpacity(1);
+        }
+      }
+
+      function applyPuvSocketUpdatePayload(p) {
+        var ride = findRideForPuvSocket(p);
+        if (!ride || !ride.marker) {
+          return;
+        }
+        pauseClientSimForServerTelemetry();
+        puvSocketHadData = true;
+        var lat = Number(p.lat);
+        var lng = Number(p.lng);
+        if (!isFinite(lat) || !isFinite(lng)) {
+          return;
+        }
+        ride.lat = lat;
+        ride.lng = lng;
+        ride.telemetryFromSocket = true;
+        ride.serverTelemetryMs = Date.now();
+        var ts = p.timestamp ? Date.parse(p.timestamp) : NaN;
+        ride.lastUpdatedMs = !isNaN(ts) ? ts : ride.serverTelemetryMs;
+        if (p.bearing != null && isFinite(Number(p.bearing))) {
+          ride.bearing = Number(p.bearing);
+        } else if (ride.path && ride.path.length >= 2) {
+          var snapB = nearestPointOnPolyline(ride.path, [lat, lng], ride.pathClosed !== false);
+          ride.bearing = bearingTangentAlongPolyline(ride.path, snapB.pathIndex, snapB.segmentT, 0.024, ride.pathClosed !== false);
+        }
+        if (p.speedKph != null && isFinite(Number(p.speedKph))) {
+          ride.effectiveSpeedKmh = Number(p.speedKph);
+        }
+        if (p.progress != null && isFinite(Number(p.progress))) {
+          ride.routeProgressPct = Number(p.progress);
+        }
+        if (p.status) {
+          ride.socketStatus = String(p.status);
+          applyPuvSocketMarkerStyle(ride, ride.socketStatus);
+        } else {
+          applyPuvSocketMarkerStyle(ride, "active");
+        }
+        ride.marker.setLatLng([lat, lng]);
+        updateMarkerRotation(ride);
+        updateLiveSimVisuals(ride);
+        var tip = ride.marker.getTooltip && ride.marker.getTooltip();
+        if (tip) {
+          var sp =
+            p.speedKph != null && isFinite(Number(p.speedKph))
+              ? Math.round(Number(p.speedKph))
+              : Math.round(ride.effectiveSpeedKmh != null ? ride.effectiveSpeedKmh : ride.speedKmh);
+          tip.setContent(ride.id + " · " + sp + " km/h (server)");
+        }
+        refreshEtas();
+      }
+
+      function applyPuvSocketStatusPayload(p) {
+        var ride = findRideForPuvSocket(p);
+        if (!ride) {
+          return;
+        }
+        ride.socketStatus = String(p.status || "");
+        ride.telemetryFromSocket = true;
+        ride.serverTelemetryMs = Date.now();
+        applyPuvSocketMarkerStyle(ride, ride.socketStatus);
+        refreshEtas();
+      }
+
+      function applyPuvSocketSnapshot(msg) {
+        var list = msg && msg.vehicles ? msg.vehicles : [];
+        if (!list.length) {
+          return;
+        }
+        list.forEach(function (v) {
+          applyPuvSocketUpdatePayload(v);
+        });
+        updateFeedSyncLine();
+      }
+
+      /** User turned client sim back on — drop socket so local sim owns marker motion. */
+      function disconnectPuvSocketForUserSim() {
+        if (puvSocket) {
+          try {
+            puvSocket.removeAllListeners();
+            puvSocket.disconnect();
+          } catch (eSk) {}
+          puvSocket = null;
+        }
+        puvSocketConnected = false;
+        puvSocketHadData = false;
+        rides.forEach(function (r) {
+          r.telemetryFromSocket = false;
+          r.serverTelemetryMs = null;
+          r.socketStatus = "";
+          applyPuvSocketMarkerStyle(r, "active");
+        });
+        updateFeedSyncLine();
+        updateGpsFreshness();
+      }
+
+      function reconnectPuvSocketWithAuth() {
+        if (!rides.length || typeof io === "undefined") {
+          return;
+        }
+        var tok = localStorage.getItem("lipamove_token") || "";
+        if (puvSocket) {
+          puvSocket.auth = { token: tok };
+          if (puvSocket.connected) {
+            puvSocket.disconnect();
+          }
+          puvSocket.connect();
+          return;
+        }
+        connectPuvSocket();
+      }
+
+      function connectPuvSocket() {
+        if (typeof io === "undefined" || !rides.length) {
+          return;
+        }
+        if (puvSocket) {
+          return;
+        }
+        var url = socketIoServerUrl();
+        var token = localStorage.getItem("lipamove_token") || "";
+        puvSocket = io(url, {
+          path: "/socket.io/",
+          transports: ["websocket", "polling"],
+          auth: { token: token },
+          autoConnect: true,
+          reconnection: true,
+          reconnectionAttempts: 10,
+          reconnectionDelay: 1600
+        });
+        puvSocket.on("connect", function () {
+          puvSocketConnected = true;
+          updateFeedSyncLine();
+          updateGpsFreshness();
+        });
+        puvSocket.on("disconnect", function () {
+          puvSocketConnected = false;
+          updateFeedSyncLine();
+        });
+        puvSocket.on("connect_error", function () {
+          puvSocketConnected = false;
+          updateFeedSyncLine();
+        });
+        puvSocket.on("puv:update", applyPuvSocketUpdatePayload);
+        puvSocket.on("puv:status", applyPuvSocketStatusPayload);
+        puvSocket.on("puv:snapshot", applyPuvSocketSnapshot);
+      }
+
       document.addEventListener("click", function (e) {
         var el = e.target;
         if (el.nodeType === 3) {
@@ -1202,6 +1448,186 @@
         var lat2 = b[0] * Math.PI / 180;
         var x = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLng / 2) * Math.sin(dLng / 2) * Math.cos(lat1) * Math.cos(lat2);
         return 2 * R * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+      }
+
+      /**
+       * Split a closed route into two polylines at ~half perimeter (outbound vs return), for two-tone styling.
+       */
+      function splitClosedRouteByHalfPerimeter(points) {
+        var n = points.length;
+        if (n < 4) {
+          return null;
+        }
+        var edges = [];
+        var ei;
+        for (ei = 0; ei < n - 1; ei++) {
+          edges.push(distanceKm(points[ei], points[ei + 1]));
+        }
+        edges.push(distanceKm(points[n - 1], points[0]));
+        var total = 0;
+        for (ei = 0; ei < edges.length; ei++) {
+          total += edges[ei];
+        }
+        if (total < 0.05) {
+          return null;
+        }
+        var half = total * 0.5;
+        var acc = 0;
+        for (ei = 0; ei < edges.length; ei++) {
+          if (acc + edges[ei] >= half) {
+            var outbound;
+            var inbound;
+            if (ei < n - 1) {
+              outbound = points.slice(0, ei + 2);
+              inbound = points.slice(ei + 1);
+              inbound.push(points[0]);
+            } else {
+              outbound = points.slice();
+              inbound = [points[n - 1], points[0]];
+            }
+            if (outbound.length < 2 || inbound.length < 2) {
+              return null;
+            }
+            return { outbound: outbound, inbound: inbound };
+          }
+          acc += edges[ei];
+        }
+        return null;
+      }
+
+      function bearingBetween(from, to) {
+        var y = Math.sin((to[1] - from[1]) * Math.PI / 180) * Math.cos(to[0] * Math.PI / 180);
+        var x =
+          Math.cos(from[0] * Math.PI / 180) * Math.sin(to[0] * Math.PI / 180) -
+          Math.sin(from[0] * Math.PI / 180) * Math.cos(to[0] * Math.PI / 180) * Math.cos((to[1] - from[1]) * Math.PI / 180);
+        return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+      }
+
+      /**
+       * Place small arrows along a polyline for travel direction (cheap alternative to PolylineDecorator).
+       */
+      function addDirectionArrowsAlongRoute(layerGroup, points, options) {
+        options = options || {};
+        if (!layerGroup || !points || points.length < 2) {
+          return;
+        }
+        var stepKm = options.stepKm != null ? options.stepKm : 0.2;
+        var maxArrows = options.maxArrows != null ? options.maxArrows : 22;
+        var color = options.color || "rgba(255,255,255,0.9)";
+        var closed = !!options.closed;
+        var segs = [];
+        var tot = 0;
+        var i;
+        for (i = 0; i < points.length - 1; i++) {
+          var d = distanceKm(points[i], points[i + 1]);
+          segs.push({ from: points[i], to: points[i + 1], d: d });
+          tot += d;
+        }
+        if (closed) {
+          var dc = distanceKm(points[points.length - 1], points[0]);
+          segs.push({
+            from: points[points.length - 1],
+            to: points[0],
+            d: dc
+          });
+          tot += dc;
+        }
+        if (tot < 0.02) {
+          return;
+        }
+        var positions = [];
+        var target = stepKm;
+        var walked = 0;
+        for (i = 0; i < segs.length && positions.length < maxArrows; i++) {
+          var sg = segs[i];
+          while (target <= walked + sg.d && positions.length < maxArrows) {
+            var t = (target - walked) / sg.d;
+            var lat = sg.from[0] + t * (sg.to[0] - sg.from[0]);
+            var lng = sg.from[1] + t * (sg.to[1] - sg.from[1]);
+            var br = bearingBetween([lat, lng], sg.to);
+            positions.push({ lat: lat, lng: lng, bearing: br });
+            target += stepKm;
+          }
+          walked += sg.d;
+        }
+        positions.forEach(function (p) {
+          var icon = L.divIcon({
+            className: "route-dir-arrow",
+            html:
+              '<div style="transform:rotate(' +
+              p.bearing +
+              "deg);color:" +
+              color +
+              ';font-size:11px;line-height:1;text-shadow:0 0 4px #000,0 0 2px #000;">\u25b6</div>',
+            iconSize: [14, 14],
+            iconAnchor: [7, 7]
+          });
+          L.marker([p.lat, p.lng], { icon: icon, interactive: false, keyboard: false }).addTo(layerGroup);
+        });
+      }
+
+      /**
+       * Wide soft underlay + main line for road-snapped routes (readable on dark tiles).
+       */
+      function addRoadRouteWithGlow(layerGroup, latlngs, styleOpts) {
+        styleOpts = styleOpts || {};
+        var color = styleOpts.color || "#fb923c";
+        var weight = styleOpts.weight != null ? styleOpts.weight : 6;
+        var opacity = styleOpts.opacity != null ? styleOpts.opacity : 0.92;
+        var glowOpacity = styleOpts.glowOpacity != null ? styleOpts.glowOpacity : 0.38;
+        var glowWeight = styleOpts.glowWeight != null ? styleOpts.glowWeight : weight + 9;
+        var dash = styleOpts.dashArray;
+        var smoothFactor = styleOpts.smoothFactor != null ? styleOpts.smoothFactor : 1.12;
+        var common = { lineCap: "round", lineJoin: "round", smoothFactor: smoothFactor, interactive: false };
+        L.polyline(
+          latlngs,
+          Object.assign({ color: color, weight: glowWeight, opacity: glowOpacity }, common)
+        ).addTo(layerGroup);
+        var mainOpts = Object.assign({ color: color, weight: weight, opacity: opacity }, common);
+        if (dash) {
+          mainOpts.dashArray = dash;
+        }
+        L.polyline(latlngs, mainOpts).addTo(layerGroup);
+      }
+
+      function renderJeepneyRoadRoute(layerGroup, routePoints, routeClosed) {
+        var split = routeClosed ? splitClosedRouteByHalfPerimeter(routePoints) : null;
+        if (split) {
+          addRoadRouteWithGlow(layerGroup, split.outbound, {
+            color: "#fb923c",
+            weight: 6,
+            glowWeight: 15,
+            glowOpacity: 0.4
+          });
+          addRoadRouteWithGlow(layerGroup, split.inbound, {
+            color: "#c2410c",
+            weight: 6,
+            glowWeight: 15,
+            glowOpacity: 0.32
+          });
+        } else {
+          addRoadRouteWithGlow(layerGroup, routePoints, { color: "#fb923c", weight: 6, glowOpacity: 0.4 });
+        }
+        addDirectionArrowsAlongRoute(layerGroup, routePoints, {
+          closed: routeClosed,
+          stepKm: 0.2,
+          maxArrows: 20
+        });
+      }
+
+      function renderBatraRoadRoute(layerGroup, routePoints, routeClosed) {
+        addRoadRouteWithGlow(layerGroup, routePoints, {
+          color: "#38bdf8",
+          weight: 5,
+          glowWeight: 13,
+          glowOpacity: 0.28
+        });
+        addDirectionArrowsAlongRoute(layerGroup, routePoints, {
+          closed: routeClosed,
+          stepKm: 0.22,
+          maxArrows: 16,
+          color: "rgba(240,250,255,0.95)"
+        });
       }
 
       function getTrafficMultiplier() {
@@ -1366,6 +1792,269 @@
         return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
       }
 
+      /** Spherical interpolation between lat/lng points (densified edges hug the globe, not planar chords). */
+      function interpolateGreatCircle(a, b, t) {
+        if (t <= 0) {
+          return [a[0], a[1]];
+        }
+        if (t >= 1) {
+          return [b[0], b[1]];
+        }
+        var lat1 = a[0] * Math.PI / 180;
+        var lon1 = a[1] * Math.PI / 180;
+        var lat2 = b[0] * Math.PI / 180;
+        var lon2 = b[1] * Math.PI / 180;
+        var sinLat1 = Math.sin(lat1);
+        var cosLat1 = Math.cos(lat1);
+        var sinLat2 = Math.sin(lat2);
+        var cosLat2 = Math.cos(lat2);
+        var dCos = Math.min(1, Math.max(-1, sinLat1 * sinLat2 + cosLat1 * cosLat2 * Math.cos(lon2 - lon1)));
+        var d = Math.acos(dCos);
+        if (!isFinite(d) || d < 1e-10) {
+          return interpolate(a, b, t);
+        }
+        var sinD = Math.sin(d);
+        var A = Math.sin((1 - t) * d) / sinD;
+        var B = Math.sin(t * d) / sinD;
+        var x = A * cosLat1 * Math.cos(lon1) + B * cosLat2 * Math.cos(lon2);
+        var y = A * cosLat1 * Math.sin(lon1) + B * cosLat2 * Math.sin(lon2);
+        var z = A * sinLat1 + B * sinLat2;
+        var lat = Math.atan2(z, Math.sqrt(x * x + y * y)) * 180 / Math.PI;
+        var lon = Math.atan2(y, x) * 180 / Math.PI;
+        return [lat, lon];
+      }
+
+      /** Drop consecutive vertices closer than minKm (reduces jitter on duplicate XML points). */
+      function mergeClosePathVertices(points, minKm) {
+        if (!points || !points.length) {
+          return [];
+        }
+        var minD = typeof minKm === "number" && minKm > 0 ? minKm : 0.001;
+        var out = [points[0].slice()];
+        for (var i = 1; i < points.length; i++) {
+          var p = points[i];
+          if (distanceKm(out[out.length - 1], p) >= minD) {
+            out.push(p.slice());
+          }
+        }
+        if (out.length < 2 && points.length >= 2) {
+          return points.slice();
+        }
+        return out;
+      }
+
+      /**
+       * True when first and last vertices are the same stop (short gap), so we connect last→first.
+       * If false, the route is treated as an open chain — no phantom edge from last to first (avoids cross-map diagonals).
+       */
+      function isPathGeographicallyClosed(points) {
+        var n = points && points.length;
+        if (!n || n < 2) {
+          return true;
+        }
+        return distanceKm(points[0], points[n - 1]) <= 0.22;
+      }
+
+      /**
+       * Split each edge of the closed route so no segment exceeds maxSegKm.
+       * Vehicles interpolate straight along each sub-segment, so shorter edges hug bends better.
+       */
+      function densifyClosedRoute(points, maxSegKm) {
+        if (!points || points.length < 2) {
+          return points ? points.slice() : [];
+        }
+        var cap = Math.max(0.016, Math.min(maxSegKm || 0.042, 1.2));
+        var n = points.length;
+        var out = [];
+        for (var i = 0; i < n; i++) {
+          var from = points[i];
+          var to = points[(i + 1) % n];
+          var d = distanceKm(from, to);
+          if (d < 1e-9) {
+            continue;
+          }
+          var num = Math.max(1, Math.ceil(d / cap));
+          var j0 = out.length === 0 ? 0 : 1;
+          for (var j = j0; j <= num; j++) {
+            var t = j / num;
+            out.push(interpolateGreatCircle(from, to, t));
+          }
+        }
+        return out.length >= 2 ? out : points.slice();
+      }
+
+      /** Same as densifyClosedRoute but only forward edges (no edge from last point back to first). */
+      function densifyOpenRoute(points, maxSegKm) {
+        if (!points || points.length < 2) {
+          return points ? points.slice() : [];
+        }
+        var cap = Math.max(0.016, Math.min(maxSegKm || 0.042, 1.2));
+        var n = points.length;
+        var out = [];
+        for (var i = 0; i < n - 1; i++) {
+          var from = points[i];
+          var to = points[i + 1];
+          var d = distanceKm(from, to);
+          if (d < 1e-9) {
+            continue;
+          }
+          var num = Math.max(1, Math.ceil(d / cap));
+          var j0 = out.length === 0 ? 0 : 1;
+          for (var j = j0; j <= num; j++) {
+            var t = j / num;
+            out.push(interpolateGreatCircle(from, to, t));
+          }
+        }
+        return out.length >= 2 ? out : points.slice();
+      }
+
+      /** Nearest point on polyline; closed uses edge (n-1)→0, open uses only 0→1→…→(n-1). */
+      function nearestPointOnPolyline(path, latlng, closed) {
+        var n = path.length;
+        if (n < 2) {
+          return { pathIndex: 0, segmentT: 0, lat: latlng[0], lng: latlng[1] };
+        }
+        var py = latlng[0];
+        var px = latlng[1];
+        var bestD = Infinity;
+        var bestI = 0;
+        var bestT = 0;
+        var bestLat = py;
+        var bestLng = px;
+        var iMax = closed ? n - 1 : n - 2;
+        for (var i = 0; i <= iMax; i++) {
+          var A = path[i];
+          var B = closed ? path[(i + 1) % n] : path[i + 1];
+          var ay = A[0];
+          var ax = A[1];
+          var by = B[0];
+          var bx = B[1];
+          var abx = bx - ax;
+          var aby = by - ay;
+          var apx = px - ax;
+          var apy = py - ay;
+          var ab2 = abx * abx + aby * aby;
+          var t = ab2 < 1e-18 ? 0 : Math.max(0, Math.min(1, (apx * abx + apy * aby) / ab2));
+          var qy = ay + aby * t;
+          var qx = ax + abx * t;
+          var dk = distanceKm([qy, qx], latlng);
+          if (dk < bestD) {
+            bestD = dk;
+            bestI = i;
+            bestT = t;
+            bestLat = qy;
+            bestLng = qx;
+          }
+        }
+        return { pathIndex: bestI, segmentT: bestT, lat: bestLat, lng: bestLng };
+      }
+
+      /**
+       * @param {{ preserveRoadShape?: boolean }} opts — If true (OSRM/Mapbox path), skip great-circle densify
+       *   so the line stays on the real road geometry instead of cutting corners between vertices.
+       */
+      function refinePathForSimulation(rawPoints, opts) {
+        opts = opts || {};
+        if (!rawPoints || rawPoints.length < 2) {
+          return { points: rawPoints ? rawPoints.slice() : [], closed: true };
+        }
+        var cleaned = mergeClosePathVertices(rawPoints, 0.0011);
+        if (cleaned.length < 2) {
+          return { points: rawPoints.slice(), closed: isPathGeographicallyClosed(rawPoints) };
+        }
+        var closed = isPathGeographicallyClosed(cleaned);
+        if (opts.preserveRoadShape) {
+          return { points: cleaned, closed: closed };
+        }
+        var pts = closed ? densifyClosedRoute(cleaned, 0.042) : densifyOpenRoute(cleaned, 0.042);
+        return { points: pts, closed: closed };
+      }
+
+      /** Walk forward along polyline by aheadKm; open routes wrap from terminus back to start without a drawn closing edge. */
+      function samplePointAheadOnPolyline(path, startI, startT, aheadKm, closed) {
+        var n = path.length;
+        if (n < 2) {
+          return { lat: path[0][0], lng: path[0][1], pathIndex: 0, segmentT: 0 };
+        }
+        var i = startI;
+        var t = Math.max(0, Math.min(1, startT));
+        var rem = Math.max(0, aheadKm);
+        var guard = 0;
+        var maxG = n * 12 + 30;
+        while (rem > 1e-10 && guard < maxG) {
+          guard++;
+          if (t >= 1 - 1e-12) {
+            if (closed) {
+              i = (i + 1) % n;
+              t = 0;
+            } else if (i >= n - 2) {
+              i = 0;
+              t = 0;
+            } else {
+              i++;
+              t = 0;
+            }
+          }
+          var from = path[i];
+          var to = closed ? path[(i + 1) % n] : path[i + 1];
+          var segLen = Math.max(1e-9, distanceKm(from, to));
+          var alongThis = segLen * (1 - t);
+          if (rem <= alongThis) {
+            var nt = t + rem / segLen;
+            if (nt >= 1 - 1e-12) {
+              if (closed) {
+                i = (i + 1) % n;
+                t = 0;
+              } else if (i >= n - 2) {
+                i = 0;
+                t = 0;
+              } else {
+                i++;
+                t = 0;
+              }
+            } else {
+              t = nt;
+            }
+            rem = 0;
+            break;
+          }
+          rem -= alongThis;
+          if (closed) {
+            i = (i + 1) % n;
+          } else if (i >= n - 2) {
+            i = 0;
+          } else {
+            i++;
+          }
+          t = 0;
+        }
+        var fromE = path[i];
+        var toE = closed ? path[(i + 1) % n] : path[i + 1];
+        var pos = interpolate(fromE, toE, Math.min(1, t));
+        return { lat: pos[0], lng: pos[1], pathIndex: i, segmentT: t };
+      }
+
+      /** Geographic heading of the route a short distance ahead (stable through corners vs one segment chord). */
+      function bearingTangentAlongPolyline(path, pathIndex, segmentT, lookAheadKm, closed) {
+        var n = path.length;
+        if (n < 2) {
+          return 0;
+        }
+        var la = typeof lookAheadKm === "number" && lookAheadKm > 0 ? lookAheadKm : 0.022;
+        var from = path[pathIndex];
+        var to = closed ? path[(pathIndex + 1) % n] : path[pathIndex + 1];
+        if (!to) {
+          return 0;
+        }
+        var here = interpolate(from, to, Math.min(1, segmentT));
+        var ahead = samplePointAheadOnPolyline(path, pathIndex, segmentT, la, closed);
+        var there = [ahead.lat, ahead.lng];
+        if (distanceKm(here, there) < 0.00004) {
+          return bearingDeg(from, to) || 0;
+        }
+        return bearingDeg(here, there) || 0;
+      }
+
       function bearingDeg(a, b) {
         var toRad = Math.PI / 180;
         var lat1 = a[0] * toRad;
@@ -1379,33 +2068,59 @@
       function segmentLengthKmForRide(ride) {
         var path = ride.path;
         if (!path || path.length < 2) { return 0.00001; }
-        return Math.max(0.00001, distanceKm(path[ride.pathIndex], path[(ride.pathIndex + 1) % path.length]));
+        var closed = ride.pathClosed !== false;
+        var n = path.length;
+        if (!closed && ride.pathIndex > n - 2) {
+          return 0.00001;
+        }
+        var nextI = closed ? (ride.pathIndex + 1) % n : ride.pathIndex + 1;
+        return Math.max(0.00001, distanceKm(path[ride.pathIndex], path[nextI]));
       }
 
       function advanceRideAlongPath(ride, distKm) {
         var path = ride.path;
         if (!path || path.length < 2) { return; }
+        var closed = ride.pathClosed !== false;
+        var n = path.length;
         var remaining = distKm;
         var guard = 0;
-        while (remaining > 0.0000001 && guard < path.length * 6) {
+        var maxSteps = Math.max(path.length * 24, 48);
+        while (remaining > 0.0000001 && guard < maxSteps) {
           guard++;
           var segLen = segmentLengthKmForRide(ride);
           var segRemain = segLen * (1 - ride.segmentT);
           if (remaining >= segRemain) {
             remaining -= segRemain;
             ride.segmentT = 0;
-            ride.pathIndex = (ride.pathIndex + 1) % path.length;
+            if (closed) {
+              ride.pathIndex = (ride.pathIndex + 1) % n;
+            } else if (ride.pathIndex >= n - 2) {
+              ride.pathIndex = 0;
+            } else {
+              ride.pathIndex++;
+            }
           } else {
             ride.segmentT += remaining / segLen;
             remaining = 0;
           }
         }
+        if (!closed) {
+          if (ride.pathIndex > n - 2) {
+            ride.pathIndex = n - 2;
+          }
+          if (ride.pathIndex < 0) {
+            ride.pathIndex = 0;
+          }
+          if (ride.segmentT > 1) {
+            ride.segmentT = 1;
+          }
+        }
         var from = path[ride.pathIndex];
-        var to = path[(ride.pathIndex + 1) % path.length];
-        var pos = interpolate(from, to, ride.segmentT);
+        var to = closed ? path[(ride.pathIndex + 1) % n] : path[ride.pathIndex + 1];
+        var pos = interpolateGreatCircle(from, to, ride.segmentT);
         ride.lat = pos[0];
         ride.lng = pos[1];
-        ride.bearing = bearingDeg(from, to) || 0;
+        ride.bearing = bearingTangentAlongPolyline(path, ride.pathIndex, ride.segmentT, 0.024, closed);
       }
 
       function isCoreLoopStop(point) {
@@ -1441,6 +2156,9 @@
 
       function getRideFreshnessSec(ride) {
         if (simEnabled) { return 0; }
+        if (ride && ride.telemetryFromSocket && ride.serverTelemetryMs) {
+          return Math.max(0, Math.round((Date.now() - ride.serverTelemetryMs) / 1000));
+        }
         if (!ride || !ride.lastUpdatedMs) { return 9999; }
         return Math.max(0, Math.round((Date.now() - ride.lastUpdatedMs) / 1000));
       }
@@ -1460,6 +2178,16 @@
 
       function getRideConfidence(ride) {
         if (simEnabled) { return { level: "high", label: "Confidence: High (sim)" }; }
+        if (ride && ride.telemetryFromSocket) {
+          var fs = getRideFreshnessSec(ride);
+          if (fs <= 90) {
+            return { level: "high", label: "Confidence: High (server)" };
+          }
+          if (fs <= 180) {
+            return { level: "medium", label: "Confidence: Medium (server)" };
+          }
+          return { level: "low", label: "Confidence: Low (server stale)" };
+        }
         var freshness = getRideFreshnessSec(ride);
         if (freshness > 120) { return { level: "low", label: "Confidence: Low" }; }
         if (freshness > 45) { return { level: "medium", label: "Confidence: Medium" }; }
@@ -1517,7 +2245,13 @@
           if (etaMetaByRide[ride.id]) {
             var conf = getRideConfidence(ride);
             var freshness = getRideFreshnessSec(ride);
-            var freshTxt = simEnabled ? "Updated: live sim" : (freshness > 120 ? "Updated: stale " + freshness + "s" : "Updated: " + freshness + "s ago");
+            var freshTxt = simEnabled
+              ? "Updated: live sim"
+              : ride.telemetryFromSocket
+                ? "Updated: server " + freshness + "s ago"
+                : freshness > 120
+                  ? "Updated: stale " + freshness + "s"
+                  : "Updated: " + freshness + "s ago";
             etaMetaByRide[ride.id].freshnessEl.textContent = freshTxt;
             etaMetaByRide[ride.id].confidenceEl.textContent = conf.label;
             etaMetaByRide[ride.id].confidenceEl.className = "eta-chip conf-" + conf.level;
@@ -1541,17 +2275,22 @@
       function updateGpsFreshness() {
         var gpsChip = document.getElementById("gps-toggle");
         if (!gpsChip) { return; }
-          gpsChip.classList.toggle("warn", !simEnabled);
+        gpsChip.classList.toggle("warn", !simEnabled && !puvSocketHadData);
         if (!rides.length) {
-            gpsChip.textContent = "Live tracking: No units loaded";
+          gpsChip.textContent = "Live tracking: No units loaded";
           gpsChip.classList.add("warn");
+        } else if (puvSocketHadData && !simEnabled) {
+          gpsChip.textContent = "Live tracking: Server";
+          gpsChip.classList.remove("warn");
         } else {
-            gpsChip.textContent = simEnabled ? "Live tracking: On" : "Live tracking: Paused";
+          gpsChip.textContent = simEnabled ? "Live tracking: On" : "Live tracking: Paused";
         }
         var pill = document.getElementById("live-sim-pill");
         if (pill) {
           if (!rides.length) {
             pill.textContent = "Preparing live route data...";
+          } else if (puvSocketHadData && !simEnabled) {
+            pill.textContent = "Server live PUV feed";
           } else {
             pill.textContent = simEnabled ? "Live vehicle tracking" : "Live tracking paused";
           }
@@ -1560,18 +2299,25 @@
           var el = r.marker.getElement && r.marker.getElement();
           if (el) {
             var pin = el.querySelector(".vehicle-pin");
-            if (pin) { pin.classList.toggle("live-sim", simEnabled); }
+            if (pin) {
+              pin.classList.toggle("live-sim", simEnabled || puvSocketHadData);
+            }
           }
           var tip = r.marker.getTooltip && r.marker.getTooltip();
           if (tip) {
-            tip.setContent(
-              simEnabled
-                ? r.id + " · " + (r.dwellUntilMs && r.dwellUntilMs > performance.now() ? "Boarding stop" : Math.round(r.effectiveSpeedKmh != null ? r.effectiveSpeedKmh : r.speedKmh) + " km/h")
-                : r.id + " · Live feed paused"
-            );
+            if (r.telemetryFromSocket && !simEnabled) {
+              var spS = Math.round(r.effectiveSpeedKmh != null ? r.effectiveSpeedKmh : r.speedKmh);
+              tip.setContent(r.id + " · " + spS + " km/h (server)");
+            } else {
+              tip.setContent(
+                simEnabled
+                  ? r.id + " · " + (r.dwellUntilMs && r.dwellUntilMs > performance.now() ? "Boarding stop" : Math.round(r.effectiveSpeedKmh != null ? r.effectiveSpeedKmh : r.speedKmh) + " km/h")
+                  : r.id + " · Live feed paused"
+              );
+            }
           }
           if (r.trailLine && r.trailLine.setStyle) {
-            r.trailLine.setStyle({ opacity: simEnabled ? 0.4 : 0.12 });
+            r.trailLine.setStyle({ opacity: simEnabled ? 0.4 : (puvSocketHadData ? 0.36 : 0.12) });
           }
         });
         updateFeedSyncLine();
@@ -1609,6 +2355,9 @@
           var id = u.getAttribute("id");
           var ride = rides.find(function (r) { return r.id === id; });
           if (!ride) { return; }
+          if (ride.telemetryFromSocket) {
+            return;
+          }
           var locEl = u.querySelector("location");
           if (!locEl) { return; }
           var lat = Number(locEl.getAttribute("lat"));
@@ -1749,7 +2498,7 @@
               }
               if (ride.simPhase == null) { ride.simPhase = Math.random() * Math.PI * 2; }
               var ph = ride.simPhase;
-              var wobble = Math.sin(now / 5400 + ph) * 0.06 + Math.sin(now / 11000 + ph * 2) * 0.035;
+              var wobble = Math.sin(now / 5400 + ph) * 0.045 + Math.sin(now / 11000 + ph * 2) * 0.028;
               ride.effectiveSpeedKmh = Math.max(10, ride.speedKmh * (1 + wobble));
               var prevIdx = ride.pathIndex;
               var distStep = (ride.effectiveSpeedKmh / 3600) * dt * SIM_MOVEMENT_SCALE;
@@ -1830,8 +2579,12 @@
               maxBounds: lipaBounds,
               maxBoundsViscosity: 1.0
             }).setView([13.9650, 121.1640], 13);
+            /* Dark basemap (Carto dark_all); roads still from OSM — routes snap via OSRM on server. */
             L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-              subdomains: "abcd", maxZoom: 19, opacity: 0.8, attribution: "&copy; OpenStreetMap &copy; CARTO"
+              subdomains: "abcd",
+              maxZoom: 19,
+              opacity: 0.85,
+              attribution: "&copy; OpenStreetMap &copy; CARTO"
             }).addTo(map);
             map.on("contextmenu", function (ev) {
               if (!ev || !ev.latlng) { return; }
@@ -1946,6 +2699,7 @@
                 localStorage.setItem("lipamove_token", x.j.token);
                 if (st) { st.textContent = "Signed up successfully."; }
                 refreshAuthUi();
+                reconnectPuvSocketWithAuth();
                 navigateTo("profile");
               })
               .catch(function () {
@@ -1977,6 +2731,7 @@
                 localStorage.setItem("lipamove_token", x.j.token);
                 if (st) { st.textContent = "Logged in."; }
                 refreshAuthUi();
+                reconnectPuvSocketWithAuth();
                 navigateTo("profile");
               })
               .catch(function () {
@@ -1992,6 +2747,7 @@
               .finally(function () {
                 localStorage.removeItem("lipamove_token");
                 refreshAuthUi();
+                reconnectPuvSocketWithAuth();
                 navigateTo("auth");
                 showAuthStep("login");
                 var tl = document.getElementById("auth-tab-login");
@@ -2171,7 +2927,9 @@
             if (!simEnabled) {
               stopSimulation();
               startLiveGpsPolling();
+              connectPuvSocket();
             } else {
+              disconnectPuvSocketForUserSim();
               stopLiveGpsPolling();
               if (!simRafId) {
                 startSimulation();
@@ -2456,13 +3214,15 @@
             return;
           }
 
-          units.forEach(function (u, i) {
+          return units.reduce(function (chain, u, i) {
+            return chain.then(function () {
             var id = u.getAttribute("id") || ("LM-" + (i + 1));
             var rawType = ((u.getAttribute("vehicle_type") || "batrasco") + "").toLowerCase();
             var vtype = rawType === "jeepney" ? "jeepney" : "batrasco";
             var speedKmh = Number(u.getAttribute("speed_kph") || (vtype === "jeepney" ? 22 : 26));
             if (!isFinite(speedKmh) || speedKmh < 8) { speedKmh = vtype === "jeepney" ? 22 : 26; }
             var route = (u.querySelector("route_assignment") || {}).textContent || "Route unavailable";
+            var plateAttr = (u.getAttribute("plate_number") || u.getAttribute("plate") || "").trim();
             var occEl = u.querySelector("current_occupancy");
             var occTxt = occEl ? occEl.textContent : "Low Density";
             var occVal = occEl ? Number(occEl.getAttribute("value") || 0) : 0;
@@ -2477,29 +3237,51 @@
               lng = fallback[1];
             }
 
-            var routePoints = Array.prototype.slice.call(u.querySelectorAll("route_path point")).map(function (pt) {
+            var routePointsRaw = Array.prototype.slice.call(u.querySelectorAll("route_path point")).map(function (pt) {
               return [Number(pt.getAttribute("lat")), Number(pt.getAttribute("lng"))];
             }).filter(function (pt) { return isFinite(pt[0]) && isFinite(pt[1]); });
+            if (!routePointsRaw.length) {
+              routePointsRaw.push([lat, lng]);
+            }
+            return fetchRoadSnappedPath(routePointsRaw).then(function (snapRes) {
+              var snappedPts = snapRes.path;
+              var snapSource = snapRes.source || "";
+              /* OSRM/Mapbox return dense polylines; xml_fallback keeps sparse XML → chord densify looks like flying shortcuts (blue line bug). */
+              var looksLikeSnappedRoad =
+                snappedPts &&
+                snappedPts.length >= Math.max(routePointsRaw.length + 8, 28);
+              var fromRouter =
+                snapSource.indexOf("osrm") >= 0 ||
+                snapSource.indexOf("mapbox") >= 0 ||
+                (looksLikeSnappedRoad &&
+                  snapSource !== "xml_fallback" &&
+                  snapSource !== "client_fallback" &&
+                  snapSource !== "client_error");
+              var routeForSim = snappedPts && snappedPts.length >= 2 ? snappedPts : routePointsRaw;
+              var refined = refinePathForSimulation(routeForSim, { preserveRoadShape: fromRouter });
+            var routePoints = refined.points;
+            var routeClosed = refined.closed;
             if (!routePoints.length) {
-              routePoints = [[lat, lng]];
+              routePoints = routeForSim.slice();
+              routeClosed = isPathGeographicallyClosed(routePoints);
             }
 
             var startIndex = 0;
+            var startSegT = 0;
             if (routePoints.length > 1) {
-              var minPointKm = Infinity;
-              routePoints.forEach(function (pt, idx) {
-                var ptKm = distanceKm(pt, [lat, lng]);
-                if (ptKm < minPointKm) {
-                  minPointKm = ptKm;
-                  startIndex = idx;
-                }
-              });
+              var snap = nearestPointOnPolyline(routePoints, [lat, lng], routeClosed);
+              startIndex = snap.pathIndex;
+              startSegT = snap.segmentT;
+              lat = snap.lat;
+              lng = snap.lng;
+            } else if (routePoints.length) {
+              lat = routePoints[0][0];
+              lng = routePoints[0][1];
             }
-            if (routePoints.length) {
-              lat = routePoints[startIndex][0];
-              lng = routePoints[startIndex][1];
-            }
-            var brStart = routePoints.length >= 2 ? bearingDeg(routePoints[startIndex], routePoints[(startIndex + 1) % routePoints.length]) : 0;
+            var brStart =
+              routePoints.length >= 2
+                ? bearingTangentAlongPolyline(routePoints, startIndex, startSegT, 0.024, routeClosed)
+                : 0;
             var vtagLabel = vtype === "jeepney" ? "Jeepney" : "Batra jeepney";
             var icon = L.divIcon({
               className: "vehicle-marker-wrap",
@@ -2530,25 +3312,31 @@
             });
             markers[id] = marker;
             var lineColor = vtype === "jeepney" ? "#fb923c" : "#38bdf8";
-            L.polyline(routePoints, {
-              color: lineColor,
-              weight: 3,
-              opacity: 0.5,
-              dashArray: vtype === "jeepney" ? "4 10" : "6 8"
-            }).addTo(routeGroup);
+            if (vtype === "jeepney") {
+              renderJeepneyRoadRoute(routeGroup, routePoints, routeClosed);
+            } else {
+              renderBatraRoadRoute(routeGroup, routePoints, routeClosed);
+            }
 
             var trailLine = null;
             if (liveTrailGroup) {
-              trailLine = L.polyline([[lat, lng]], {
+              var trailOpts = {
                 color: lineColor,
-                weight: 2,
-                opacity: 0.4,
-                dashArray: "2 8"
-              }).addTo(liveTrailGroup);
+                weight: 3,
+                opacity: 0.52,
+                lineCap: "round",
+                lineJoin: "round",
+                smoothFactor: 1.1
+              };
+              if (vtype === "jeepney") {
+                trailOpts.dashArray = "2 5";
+              }
+              trailLine = L.polyline([[lat, lng]], trailOpts).addTo(liveTrailGroup);
             }
 
             var rideRef = {
               id: id,
+              plateNumber: plateAttr || null,
               route: route,
               density: occTxt,
               occVal: occVal,
@@ -2562,8 +3350,9 @@
               bearing: brStart,
               marker: marker,
               path: routePoints,
+              pathClosed: routeClosed,
               pathIndex: startIndex,
-              segmentT: 0,
+              segmentT: startSegT,
               dwellUntilMs: 0,
               trailHistory: [[lat, lng]],
               trailLine: trailLine,
@@ -2642,18 +3431,37 @@
               marker.openPopup();
               refreshEtas();
             });
+            return Promise.resolve();
+            });
           });
+          }, Promise.resolve()).then(function () {
 
           if (!rides.length && etaList) {
             etaList.innerHTML = "<div class=\"card\">No units found in <code>data.xml</code>. Add <code>fleet_management &gt; unit</code> entries with route points.</div>";
           }
 
           if (routeGroup && coreLoopStops.length > 1) {
-            L.polyline(coreLoopStops.map(function (s) { return s.latlng; }), {
-              color: "#22d3ee",
-              weight: 4,
-              opacity: 0.65
-            }).addTo(routeGroup);
+            var coreLoopRawPts = coreLoopStops.map(function (s) {
+              var ll = s.latlng;
+              return [ll[0], ll[1]];
+            });
+            fetchRoadSnappedPath(coreLoopRawPts).then(function (snapLoop) {
+              var loopPts =
+                snapLoop.path && snapLoop.path.length >= 2 ? snapLoop.path : coreLoopRawPts;
+              addRoadRouteWithGlow(routeGroup, loopPts, {
+                color: "#22d3ee",
+                weight: 5,
+                glowWeight: 14,
+                glowOpacity: 0.28,
+                opacity: 0.78
+              });
+              addDirectionArrowsAlongRoute(routeGroup, loopPts, {
+                closed: isPathGeographicallyClosed(loopPts),
+                stepKm: 0.35,
+                maxArrows: 14,
+                color: "rgba(200,255,255,0.88)"
+              });
+            });
             coreLoopStops.forEach(function (stop) {
               L.circleMarker(stop.latlng, {
                 radius: 5,
@@ -2709,6 +3517,9 @@
 
           startSimulation();
           updateGpsFreshness();
+          connectPuvSocket();
+          updateFeedSyncLine();
+          });
         })
         .catch(function () {
           simEnabled = false;

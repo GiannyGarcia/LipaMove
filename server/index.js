@@ -2,8 +2,11 @@
 
 require("dotenv").config();
 const path = require("path");
+const http = require("http");
 const crypto = require("crypto");
 const express = require("express");
+const socketService = require("./socketService");
+const routeService = require("./routeService");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const mysql = require("mysql2/promise");
@@ -357,6 +360,65 @@ app.get("/", function (req, res) {
   res.redirect(302, "/index.xhtml");
 });
 
+/**
+ * Internal bridge for IoT / simulators to push live PUV payloads into Socket.io.
+ * Set INTERNAL_PUV_BROADCAST_KEY in .env and send header X-Internal-Key: <same value>.
+ *
+ * Body examples:
+ *   { "type": "update", "payload": { "puvId": "LM-1", "routeId": 1, "lat": 13.94, "lng": 121.16, "bearing": 0, "speedKph": 25, "progress": 40, "status": "active" } }
+ *   { "type": "status", "payload": { "puvId": "LM-1", "routeId": 1, "status": "idle" } }
+ *   { "type": "snapshot" }
+ */
+/**
+ * Snap waypoints to drivable roads (OSRM → Mapbox optional → fallback).
+ * POST body: { "path": [[lat,lng], ...] }
+ * Response: { path, source, cached? }
+ */
+async function handleSnapRoadsRoute(req, res) {
+  try {
+    const pathIn = req.body && req.body.path;
+    if (!Array.isArray(pathIn) || pathIn.length < 2) {
+      return res.status(400).json({ error: "path must be [[lat,lng],...] with length >= 2" });
+    }
+    const result = await routeService.snapRouteToRoads(pathIn);
+    res.json({
+      path: result.path,
+      source: result.source,
+      cached: !!result.cached,
+    });
+  } catch (e) {
+    console.warn("[lipamove] /api/route/snap-roads", e && e.message);
+    const fallback = (req.body && req.body.path) || [];
+    res.json({ path: fallback, source: "error_fallback", cached: false });
+  }
+}
+
+app.post("/api/route/snap-roads", handleSnapRoadsRoute);
+app.post("/api/route/snap", handleSnapRoadsRoute);
+
+app.post("/api/puv/broadcast", function (req, res) {
+  const key = process.env.INTERNAL_PUV_BROADCAST_KEY;
+  if (!key || req.get("x-internal-key") !== key) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  const body = req.body || {};
+  const t = body.type;
+  try {
+    if (t === "update") {
+      socketService.broadcastPUVUpdate(body.payload || body);
+    } else if (t === "status") {
+      socketService.broadcastPUVStatus(body.payload || body);
+    } else if (t === "snapshot") {
+      socketService.broadcastAllActivePUVs();
+    } else {
+      return res.status(400).json({ error: "type must be update, status, or snapshot" });
+    }
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(503).json({ error: "socket_unavailable", message: String(e && e.message) });
+  }
+});
+
 app.use(
   express.static(staticRoot, {
     setHeaders: function (res, filePath) {
@@ -367,10 +429,16 @@ app.use(
   })
 );
 
+const httpServer = http.createServer(app);
+
 ensureAuthTables()
   .then(function () {
-    app.listen(PORT, "0.0.0.0", function () {
-      console.log("LipaMove listening on port " + PORT + " (server bind; not your laptop).");
+    socketService.initSocket(httpServer, {
+      pool,
+      corsAllowedOrigins: CORS_ALLOWED_ORIGINS,
+    });
+    httpServer.listen(PORT, "0.0.0.0", function () {
+      console.log("LipaMove listening on port " + PORT + " (HTTP + Socket.io; server bind).");
       if (process.env.RAILWAY_ENVIRONMENT) {
         console.log("Open the public domain from Railway (Networking), not http://127.0.0.1 in your browser.");
       } else {

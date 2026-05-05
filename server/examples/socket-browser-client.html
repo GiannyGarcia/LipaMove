@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>LipaMove Socket.io client example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Same origin as LipaMove server (e.g. http://127.0.0.1:3000/examples/socket-browser-client.html) -->
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <pre id="log"></pre>
+  <script>
+    function log(line) {
+      var el = document.getElementById("log");
+      el.textContent += line + "\n";
+    }
+    var token = localStorage.getItem("lipamove_token") || "";
+    var socket = io({
+      path: "/socket.io/",
+      transports: ["websocket", "polling"],
+      auth: { token: token },
+    });
+    socket.on("connect", function () {
+      log("connected " + socket.id);
+    });
+    socket.on("connect_error", function (err) {
+      log("connect_error: " + (err && err.message));
+    });
+    socket.on("puv:welcome", function (msg) {
+      log("puv:welcome " + JSON.stringify(msg));
+    });
+    socket.on("puv:update", function (p) {
+      log("puv:update " + JSON.stringify(p));
+    });
+    socket.on("puv:status", function (p) {
+      log("puv:status " + JSON.stringify(p));
+    });
+    socket.on("puv:snapshot", function (p) {
+      log("puv:snapshot vehicles=" + ((p && p.vehicles) ? p.vehicles.length : 0));
+    });
+    // Optional: subscribe to a route room for future route-scoped emits
+    socket.emit("joinRoute", 3);
+    socket.on("route:joined", function (x) {
+      log("route:joined " + JSON.stringify(x));
+    });
+  </script>
+</body>
+</html>
