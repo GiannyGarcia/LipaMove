@@ -226,6 +226,60 @@
     .leaflet-control-attribution { background: rgba(255,255,255,.88) !important; color: #64748b !important; font-size: 10px; }
     .leaflet-popup-content { margin: 10px 12px; color: #0f172a; }
     .home-tools { margin-bottom: 12px; box-shadow: var(--lm-shadow-md); border: 1px solid rgba(148,163,184,.18); background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,251,255,.95)); }
+    .home-mode-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,.25);
+      background: rgba(255,255,255,.88);
+    }
+    .home-mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      border: 1px solid rgba(148,163,184,.35);
+      color: #334155;
+      background: #ffffff;
+    }
+    .home-mode-badge.live { border-color: rgba(5,150,105,.35); color: #065f46; background: rgba(16,185,129,.12); }
+    .home-mode-badge.sim { border-color: rgba(14,116,144,.35); color: #0c4a6e; background: rgba(14,165,233,.12); }
+    .home-mode-badge.connecting { border-color: rgba(217,119,6,.35); color: #92400e; background: rgba(251,191,36,.14); }
+    .home-mode-updated { font-size: 11px; color: #64748b; text-align: right; }
+    .home-analytics { margin-bottom: 12px; }
+    .home-analytics-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .home-analytics-item {
+      border: 1px solid rgba(148,163,184,.2);
+      border-radius: 10px;
+      padding: 8px;
+      background: rgba(255,255,255,.85);
+    }
+    .home-analytics-item .k { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: .04em; }
+    .home-analytics-item .v { font-size: 12px; color: #0f172a; font-weight: 700; margin-top: 2px; }
+    .home-onboard {
+      border: 1px solid rgba(14,165,233,.3);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(14,165,233,.08);
+      margin-bottom: 10px;
+    }
+    .home-onboard-title { font-size: 12px; font-weight: 700; color: #075985; margin-bottom: 4px; }
+    .home-onboard-list { margin: 0 0 8px 16px; padding: 0; color: #334155; font-size: 11px; line-height: 1.35; }
+    #eta-empty-state { display: none; }
     .home-extra-details { margin-top: 10px; border-top: 1px dashed rgba(148,163,184,.35); padding-top: 8px; }
     .home-extra-details summary {
       cursor: pointer;
@@ -354,6 +408,10 @@
     @media (max-width: 420px) {
       .headline { font-size: 24px; }
       .map-wrap { min-height: 220px; height: 33vh; max-height: 300px; }
+      .home-tools { padding: 9px 10px !important; border-radius: 12px !important; }
+      .home-mode-strip { flex-direction: column; align-items: flex-start; gap: 5px; }
+      .home-mode-updated { text-align: left; }
+      .home-analytics-row { grid-template-columns: 1fr; }
     }
     /* Mobile map chrome: avoid stacked chips overlapping and free map space */
     @media (max-width: 899px) {
@@ -385,6 +443,19 @@
       .map-wrap { min-height: 360px; height: 58vh; max-height: 620px; }
       .tagline { display: none; }
       .home-tools { padding: 10px 12px !important; border-radius: 14px !important; }
+      .home-mode-strip { padding: 6px 8px; margin-bottom: 8px; }
+      .home-mode-badge { font-size: 9px; padding: 4px 8px; }
+      .home-mode-updated { font-size: 10px; }
+      .home-onboard { padding: 9px; margin-bottom: 8px; }
+      .home-onboard-title { font-size: 11px; }
+      .home-onboard-list { font-size: 10px; margin-left: 14px; }
+      #home-onboard-dismiss { padding: 8px 10px; font-size: 11px; }
+      .home-analytics { margin-bottom: 10px; padding: 11px; border-radius: 12px; }
+      .home-analytics h3 { font-size: 14px; margin-bottom: 4px; }
+      .home-analytics-row { gap: 6px; margin-top: 6px; }
+      .home-analytics-item { padding: 7px; border-radius: 9px; }
+      .home-analytics-item .k { font-size: 9px; }
+      .home-analytics-item .v { font-size: 11px; }
       .weather-line.subtle { font-size: 10px; margin-bottom: 8px; }
       .mini-label { font-size: 10px; margin-bottom: 4px; }
       #nearest-summary { display: none !important; }
@@ -451,6 +522,19 @@
           <div class="label" data-i18n="home.nearest_label">Closest rides</div>
           <div class="tagline" data-i18n="home.nearest_tagline">Nearest rides from your chosen spot, with simple ETA bands.</div>
           <div class="home-tools glass" style="padding:12px 14px;border-radius:16px;margin-bottom:12px;">
+            <div id="home-mode-strip" class="home-mode-strip" aria-live="polite">
+              <span id="home-mode-badge" class="home-mode-badge sim">Simulation mode</span>
+              <span id="home-mode-updated" class="home-mode-updated">Updated just now</span>
+            </div>
+            <div id="home-onboard" class="home-onboard" style="display:none;">
+              <div class="home-onboard-title" data-i18n="home.onboard_title">Quick start</div>
+              <ol class="home-onboard-list">
+                <li data-i18n="home.onboard_step1">Choose ETA From (pin or terminal).</li>
+                <li data-i18n="home.onboard_step2">Choose your destination terminal.</li>
+                <li data-i18n="home.onboard_step3">Use Sort list, then tap a vehicle card.</li>
+              </ol>
+              <button id="home-onboard-dismiss" type="button" class="action-btn block" data-i18n="home.onboard_btn">Got it</button>
+            </div>
             <label class="mini-label" for="eta-basis-select" data-i18n="home.eta_basis">ETA from</label>
             <select id="eta-basis-select" class="select" style="margin-bottom:10px;font-size:12px;">
               <option value="pin">Pin waiting spot on map</option>
@@ -491,11 +575,34 @@
               </div>
             </details>
           </div>
+          <div id="home-analytics" class="dispatch-card home-analytics">
+            <h3 data-i18n="home.analytics_title">System snapshot</h3>
+            <p class="muted" id="home-analytics-sub" data-i18n="home.analytics_sub">Live summary for presentation and quick checks.</p>
+            <div class="home-analytics-row">
+              <div class="home-analytics-item">
+                <div class="k" data-i18n="home.analytics_units">Active units</div>
+                <div class="v" id="analytics-units">0</div>
+              </div>
+              <div class="home-analytics-item">
+                <div class="k" data-i18n="home.analytics_best_eta">Best ETA now</div>
+                <div class="v" id="analytics-best-eta">--</div>
+              </div>
+              <div class="home-analytics-item">
+                <div class="k" data-i18n="home.analytics_mode">Feed mode</div>
+                <div class="v" id="analytics-mode">Simulation</div>
+              </div>
+              <div class="home-analytics-item">
+                <div class="k" data-i18n="home.analytics_avg_crowd">Avg crowd</div>
+                <div class="v" id="analytics-crowd">--</div>
+              </div>
+            </div>
+          </div>
           <div id="nearest-summary" class="nearest-summary glass" style="display:none;">
             <div class="ns-title" data-i18n="home.nearest_summary_title">Closest</div>
             <div id="nearest-body" class="ns-body">—</div>
           </div>
           <div id="eta-list"></div>
+          <div id="eta-empty-state" class="card muted" data-i18n="home.empty_eta">No vehicles available yet. Check feed or simulation status.</div>
           <button id="toggle-more-vehicles" type="button" class="action-btn block vehicle-more-toggle">Show more vehicles</button>
         </div>
       </section>
@@ -951,6 +1058,70 @@
           return;
         }
         el.textContent = tr("feed.pull_hint");
+      }
+
+      function updateHomeModeStatus() {
+        var badge = document.getElementById("home-mode-badge");
+        var upd = document.getElementById("home-mode-updated");
+        if (!badge || !upd) { return; }
+        badge.classList.remove("live", "sim", "connecting");
+        if (puvSocketHadData && !simEnabled) {
+          badge.classList.add("live");
+          badge.textContent = tr("home.mode_live");
+        } else if (puvSocket && !puvSocketConnected) {
+          badge.classList.add("connecting");
+          badge.textContent = tr("home.mode_connecting");
+        } else {
+          badge.classList.add("sim");
+          badge.textContent = tr("home.mode_sim");
+        }
+        var baseTs = 0;
+        if (lastLiveFetchMs) { baseTs = lastLiveFetchMs; }
+        rides.forEach(function (r) {
+          if (r && r.lastTelemetryMs) { baseTs = Math.max(baseTs, r.lastTelemetryMs); }
+        });
+        if (!baseTs) {
+          upd.textContent = tr("home.updated_now");
+          return;
+        }
+        var sec = Math.max(0, Math.round((Date.now() - baseTs) / 1000));
+        upd.textContent = tr("home.updated_seconds", { s: String(sec) });
+      }
+
+      function updateEtaEmptyState() {
+        var box = document.getElementById("eta-empty-state");
+        var listEl = document.getElementById("eta-list");
+        if (!box || !listEl) { return; }
+        var cards = listEl.querySelectorAll(".card[data-ride-id]");
+        box.style.display = cards.length ? "none" : "block";
+      }
+
+      function updateHomeAnalytics() {
+        var unitsEl = document.getElementById("analytics-units");
+        var etaEl = document.getElementById("analytics-best-eta");
+        var modeEl = document.getElementById("analytics-mode");
+        var crowdEl = document.getElementById("analytics-crowd");
+        if (!unitsEl || !etaEl || !modeEl || !crowdEl) { return; }
+        unitsEl.textContent = String(rides.length);
+        if (!rides.length) {
+          etaEl.textContent = tr("home.analytics_none");
+          crowdEl.textContent = tr("home.analytics_none");
+        } else {
+          var bestUpper = null;
+          var occSum = 0;
+          rides.forEach(function (r) {
+            var eta = getEtaRangeData(r);
+            if (bestUpper === null || eta.upper < bestUpper) { bestUpper = eta.upper; }
+            occSum += isFinite(Number(r.occVal)) ? Number(r.occVal) : 0;
+          });
+          etaEl.textContent = bestUpper === null ? tr("home.analytics_none") : ("~" + String(bestUpper) + tr("eta_suffix"));
+          crowdEl.textContent = String(Math.round(occSum / Math.max(1, rides.length))) + "%";
+        }
+        modeEl.textContent = puvSocketHadData && !simEnabled
+          ? tr("home.mode_live_short")
+          : puvSocket && !puvSocketConnected
+            ? tr("home.mode_connecting_short")
+            : tr("home.mode_sim_short");
       }
 
       function parseCongestionLevel(txt) {
@@ -2618,10 +2789,12 @@
         if (!toggle) { return; }
         if (cards.length <= 3) {
           toggle.style.display = "none";
+          updateEtaEmptyState();
           return;
         }
         toggle.style.display = "block";
         toggle.textContent = showAllVehicles ? "Show fewer vehicles" : "Show more vehicles";
+        updateEtaEmptyState();
       }
 
       function refreshEtas() {
@@ -2653,6 +2826,8 @@
         updateWalkHintLine();
         updateCommuterExtrasOnCards();
         updateFeedSyncLine();
+        updateHomeModeStatus();
+        updateHomeAnalytics();
         updateTrackingMiniCard();
         applyHomeVehicleVisibility();
         maybeNearestEtaNotification();
@@ -3027,6 +3202,8 @@
         refreshEtas();
         updateSharePreview();
         updatePlanSummary();
+        updateHomeModeStatus();
+        updateHomeAnalytics();
         refreshAuthUi();
       }
 
@@ -3810,6 +3987,21 @@
           });
         }
 
+        var onboardBox = document.getElementById("home-onboard");
+        var onboardDismiss = document.getElementById("home-onboard-dismiss");
+        if (onboardBox) {
+          var seen = localStorage.getItem("lipamove_home_onboard_seen_v1") === "1";
+          onboardBox.style.display = seen ? "none" : "block";
+        }
+        if (onboardDismiss && !onboardDismiss.dataset.wired) {
+          onboardDismiss.dataset.wired = "1";
+          onboardDismiss.addEventListener("click", function () {
+            localStorage.setItem("lipamove_home_onboard_seen_v1", "1");
+            var box = document.getElementById("home-onboard");
+            if (box) { box.style.display = "none"; }
+          });
+        }
+
         var wr = document.getElementById("guide-weather-refresh");
         if (wr && !wr.dataset.wired) {
           wr.dataset.wired = "1";
@@ -4192,6 +4384,8 @@
           updateGpsFreshness();
           connectPuvSocket();
           updateFeedSyncLine();
+          updateHomeModeStatus();
+          updateHomeAnalytics();
           });
         })
         .catch(function () {
@@ -4201,6 +4395,8 @@
             etaList.innerHTML = "<div class=\"card\">" + tr("map.feed_fail") + "</div>";
           }
           updateGpsFreshness();
+          updateHomeModeStatus();
+          updateHomeAnalytics();
         });
     })();
     //]]>
