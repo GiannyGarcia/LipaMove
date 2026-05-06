@@ -130,6 +130,7 @@
       "guide.reminders_title": "Near-me reminders",
       "guide.reminders_body":
         "Sends one browser notification when the closest listed ride's ETA band reaches your threshold (not perfect when the tab is closed).",
+      "guide.more_topics": "More guide topics",
       "guide.notify_when": "When closest ETA is within",
       "guide.notify_off": "Off",
       "guide.notify_min": "{n} minutes",
@@ -449,6 +450,7 @@
       "guide.reminders_title": "Paalala kapag malapit na",
       "guide.reminders_body":
         "Nagpapadala ng isang browser notification kapag ang pinakamalapit na sasakyan ay nasa iyong hanay ng minuto (hindi perpekto kapag nakasara ang tab).",
+      "guide.more_topics": "Mas maraming gabay",
       "guide.notify_when": "Kapag pinakamalapit na ETA ay hanggang",
       "guide.notify_off": "Naka-off",
       "guide.notify_min": "{n} minuto",
