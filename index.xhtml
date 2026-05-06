@@ -148,6 +148,68 @@
     .auth-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
     .auth-tabs button { flex: 1; border-radius: 12px; border: 1px solid rgba(148,163,184,.35); background: #ffffff; color: #64748b; padding: 10px; font-size: 13px; cursor: pointer; }
     .auth-tabs button.active { border-color: rgba(14,165,233,.5); color: #075985; background: rgba(14,165,233,.14); }
+    .auth-lang-switch {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .auth-lang-switch .lang-label {
+      font-size: 11px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: #64748b;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .auth-lang-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .lang-toggle {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      flex: 0 0 auto;
+    }
+    .lang-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .lang-toggle .slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,.45);
+      background: #e2e8f0;
+      cursor: pointer;
+      transition: background .2s ease, border-color .2s ease;
+    }
+    .lang-toggle .slider::before {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      left: 2px;
+      top: 2px;
+      background: #ffffff;
+      box-shadow: 0 1px 4px rgba(15,23,42,.28);
+      transition: transform .2s ease;
+    }
+    .lang-toggle input:checked + .slider {
+      background: #0ea5e9;
+      border-color: #0284c7;
+    }
+    .lang-toggle input:checked + .slider::before {
+      transform: translateX(20px);
+    }
     .auth-step { display: none; }
     .auth-step.visible { display: block; }
     .muted { color: #64748b; font-size: 12px; }
@@ -237,8 +299,6 @@
     .card-star-btn.starred { border-color: rgba(245,158,11,.6) !important; background: rgba(251,191,36,.15) !important; }
     .commuter-extras { font-size: 11px; color: #64748b; line-height: 1.45; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(148,163,184,.35); }
     .ns-extra { margin-top: 8px; font-size: 12px; line-height: 1.45; }
-    .phrase-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-    .phrase-grid .phrase-copy { font-size: 11px; padding: 7px 10px; }
     .peak-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
     .peak-table th, .peak-table td { border: 1px solid rgba(148,163,184,.35); padding: 6px 8px; text-align: left; }
     .peak-table th { background: rgba(14,165,233,.1); color: #0f172a; }
@@ -532,9 +592,9 @@
           <h3 data-i18n="guide.map_key_title">What you see on the map</h3>
           <ul class="guide-ul">
             <li data-i18n="guide.map_li1">Orange pin — jeepney; blue — Batrasco-style unit.</li>
-            <li data-i18n="guide.map_li2">Orange / blue route lines — estimated path per unit from data.xml.</li>
-            <li data-i18n="guide.map_li3">Cyan line with dots — core terminal loop reference.</li>
-            <li data-i18n="guide.map_li4">Small blue dot — you after Locate me.</li>
+            <li data-i18n="guide.map_li2">Orange line = jeepney route; blue line = Batrasco route estimate.</li>
+            <li data-i18n="guide.map_li3">Thin orange trail appears behind moving jeepney units.</li>
+            <li data-i18n="guide.map_li4">No cyan reference loop is shown in this view.</li>
           </ul>
         </div>
         <div class="dispatch-card">
@@ -613,6 +673,17 @@
           <h2 data-i18n="auth.title">Account</h2>
         </div>
         <p class="screen-intro" data-i18n="auth.intro">Sign up or log in for a personalized experience.</p>
+        <div class="dispatch-card auth-lang-switch">
+          <span class="lang-label" data-i18n="home.lang_mini">Language</span>
+          <div class="auth-lang-control">
+            <span data-i18n="lang.en">English</span>
+            <label class="lang-toggle" for="account-lang-toggle">
+              <input type="checkbox" id="account-lang-toggle" aria-label="Language toggle" />
+              <span class="slider"></span>
+            </label>
+            <span data-i18n="lang.tl">Tagalog</span>
+          </div>
+        </div>
         <div class="auth-tabs" role="tablist">
           <button type="button" id="auth-tab-login" class="active" data-auth-tab="login" data-i18n="auth.login_tab">Log in</button>
           <button type="button" id="auth-tab-signup" data-auth-tab="signup" data-i18n="auth.signup_tab">Sign up</button>
@@ -691,6 +762,10 @@
         document.querySelectorAll(".lang-seg button[data-lang]").forEach(function (b) {
           b.classList.toggle("active", b.getAttribute("data-lang") === loc);
         });
+        var accountLangToggle = document.getElementById("account-lang-toggle");
+        if (accountLangToggle) {
+          accountLangToggle.checked = loc === "tl";
+        }
       }
       var map = null;
       var markers = {};
@@ -1662,21 +1737,6 @@
           el = el.parentElement;
         }
         if (!el || !el.closest) { return; }
-        var phraseBtn = el.closest(".phrase-copy");
-        if (phraseBtn) {
-          e.preventDefault();
-          var ptxt = phraseBtn.getAttribute("data-phrase") || "";
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(ptxt).then(function () {
-              showToast(tr("phrase.copied"));
-            }).catch(function () {
-              showToast(ptxt);
-            });
-          } else {
-            showToast(ptxt);
-          }
-          return;
-        }
         var t = el.closest("[data-goto]");
         if (!t) { return; }
         var g = t.getAttribute("data-goto");
@@ -3081,10 +3141,6 @@
                   escHtml(tr("profile.label_phone")) +
                   ": " +
                   escHtml(data.user.phone || "—") +
-                  "</p><p class=\"muted\">" +
-                  escHtml(tr("profile.label_id")) +
-                  ": " +
-                  data.user.id +
                   "</p>";
               }
               if (lo) { lo.style.display = "block"; }
@@ -3320,6 +3376,17 @@
             }
             ev.preventDefault();
             LipaMoveI18n.setLocale(lb.getAttribute("data-lang"));
+            refreshLocaleUi();
+          });
+        }
+        var accountLangToggle = document.getElementById("account-lang-toggle");
+        if (accountLangToggle && !accountLangToggle.dataset.bound) {
+          accountLangToggle.dataset.bound = "1";
+          accountLangToggle.addEventListener("change", function () {
+            if (!window.LipaMoveI18n) {
+              return;
+            }
+            LipaMoveI18n.setLocale(accountLangToggle.checked ? "tl" : "en");
             refreshLocaleUi();
           });
         }

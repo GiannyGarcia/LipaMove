@@ -24,11 +24,11 @@
       "nearest.landmark":
         "You're ~{km} km from {name} (straight-line reference from your ETA point).",
       "feed.puv_socket":
-        "PUV positions: real-time from LipaMove server (Socket.io). Tap Live tracking to return to local simulation.",
+        "PUV positions: live telemetry from LipaMove server (Socket.io).",
       "feed.socket_connecting":
-        "Connecting to live PUV server… (without telemetry, simulation / data.xml continues.)",
+        "Connecting to live PUV server… if unavailable, simulation from data.xml continues.",
       "feed.sim_guide":
-        "Simulation — ETA is guidance only (★ your priority unit). Use Sort list for lighter occupancy first.",
+        "Simulation mode active (no live telemetry yet) — ETA is guidance only. Use Sort list for lighter occupancy first.",
       "feed.last_pull": "Last live feed pull: {ago} — auto every ~{poll}s (data saver: {ds}).",
       "notify.perm_granted_toast": "OK — we'll alert when the nearest ride is close.",
       "notify.unsupported_toast": "Notifications aren't supported here.",
@@ -52,7 +52,6 @@
       "datasaver.off_toast": "Back to more frequent live pulls.",
       "profile.label_email": "Email",
       "profile.label_phone": "Phone",
-      "profile.label_id": "User ID",
       "guide.notify_15": "15 minutes",
       "guide.notify_10": "10 minutes",
       "guide.notify_7": "7 minutes",
@@ -145,9 +144,9 @@
       "guide.weather_refresh": "Refresh weather",
       "guide.map_key_title": "What you see on the map",
       "guide.map_li1": "Orange pin — jeepney; blue — Batrasco-style unit.",
-      "guide.map_li2": "Orange / blue route lines — estimated path per unit from data.xml.",
-      "guide.map_li3": "Cyan line with dots — core terminal loop reference.",
-      "guide.map_li4": "Small blue dot — you after Locate me.",
+      "guide.map_li2": "Orange line = jeepney route; blue line = Batrasco route estimate.",
+      "guide.map_li3": "Thin orange trail appears behind moving jeepney units.",
+      "guide.map_li4": "No cyan reference loop is shown in this view.",
       "guide.bring_title": "Commuter carry list",
       "guide.bring_li1": "Fan or umbrella — Lipa weather shifts quickly.",
       "guide.bring_li2": "Fare coins ready — faster than digging while queued.",
@@ -176,8 +175,6 @@
       "guide.peak_r3t": "Peak evening — wider ETA bands",
       "guide.peak_r4": "Sun / holiday",
       "guide.peak_r4t": "Varies — watch live demand on cards",
-      "guide.phrases_title": "Quick Filipino phrases",
-      "guide.phrases_hint": "Tap to copy (fare / courtesy).",
       "share.title": "Share ETA",
       "share.intro": "Pick a vehicle and share an ETA band with family or friends.",
       "share.unit": "Unit",
@@ -337,11 +334,11 @@
       "nearest.landmark":
         "Mga ~{km} km ka mula sa {name} (sanggunian sa tuwid na linya mula sa punto ng ETA).",
       "feed.puv_socket":
-        "PUV positions: real-time mula sa LipaMove server (Socket.io). I-tap ang Live tracking para bumalik sa local simulation.",
+        "PUV positions: live telemetry mula sa LipaMove server (Socket.io).",
       "feed.socket_connecting":
-        "Kumokonekta sa live PUV server… (kung walang telemetry, mananatili ang simulation / data.xml.)",
+        "Kumokonekta sa live PUV server… kung wala, mananatili ang simulation mula data.xml.",
       "feed.sim_guide":
-        'Simulation — ang ETA ay gabay lamang (★ priority unit mo). Gamitin ang Ayusin listahan para sa mas magaan na sakay.',
+        "Simulation mode (wala pang live telemetry) — gabay lamang ang ETA. Gamitin ang Ayusin listahan para sa mas magaan na sakay.",
       "feed.last_pull":
         "Huling pull ng live feed: {ago} — auto kada ~{poll}s (data saver: {ds}).",
       "notify.perm_granted_toast": "Sige — mag-aalerto kapag malapit na ang pinakamalapit na sasakyan.",
@@ -367,7 +364,6 @@
       "datasaver.off_toast": "Balik sa mas madalas na live pull.",
       "profile.label_email": "Email",
       "profile.label_phone": "Phone",
-      "profile.label_id": "User ID",
       "guide.notify_15": "15 minuto",
       "guide.notify_10": "10 minuto",
       "guide.notify_7": "7 minuto",
@@ -469,9 +465,9 @@
       "guide.weather_refresh": "I-refresh ang weather",
       "guide.map_key_title": "Ano ang makikita sa map",
       "guide.map_li1": "Orange icon — jeepney; asul — batrasco.",
-      "guide.map_li2": "Orange o asul na linya — tinatayong ruta mula sa data.xml.",
-      "guide.map_li3": "Cyan na linya — pangunahing loop terminals.",
-      "guide.map_li4": "Maliit na asul na tuldok — ikaw pagkatapos ng Locate me.",
+      "guide.map_li2": "Orange na linya = ruta ng jeepney; asul na linya = tantiyang ruta ng Batrasco.",
+      "guide.map_li3": "Manipis na orange trail sa likod ng gumagalaw na jeepney units.",
+      "guide.map_li4": "Wala nang cyan na reference loop sa view na ito.",
       "guide.bring_title": "Mga bitbit sa commuter",
       "guide.bring_li1": "Paypay o payong — mabilis lumipat ang panahon sa Lipa.",
       "guide.bring_li2": "Barya naka-hand para sa sakay.",
@@ -505,8 +501,6 @@
       "guide.peak_r3t": "Peak uwian — mas malawak ang ETA",
       "guide.peak_r4": "Linggo / holiday",
       "guide.peak_r4t": "Mag-iba — tingnan ang live demand sa card",
-      "guide.phrases_title": "Mabilis na sasakyan phrases",
-      "guide.phrases_hint": "Tap para kopyahin (pakiusap / bayad).",
       "share.title": "Share ETA",
       "share.intro":
         "Piliin ang sasakyan at i-share ang estimated dating sa pamilya o kaibigan.",
